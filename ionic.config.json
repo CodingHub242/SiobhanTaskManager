@@ -1,0 +1,7 @@
+{
+  "name": "siobhantask",
+  "integrations": {
+    "capacitor": {}
+  },
+  "type": "angular-standalone"
+}
