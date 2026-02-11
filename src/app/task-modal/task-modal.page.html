@@ -1,13 +1,128 @@
-<ion-header [translucent]="true">
+<ion-header>
   <ion-toolbar>
-    <ion-title>task-modal</ion-title>
+    <ion-buttons slot="start">
+      <ion-button (click)="dismiss()">Cancel</ion-button>
+    </ion-buttons>
+    <ion-title>{{ mode === 'add' ? 'Add Task' : mode === 'edit' ? 'Edit Task' : 'View Task' }}</ion-title>
+    <ion-buttons slot="end" *ngIf="mode !== 'view'">
+      <ion-button (click)="save()" [disabled]="!title.trim() || isLoading">
+        <ion-spinner *ngIf="isLoading" name="lines-small" style="margin-right: 4px;"></ion-spinner>
+        Save
+      </ion-button>
+    </ion-buttons>
   </ion-toolbar>
 </ion-header>
 
-<ion-content [fullscreen]="true">
-  <ion-header collapse="condense">
-    <ion-toolbar>
-      <ion-title size="large">task-modal</ion-title>
-    </ion-toolbar>
-  </ion-header>
+<ion-content class="ion-padding">
+  <!-- Task Reports Section (shown for all modes when reports exist) -->
+  <div *ngIf="hasReports()" class="reports-section">
+    <div class="section-header">
+      <h3>
+        <ion-icon name="document-text"></ion-icon>
+        Task Reports ({{ getReportCount() }})
+      </h3>
+    </div>
+    
+    <div class="reports-list">
+      <div *ngFor="let report of reports" class="report-card" (click)="viewReport(report)">
+        <div class="report-thumbnail" *ngIf="report.imageUrl || report.imagePath">
+          <img [src]="getReportImageUrl(report)" alt="Report image" />
+        </div>
+        <div class="report-info">
+          <p class="report-description">{{ report.description }}</p>
+          <p class="report-date">{{ report.createdAt | date:'short' }}</p>
+        </div>
+        <ion-icon name="chevron-forward" class="report-arrow"></ion-icon>
+      </div>
+    </div>
+  </div>
+
+  <ion-item>
+    <ion-label position="stacked">Title *</ion-label>
+    <ion-input 
+      [(ngModel)]="title" 
+      [readonly]="mode === 'view'"
+      placeholder="Enter task title"
+      maxlength="100">
+    </ion-input>
+  </ion-item>
+
+  <ion-item>
+    <ion-label position="stacked">Description</ion-label>
+    <ion-textarea 
+      [(ngModel)]="description" 
+      [readonly]="mode === 'view'"
+      placeholder="Enter task description"
+      rows="3"
+      maxlength="500">
+    </ion-textarea>
+  </ion-item>
+
+  <ion-item *ngIf="mode !== 'view'">
+    <ion-label position="stacked">Assign To</ion-label>
+    <ion-select [(ngModel)]="assignedTo" placeholder="Select employee">
+      <ion-select-option *ngFor="let user of users" [value]="user.id">
+        {{ user.name }} ({{ user.role | titlecase }})
+      </ion-select-option>
+    </ion-select>
+  </ion-item>
+
+  <div *ngIf="mode === 'view' && assignedTo">
+    <ion-item>
+      <ion-label position="stacked">Assigned To</ion-label>
+      <ion-input 
+        [value]="getEmployeeName(assignedTo)" 
+        readonly>
+      </ion-input>
+    </ion-item>
+  </div>
+
+  <ion-item *ngIf="mode !== 'view'">
+    <ion-label position="stacked">Priority</ion-label>
+    <ion-segment [(ngModel)]="priority">
+      <ion-segment-button value="low">
+        <ion-label>Low</ion-label>
+      </ion-segment-button>
+      <ion-segment-button value="medium">
+        <ion-label>Medium</ion-label>
+      </ion-segment-button>
+      <ion-segment-button value="high">
+        <ion-label>High</ion-label>
+      </ion-segment-button>
+    </ion-segment>
+  </ion-item>
+
+  <ion-item *ngIf="mode === 'view'">
+    <ion-label position="stacked">Priority</ion-label>
+    <ion-chip [color]="priority === 'high' ? 'danger' : priority === 'medium' ? 'warning' : 'success'">
+      {{ priority | titlecase }}
+    </ion-chip>
+  </ion-item>
+
+  <ion-item *ngIf="mode !== 'view'">
+    <ion-label position="stacked">Due Date</ion-label>
+    <ion-input 
+      type="date" 
+      [(ngModel)]="dueDate">
+    </ion-input>
+  </ion-item>
+
+  <ion-item *ngIf="mode === 'view'">
+    <ion-label position="stacked">Due Date</ion-label>
+    <ion-input 
+      type="text"
+      [value]="dueDate | date:'fullDate'" 
+      readonly>
+    </ion-input>
+  </ion-item>
+
+  <div *ngIf="mode === 'view'" class="status-section">
+    <ion-item>
+      <ion-label position="stacked">Status</ion-label>
+      <ion-chip [color]="task?.completed ? 'success' : 'warning'">
+        <ion-icon [name]="task?.completed ? 'checkmark-circle' : 'time'"></ion-icon>
+        {{ task?.completed ? 'Completed' : 'Pending' }}
+      </ion-chip>
+    </ion-item>
+  </div>
 </ion-content>
