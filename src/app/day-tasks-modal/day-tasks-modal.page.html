@@ -1,13 +1,32 @@
-<ion-header [translucent]="true">
+<ion-header>
   <ion-toolbar>
-    <ion-title>day-tasks-modal</ion-title>
+    <ion-title>{{ selectedDate | date:'EEEE, MMMM d, yyyy' }}</ion-title>
+    <ion-buttons slot="end">
+      <ion-button (click)="close()">
+        <ion-icon name="close"></ion-icon>
+      </ion-button>
+    </ion-buttons>
   </ion-toolbar>
 </ion-header>
 
 <ion-content [fullscreen]="true">
-  <ion-header collapse="condense">
-    <ion-toolbar>
-      <ion-title size="large">day-tasks-modal</ion-title>
-    </ion-toolbar>
-  </ion-header>
+  <div *ngIf="tasks.length === 0" class="no-tasks">
+    <p>No tasks for this day</p>
+  </div>
+
+  <ion-list *ngIf="tasks.length > 0">
+    <ion-item *ngFor="let task of tasks" button (click)="onTaskClick(task)">
+      <ion-label>
+        <h2>{{ task.title }}</h2>
+        <p>{{ task.description }}</p>
+        <div class="task-info">
+          <span class="priority" [class]="task.priority">{{ task.priority | titlecase }}</span>
+          <span class="assignee" *ngIf="getEmployeeName(task.employeeId)">
+            {{ getEmployeeName(task.employeeId) }}
+          </span>
+        </div>
+      </ion-label>
+      <ion-checkbox slot="start" [checked]="task.completed" disabled></ion-checkbox>
+    </ion-item>
+  </ion-list>
 </ion-content>
