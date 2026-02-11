@@ -1,4 +1,4 @@
-import { Component, OnInit,ChangeDetectorRef  } from '@angular/core';
+import { Component, OnInit,ChangeDetectorRef, CUSTOM_ELEMENTS_SCHEMA  } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { IonicModule, AlertController, ToastController, ActionSheetController, NavController, LoadingController } from '@ionic/angular';
@@ -12,6 +12,7 @@ import { Camera, CameraResultType, CameraSource, Photo } from '@capacitor/camera
   selector: 'app-profile',
   templateUrl: './profile.page.html',
   styleUrls: ['./profile.page.scss'],
+  schemas:[CUSTOM_ELEMENTS_SCHEMA],
   standalone: true,
   imports: [IonContent, IonHeader, IonTitle, IonToolbar, CommonModule, FormsModule]
 })
