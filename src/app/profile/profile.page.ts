@@ -3,7 +3,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { IonicModule, AlertController, ToastController, ActionSheetController, NavController, LoadingController } from '@ionic/angular';
 import { AuthService } from '../services/auth.service';
-import { IonButton, IonButtons, IonContent, IonHeader, IonTitle, IonToolbar, IonInput, IonItem, IonLabel, IonTextarea, IonSelect, IonSelectOption, IonSegment, IonSegmentButton, IonChip, IonIcon, IonSpinner } from '@ionic/angular/standalone';
+import { IonButton, IonButtons, IonContent, IonHeader, IonTitle, IonToolbar, IonInput, IonItem, IonLabel, IonTextarea, IonSelect, IonSelectOption, IonSegment, IonSegmentButton, IonChip, IonIcon, IonSpinner, IonBackButton } from '@ionic/angular/standalone';
 import { ApiService } from '../services/api.service';
 import { User } from '../models/user.model';
 import { Camera, CameraResultType, CameraSource, Photo } from '@capacitor/camera';
@@ -14,7 +14,28 @@ import { Camera, CameraResultType, CameraSource, Photo } from '@capacitor/camera
   styleUrls: ['./profile.page.scss'],
   schemas:[CUSTOM_ELEMENTS_SCHEMA],
   standalone: true,
-  imports: [IonContent, IonHeader, IonTitle, IonToolbar, CommonModule, FormsModule]
+  imports: [
+    IonContent,
+    IonHeader,
+    IonTitle,
+    IonToolbar,
+    CommonModule,
+    FormsModule,
+    IonButton,
+    IonButtons,
+    IonInput,
+    IonItem,
+    IonLabel,
+    IonTextarea,
+    IonSelect,
+    IonSelectOption,
+    IonSegment,
+    IonSegmentButton,
+    IonChip,
+    IonIcon,
+    IonSpinner,
+    IonBackButton
+  ]
 })
 export class ProfilePage implements OnInit {
  user: User | null = null;
