@@ -6,7 +6,9 @@ import { AuthService } from '../services/auth.service';
 import { IonButton, IonButtons, IonContent, IonHeader, IonTitle, IonToolbar, IonInput, IonItem, IonLabel, IonTextarea, IonSelect, IonSelectOption, IonSegment, IonSegmentButton, IonChip, IonIcon, IonSpinner, IonBackButton } from '@ionic/angular/standalone';
 import { ApiService } from '../services/api.service';
 import { User } from '../models/user.model';
+import { addIcons } from 'ionicons';
 import { Camera, CameraResultType, CameraSource, Photo } from '@capacitor/camera';
+import { create, informationCircle, informationCircleOutline, key, lockClosed, pencil, shieldCheckmark } from 'ionicons/icons';
 
 @Component({
   selector: 'app-profile',
@@ -16,6 +18,7 @@ import { Camera, CameraResultType, CameraSource, Photo } from '@capacitor/camera
   standalone: true,
   imports: [
     IonContent,
+    IonicModule,
     IonHeader,
     IonTitle,
     IonToolbar,
@@ -57,7 +60,9 @@ export class ProfilePage implements OnInit {
     private actionSheetController: ActionSheetController,
     private navController: NavController,
     private loadingController: LoadingController,
-    private cdr: ChangeDetectorRef) { }
+    private cdr: ChangeDetectorRef) { 
+      addIcons({shieldCheckmark,create,pencil,lockClosed,key,informationCircleOutline,informationCircle});
+    }
 
   ngOnInit() {
      this.loadUserProfile();
