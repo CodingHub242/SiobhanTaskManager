@@ -4,13 +4,15 @@ import { FormsModule } from '@angular/forms';
 import { IonicModule, NavController, ToastController } from '@ionic/angular';
 import { IonContent, IonHeader, IonTitle, IonToolbar } from '@ionic/angular/standalone';
 import { AuthService } from '../services/auth.service';
+import { addIcons } from 'ionicons';
+//import{ ionSpinner } from 'ionicons/icons';
 
 @Component({
   selector: 'app-login',
   templateUrl: './login.page.html',
   styleUrls: ['./login.page.scss'],
   standalone: true,
-  imports: [IonContent, IonHeader, IonTitle, IonToolbar, CommonModule, FormsModule]
+  imports: [IonContent, IonHeader,IonicModule, IonTitle, IonToolbar, CommonModule, FormsModule]
 })
 export class LoginPage implements OnInit {
 email: string = '';
@@ -19,7 +21,9 @@ email: string = '';
 
   constructor( private authService: AuthService,
     private navController: NavController,
-    private toastController: ToastController) { }
+    private toastController: ToastController) {
+      addIcons({})
+     }
 
   ngOnInit() {
   }
