@@ -32,6 +32,8 @@ export class TaskModalPage implements OnInit {
   isLoading: boolean = false;
   reports: TaskReport[] = [];
   isAdmin: boolean = false;
+  searchQuery: string = '';
+  filteredUsers: User[] = [];
 
   constructor(private modalController: ModalController,
     private alertController: AlertController,
@@ -44,6 +46,9 @@ export class TaskModalPage implements OnInit {
   }
 
   ngOnInit() {
+    // Initialize filtered users with all users
+    this.filteredUsers = [...this.users];
+    
     if ((this.mode === 'edit' || this.mode === 'view') && this.task) {
       this.title = this.task.title;
       this.description = this.task.description;
@@ -187,5 +192,27 @@ export class TaskModalPage implements OnInit {
 
   hasReports(): boolean {
     return this.reports.length > 0;
+  }
+
+  onSearchChange(): void {
+    const query = this.searchQuery.toLowerCase().trim();
+    if (!query) {
+      this.filteredUsers = [...this.users];
+    } else {
+      this.filteredUsers = this.users.filter(user =>
+        user.name.toLowerCase().includes(query) ||
+        (user.email && user.email.toLowerCase().includes(query)) ||
+        (user.role && user.role.toLowerCase().includes(query))
+      );
+    }
+  }
+
+  selectUser(userId: string): void {
+    this.assignedTo = userId;
+  }
+
+  clearSearch(): void {
+    this.searchQuery = '';
+    this.filteredUsers = [...this.users];
   }
 }
