@@ -214,7 +214,7 @@
                 [class.other-month]="!day.isCurrentMonth"
                 [class.today]="day.isToday"
                 [class.has-tasks]="day.tasks.length > 0"
-                (click)="openAddTaskModal(day.date)">
+                (click)="onCalendarDayClick(day)">
                 <span class="day-number">{{ day.date | date:'d' }}</span>
                 <div class="day-tasks">
                   <div 

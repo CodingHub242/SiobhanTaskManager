@@ -10,6 +10,7 @@ import { briefcase,add, trash, create, mail, document, close, eye, download, che
 import { AuthService } from '../services/auth.service';
 import { ApiService } from '../services/api.service';
 import { TaskModalPage } from '../task-modal/task-modal.page';
+import { DayTasksModalPage } from '../day-tasks-modal/day-tasks-modal.page';
 import { addIcons } from 'ionicons';
 import { TaskReportModalPage } from '../task-report-modal/task-report-modal.page';
 
@@ -32,7 +33,7 @@ interface ChartData {
   styleUrls: ['./employee-dashboard.page.scss'],
   schemas:[CUSTOM_ELEMENTS_SCHEMA],
   standalone: true,
-  imports: [IonicModule,IonContent, IonHeader, IonTitle, IonToolbar, CommonModule, FormsModule]
+  imports: [IonicModule,IonContent, IonHeader, IonTitle, IonToolbar, CommonModule, FormsModule, TaskModalPage, DayTasksModalPage]
 })
 export class EmployeeDashboardPage implements OnInit {
  tasks: Task[] = [];
@@ -298,6 +299,28 @@ export class EmployeeDashboardPage implements OnInit {
     modal.onDidDismiss().then(() => {
       this.loadTasks();
     });
+  }
+
+  async onCalendarDayClick(day: CalendarDay): Promise<void> {
+    if (!day.isCurrentMonth) return;
+    
+    if (day.tasks.length === 0) {
+      this.showToast('No tasks for this day');
+      return;
+    }
+    
+    // Filter tasks for this employee (should already be filtered, but ensure)
+    const employeeTasks = day.tasks;
+    
+    const modal = await this.modalController.create({
+      component: DayTasksModalPage,
+      componentProps: { 
+        selectedDate: day.date, 
+        tasks: employeeTasks
+      }
+    });
+    
+    await modal.present();
   }
 
   async openTaskDetailModal(task: Task): Promise<void> {
