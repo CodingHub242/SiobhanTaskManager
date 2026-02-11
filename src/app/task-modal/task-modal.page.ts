@@ -2,7 +2,7 @@ import { Component, CUSTOM_ELEMENTS_SCHEMA, Input, OnInit } from '@angular/core'
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { IonButton, IonButtons, IonContent, IonHeader, IonTitle, IonToolbar, IonInput, IonItem, IonLabel, IonTextarea, IonSelect, IonSelectOption, IonSegment, IonSegmentButton, IonChip, IonIcon, IonSpinner } from '@ionic/angular/standalone';
-import { ModalController, AlertController, ToastController } from '@ionic/angular';
+import { IonicModule, ModalController, AlertController, ToastController } from '@ionic/angular';
 import { addIcons } from 'ionicons';
 import { close, documentText, chevronForward, checkmarkCircle, time } from 'ionicons/icons';
 import { Task, TaskReport } from '../models/task.model';
@@ -16,7 +16,7 @@ import { ApiService } from '../services/api.service';
   styleUrls: ['./task-modal.page.scss'],
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
   standalone: true,
-  imports: [IonButton, IonButtons, IonContent, IonHeader, IonTitle, IonToolbar, IonInput, IonItem, IonLabel, IonTextarea, IonSelect, IonSelectOption, IonSegment, IonSegmentButton, IonChip, IonIcon, IonSpinner, CommonModule, FormsModule]
+  imports: [IonicModule, IonButton, IonButtons, IonContent, IonHeader, IonTitle, IonToolbar, IonInput, IonItem, IonLabel, IonTextarea, IonSelect, IonSelectOption, IonSegment, IonSegmentButton, IonChip, IonIcon, IonSpinner, CommonModule, FormsModule]
 })
 export class TaskModalPage implements OnInit {
   @Input() mode: 'add' | 'edit' | 'view' = 'add';
