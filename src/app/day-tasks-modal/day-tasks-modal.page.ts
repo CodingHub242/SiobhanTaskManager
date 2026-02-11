@@ -1,7 +1,7 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { IonContent, IonHeader, IonTitle, IonToolbar, IonButtons, IonButton, IonList, IonItem, IonLabel } from '@ionic/angular/standalone';
+import { IonCheckbox, IonContent, IonHeader, IonTitle, IonToolbar, IonButtons, IonButton, IonList, IonItem, IonLabel } from '@ionic/angular/standalone';
 import { IonicModule, ModalController } from '@ionic/angular';
 import { Task } from '../models/task.model';
 import { User } from '../models/user.model';
@@ -11,7 +11,7 @@ import { User } from '../models/user.model';
   templateUrl: './day-tasks-modal.page.html',
   styleUrls: ['./day-tasks-modal.page.scss'],
   standalone: true,
-  imports: [IonicModule, IonContent, IonHeader, IonTitle, IonToolbar, IonButtons, IonButton, IonList, IonItem, IonLabel, CommonModule, FormsModule]
+  imports: [IonicModule, IonCheckbox, IonContent, IonHeader, IonTitle, IonToolbar, IonButtons, IonButton, IonList, IonItem, IonLabel, CommonModule, FormsModule]
 })
 export class DayTasksModalPage implements OnInit {
   @Input() selectedDate: Date = new Date();
