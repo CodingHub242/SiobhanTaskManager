@@ -30,14 +30,6 @@ export const routes: Routes = [
     loadComponent: () => import('./employee-dashboard/employee-dashboard.page').then( m => m.EmployeeDashboardPage)
   },
   {
-    path: 'taskmodal',
-    loadComponent: () => import('./taskmodal/taskmodal.page').then( m => m.TaskmodalPage)
-  },
-  {
-    path: 'daymodal',
-    loadComponent: () => import('./daymodal/daymodal.page').then( m => m.DaymodalPage)
-  },
-  {
     path: 'day-tasks-modal',
     loadComponent: () => import('./day-tasks-modal/day-tasks-modal.page').then( m => m.DayTasksModalPage)
   },
