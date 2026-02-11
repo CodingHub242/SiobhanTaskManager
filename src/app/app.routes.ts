@@ -21,5 +21,29 @@ export const routes: Routes = [
     redirectTo: 'login',
     pathMatch: 'full',
   },
+  {
+    path: 'admin-dashboard',
+    loadComponent: () => import('./admin-dashboard/admin-dashboard.page').then( m => m.AdminDashboardPage)
+  },
+  {
+    path: 'employee-dashboard',
+    loadComponent: () => import('./employee-dashboard/employee-dashboard.page').then( m => m.EmployeeDashboardPage)
+  },
+  {
+    path: 'taskmodal',
+    loadComponent: () => import('./taskmodal/taskmodal.page').then( m => m.TaskmodalPage)
+  },
+  {
+    path: 'daymodal',
+    loadComponent: () => import('./daymodal/daymodal.page').then( m => m.DaymodalPage)
+  },
+  {
+    path: 'day-tasks-modal',
+    loadComponent: () => import('./day-tasks-modal/day-tasks-modal.page').then( m => m.DayTasksModalPage)
+  },
+  {
+    path: 'task-modal',
+    loadComponent: () => import('./task-modal/task-modal.page').then( m => m.TaskModalPage)
+  },
   
 ];
