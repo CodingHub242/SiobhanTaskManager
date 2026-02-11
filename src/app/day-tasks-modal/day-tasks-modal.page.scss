@@ -31,14 +31,32 @@ ion-content {
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  padding: 40px 20px;
+  padding: 60px 20px;
   text-align: center;
   
+  ion-icon {
+    font-size: 64px;
+    color: #2d5a3d;
+    margin-bottom: 16px;
+  }
+  
+  h3 {
+    font-size: 1.2rem;
+    font-weight: 600;
+    color: #f0e6d3;
+    margin: 0 0 8px;
+  }
+  
   p {
-    font-size: 1rem;
+    font-size: 0.9rem;
     color: #a8b5a8;
     margin: 0;
   }
+}
+
+// Day Tasks Content
+.day-tasks-content {
+  --background: #0f2b1a;
 }
 
 ion-footer {
@@ -108,17 +126,6 @@ ion-footer {
     font-weight: 600;
     color: #f0e6d3;
   }
-  
-  ion-button {
-    --background: linear-gradient(135deg, #d4af37 0%, #b8942e 100%);
-    --color: #0d2818;
-    --border-radius: 8px;
-    --font-weight: 600;
-    
-    ion-icon {
-      margin-right: 4px;
-    }
-  }
 }
 
 .tasks-list {
@@ -146,6 +153,11 @@ ion-footer {
     font-weight: 600;
     color: #f0e6d3;
     margin: 0 0 6px;
+    
+    &.completed-text {
+      text-decoration: line-through;
+      opacity: 0.6;
+    }
   }
   
   p {
@@ -157,10 +169,6 @@ ion-footer {
     -webkit-box-orient: vertical;
     overflow: hidden;
   }
-}
-
-.task-meta {
-  margin-top: 8px;
 }
 
 .task-badges {
@@ -205,28 +213,11 @@ ion-footer {
     color: #d4af37;
     border: 1px solid #2d5a3d;
   }
-  
-  &.status {
-    &.completed {
-      background: rgba(212, 175, 55, 0.2);
-      color: #d4af37;
-      border: 1px solid #d4af37;
-    }
-    &.pending {
-      background: rgba(139, 41, 66, 0.2);
-      color: #ff6b7a;
-      border: 1px solid #8b2942;
-    }
-  }
 }
 
-.completed {
-  opacity: 0.6;
-  
-  .task-content h2,
-  .task-content p {
-    text-decoration: line-through;
-  }
+.chevron-icon {
+  color: #2d5a3d;
+  font-size: 16px;
 }
 
 ion-checkbox {
