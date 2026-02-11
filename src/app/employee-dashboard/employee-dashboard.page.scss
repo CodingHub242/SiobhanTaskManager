@@ -116,7 +116,15 @@ ion-item {
     color: #d4af37;
   }
 }
-
+.listitem{
+  --background: linear-gradient(135deg, #1a4a2a 0%, #0d2818 100%);
+      --border-color: #d4af37;
+      border: 1px solid #d4af37;
+      
+      ion-icon {
+        color: #d4af37;
+      }
+}
 // ==================== DASHBOARD HEADER ====================
 .dashboard-header {
   background: linear-gradient(135deg, #0d2818 0%, #14291d 100%);

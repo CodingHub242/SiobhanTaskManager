@@ -6,7 +6,7 @@ import { IonButton, IonButtons, IonContent, IonHeader, IonTitle, IonToolbar, Ion
 import { Subject, takeUntil } from 'rxjs';
 import { Task } from '../models/task.model';
 import { User } from '../models/user.model';
-import { briefcase,add, trash, create, mail, document, close, eye, download, checkmark, arrowBack, arrowUp, arrowDown, filter, cloudUpload, checkmarkCircle, layers, time, serverOutline } from 'ionicons/icons';
+import { briefcase,add, trash, create, mail, document, close, eye, download, checkmark, arrowBack, arrowUp, arrowDown, filter, cloudUpload, checkmarkCircle, layers, time, serverOutline, person, logOut } from 'ionicons/icons';
 import { AuthService } from '../services/auth.service';
 import { ApiService } from '../services/api.service';
 import { TaskModalPage } from '../task-modal/task-modal.page';
@@ -60,7 +60,7 @@ export class EmployeeDashboardPage implements OnInit {
     private actionSheetController: ActionSheetController,
     private popoverController: PopoverController,
     private toastController: ToastController) {
-       addIcons({briefcase,serverOutline, add, trash, create, mail, document, close, eye, download, checkmark, arrowBack, arrowUp, arrowDown, filter,checkmarkCircle,cloudUpload,layers,time});
+       addIcons({briefcase,serverOutline, add,person,logOut, trash, create, mail, document, close, eye, download, checkmark, arrowBack, arrowUp, arrowDown, filter,checkmarkCircle,cloudUpload,layers,time});
   }
 
   ngOnInit() {
