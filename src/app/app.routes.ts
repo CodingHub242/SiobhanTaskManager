@@ -29,13 +29,5 @@ export const routes: Routes = [
     path: 'employee-dashboard',
     loadComponent: () => import('./employee-dashboard/employee-dashboard.page').then( m => m.EmployeeDashboardPage)
   },
-  {
-    path: 'day-tasks-modal',
-    loadComponent: () => import('./day-tasks-modal/day-tasks-modal.page').then( m => m.DayTasksModalPage)
-  },
-  {
-    path: 'task-modal',
-    loadComponent: () => import('./task-modal/task-modal.page').then( m => m.TaskModalPage)
-  },
   
 ];
