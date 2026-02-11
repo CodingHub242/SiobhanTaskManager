@@ -1,25 +1,115 @@
-ion-item {
-  margin-bottom: 16px;
-  --border-radius: 8px;
+// Task Modal Theme Styles
+
+ion-header {
+  ion-toolbar {
+    --background: linear-gradient(135deg, #0d2818 0%, #1a4a2a 100%);
+    --color: #f0e6d3;
+    --border-color: #2d5a3d;
+    
+    ion-title {
+      font-weight: 600;
+      color: #f0e6d3;
+    }
+    
+    ion-button {
+      --color: #d4af37;
+      font-weight: 600;
+    }
+  }
 }
 
-ion-segment-button {
-  text-transform: capitalize;
+ion-content {
+  --background: #0f2b1a;
+  --padding-start: 16px;
+  --padding-end: 16px;
+  --padding-top: 16px;
+  --padding-bottom: 16px;
+}
+
+ion-item {
+  --background: transparent;
+  --border-color: #2d5a3d;
+  margin-bottom: 12px;
+  --border-radius: 8px;
+  
+  ion-label {
+    color: #a8b5a8 !important;
+    font-weight: 600;
+    margin-bottom: 8px;
+  }
 }
 
 ion-input, ion-textarea {
+  --background: #14291d;
+  --color: #f0e6d3;
   --padding-start: 12px;
   --padding-end: 12px;
   --padding-top: 12px;
   --padding-bottom: 12px;
-  border: 1px solid var(--ion-color-medium-shade);
+  border: 1px solid #2d5a3d;
   border-radius: 8px;
   margin-top: 4px;
+  
+  &::placeholder {
+    color: #5a6b5a;
+  }
 }
 
-ion-label[position="stacked"] {
+ion-select {
+  --background: #14291d;
+  --color: #f0e6d3;
+  --padding-start: 12px;
+  --padding-end: 12px;
+  --padding-top: 12px;
+  --padding-bottom: 12px;
+  border: 1px solid #2d5a3d;
+  border-radius: 8px;
+}
+
+ion-segment {
+  --background: #14291d;
+  border-radius: 8px;
+  padding: 4px;
+}
+
+ion-segment-button {
+  --background: transparent;
+  --background-checked: linear-gradient(135deg, #d4af37 0%, #b8942e 100%);
+  --color: #a8b5a8;
+  --color-checked: #0d2818;
+  --border-radius: 6px;
+  text-transform: capitalize;
   font-weight: 600;
-  margin-bottom: 8px;
+  min-height: 36px;
+}
+
+ion-chip {
+  --background: #14291d;
+  --color: #f0e6d3;
+  border: 1px solid #2d5a3d;
+  font-weight: 600;
+  
+  &.ion-color-success {
+    --background: rgba(45, 90, 61, 0.3);
+    --color: #5cb97a;
+    border-color: #2d5a3d;
+  }
+  
+  &.ion-color-warning {
+    --background: rgba(212, 175, 55, 0.2);
+    --color: #d4af37;
+    border-color: #6b6029;
+  }
+  
+  &.ion-color-danger {
+    --background: rgba(139, 41, 66, 0.3);
+    --color: #ff6b7a;
+    border-color: #8b2942;
+  }
+}
+
+ion-spinner {
+  --color: #d4af37;
 }
 
 // Reports Section
@@ -38,7 +128,11 @@ ion-label[position="stacked"] {
       margin: 0;
       font-size: 16px;
       font-weight: 600;
-      color: var(--ion-color-dark);
+      color: #f0e6d3;
+      
+      ion-icon {
+        color: #d4af37;
+      }
     }
   }
   
@@ -52,13 +146,14 @@ ion-label[position="stacked"] {
     display: flex;
     align-items: center;
     padding: 12px;
-    background: var(--ion-color-light);
+    background: linear-gradient(145deg, #14291d 0%, #0d2818 100%);
+    border: 1px solid #2d5a3d;
     border-radius: 8px;
     cursor: pointer;
-    transition: background 0.2s ease;
+    transition: all 0.2s ease;
     
     &:hover {
-      background: var(--ion-color-medium-tint);
+      border-color: #d4af37;
     }
     
     .report-thumbnail {
@@ -68,6 +163,7 @@ ion-label[position="stacked"] {
       overflow: hidden;
       margin-right: 12px;
       flex-shrink: 0;
+      background: #0d2818;
       
       img {
         width: 100%;
@@ -83,7 +179,7 @@ ion-label[position="stacked"] {
       .report-description {
         margin: 0;
         font-size: 14px;
-        color: var(--ion-color-dark);
+        color: #f0e6d3;
         white-space: nowrap;
         overflow: hidden;
         text-overflow: ellipsis;
@@ -92,12 +188,12 @@ ion-label[position="stacked"] {
       .report-date {
         margin: 4px 0 0;
         font-size: 12px;
-        color: var(--ion-color-medium);
+        color: #a8b5a8;
       }
     }
     
     .report-arrow {
-      color: var(--ion-color-medium);
+      color: #2d5a3d;
       font-size: 18px;
     }
   }
@@ -105,4 +201,17 @@ ion-label[position="stacked"] {
 
 .status-section {
   margin-top: 16px;
+}
+
+// Form validation styles
+.ion-invalid {
+  ion-input, ion-textarea {
+    border-color: #ff4961;
+  }
+}
+
+.ion-valid {
+  ion-input, ion-textarea {
+    border-color: #2dd36f;
+  }
 }

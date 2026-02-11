@@ -1,8 +1,10 @@
-import { Component,CUSTOM_ELEMENTS_SCHEMA,Input, OnInit } from '@angular/core';
+import { Component, CUSTOM_ELEMENTS_SCHEMA, Input, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { IonButton, IonButtons, IonContent, IonHeader, IonTitle, IonToolbar, IonInput, IonItem, IonLabel, IonTextarea, IonSelect, IonSelectOption, IonSegment, IonSegmentButton, IonChip, IonIcon, IonSpinner } from '@ionic/angular/standalone';
 import { IonicModule, ModalController, AlertController, ToastController } from '@ionic/angular';
+import { addIcons } from 'ionicons';
+import { close, documentText, chevronForward, checkmarkCircle, time } from 'ionicons/icons';
 import { Task, TaskReport } from '../models/task.model';
 import { User } from '../models/user.model';
 import { TaskService } from '../services/task.service';
@@ -12,12 +14,12 @@ import { ApiService } from '../services/api.service';
   selector: 'app-task-modal',
   templateUrl: './task-modal.page.html',
   styleUrls: ['./task-modal.page.scss'],
-  schemas:[CUSTOM_ELEMENTS_SCHEMA],
+  schemas: [CUSTOM_ELEMENTS_SCHEMA],
   standalone: true,
   imports: [IonicModule, IonButton, IonButtons, IonContent, IonHeader, IonTitle, IonToolbar, IonInput, IonItem, IonLabel, IonTextarea, IonSelect, IonSelectOption, IonSegment, IonSegmentButton, IonChip, IonIcon, IonSpinner, CommonModule, FormsModule]
 })
 export class TaskModalPage implements OnInit {
- @Input() mode: 'add' | 'edit' | 'view' = 'add';
+  @Input() mode: 'add' | 'edit' | 'view' = 'add';
   @Input() task?: Task;
   @Input() selectedDate?: Date;
   @Input() users: User[] = [];
@@ -31,17 +33,18 @@ export class TaskModalPage implements OnInit {
   reports: TaskReport[] = [];
   isAdmin: boolean = false;
 
-  constructor( private modalController: ModalController,
+  constructor(private modalController: ModalController,
     private alertController: AlertController,
     private toastController: ToastController,
     private apiService: ApiService,
     private taskService: TaskService) {
-       const currentUser = JSON.parse(localStorage.getItem('currentUser') || '{}');
-    this.isAdmin = currentUser?.role === 'admin';
-     }
+      addIcons({close, documentText, chevronForward, checkmarkCircle, time});
+      const currentUser = JSON.parse(localStorage.getItem('currentUser') || '{}');
+      this.isAdmin = currentUser?.role === 'admin';
+  }
 
   ngOnInit() {
-     if ((this.mode === 'edit' || this.mode === 'view') && this.task) {
+    if ((this.mode === 'edit' || this.mode === 'view') && this.task) {
       this.title = this.task.title;
       this.description = this.task.description;
       this.priority = this.task.priority;
@@ -61,12 +64,12 @@ export class TaskModalPage implements OnInit {
     }
   }
 
-    loadTaskReports(): void {
+  loadTaskReports(): void {
     if (!this.task) return;
     
     this.apiService.getTaskReports(this.task.id).subscribe({
       next: (reports: any) => {
-        this.reports = reports.map((r: any) => ({
+        this.reports = (reports || []).map((r: any) => ({
           id: r.id?.toString() || '',
           taskId: r.task_id || this.task!.id,
           description: r.description || '',
@@ -117,7 +120,6 @@ export class TaskModalPage implements OnInit {
     });
 
     if (imageUrl) {
-      // Add image to alert
       const dateStr = report.createdAt.toLocaleDateString('en-US', { 
         year: 'numeric', month: 'short', day: 'numeric', 
         hour: '2-digit', minute: '2-digit' 
@@ -186,5 +188,4 @@ export class TaskModalPage implements OnInit {
   hasReports(): boolean {
     return this.reports.length > 0;
   }
-
 }
