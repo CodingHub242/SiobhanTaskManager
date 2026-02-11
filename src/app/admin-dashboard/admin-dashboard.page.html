@@ -126,7 +126,7 @@
 
         <ion-list *ngIf="tasks.length > 0; else noTasks" class="task-list">
           <ion-item-sliding *ngFor="let task of tasks" class="task-item-row">
-            <ion-item>
+            <ion-item class="listitem">
               <ion-checkbox 
                 slot="start" 
                 [checked]="task.completed" 
