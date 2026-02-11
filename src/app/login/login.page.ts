@@ -17,6 +17,8 @@ export class LoginPage implements OnInit {
  email: string = '';
   password: string = '';
   isLoading: boolean = false;
+  showerror:any;
+  hasError: boolean = false;
 
   constructor( private authService: AuthService,
     private navController: NavController,
@@ -43,6 +45,8 @@ export class LoginPage implements OnInit {
         },
         error: (error) => {
           this.isLoading = false;
+          this.hasError = true;
+          this.showerror = error.error.errors || 'Login failed';
           this.showToast('Invalid credentials');
         }
       });
