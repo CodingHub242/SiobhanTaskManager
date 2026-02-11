@@ -58,57 +58,14 @@
     </ion-textarea>
   </ion-item>
 
-  <div *ngIf="mode !== 'view'" class="assign-section">
-    <ion-item>
-      <ion-label position="stacked">Assign To</ion-label>
-      
-      <!-- Search Input -->
-      <div class="search-container">
-        <ion-input 
-          [(ngModel)]="searchQuery" 
-          (ngModelChange)="onSearchChange()"
-          placeholder="Search employees..."
-          class="search-input">
-        </ion-input>
-        <ion-button *ngIf="searchQuery" fill="clear" size="small" (click)="clearSearch()" class="clear-search">
-          <ion-icon name="close-circle"></ion-icon>
-        </ion-button>
-      </div>
-      
-      <!-- Scrollable User List -->
-      <div class="user-list-container">
-        <div 
-          *ngFor="let user of filteredUsers" 
-          class="user-option"
-          [class.selected]="user.id === assignedTo"
-          (click)="selectUser(user.id)">
-          <div class="user-avatar">
-            {{ user.name.charAt(0).toUpperCase() }}
-          </div>
-          <div class="user-info">
-            <span class="user-name">{{ user.name }}</span>
-            <span class="user-role">{{ user.role | titlecase }}</span>
-          </div>
-          <ion-icon *ngIf="user.id === assignedTo" name="checkmark-circle" class="check-icon"></ion-icon>
-        </div>
-        
-        <div *ngIf="filteredUsers.length === 0" class="no-results">
-          <p>No employees found</p>
-        </div>
-      </div>
-    </ion-item>
-    
-    <!-- Selected User Display -->
-    <div *ngIf="assignedTo" class="selected-display">
-      <ion-chip>
-        <ion-icon name="person"></ion-icon>
-        Assigned to: {{ getEmployeeName(assignedTo) }}
-        <ion-button fill="clear" size="small" (click)="assignedTo = ''">
-          <ion-icon name="close"></ion-icon>
-        </ion-button>
-      </ion-chip>
-    </div>
-  </div>
+  <ion-item *ngIf="mode !== 'view'">
+    <ion-label position="stacked">Assign To</ion-label>
+    <ion-select [(ngModel)]="assignedTo" placeholder="Select employee">
+      <ion-select-option *ngFor="let user of users" [value]="user.id">
+        {{ user.name }} ({{ user.role | titlecase }})
+      </ion-select-option>
+    </ion-select>
+  </ion-item>
 
   <div *ngIf="mode === 'view' && assignedTo">
     <ion-item>
