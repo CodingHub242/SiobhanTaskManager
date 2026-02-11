@@ -81,7 +81,8 @@ export class AdminDashboardPage implements OnInit {
     this.taskService.tasks$
       .pipe(takeUntil(this.destroy$))
       .subscribe((tasks: any) => {
-        this.tasks = tasks;
+        // Ensure tasks is always an array
+        this.tasks = Array.isArray(tasks) ? tasks : [];
         this.generateCalendar();
         this.calculateChartData();
       });
@@ -97,19 +98,23 @@ export class AdminDashboardPage implements OnInit {
           // or direct array: [...]
           let usersRaw: any[] = [];
           
-          if (response.data && Array.isArray(response.data.data)) {
-            // Paginated response
-            usersRaw = response.data.data;
-          } else if (Array.isArray(response.data)) {
-            // Wrapped response
-            usersRaw = response.data;
-          } else if (Array.isArray(response)) {
+          if (response && Array.isArray(response)) {
             // Direct array
             usersRaw = response;
+          } else if (response && response.data && Array.isArray(response.data.data)) {
+            // Paginated response
+            usersRaw = response.data.data;
+          } else if (response && response.data && Array.isArray(response.data)) {
+            // Wrapped response
+            usersRaw = response.data;
+          } else {
+            // Fallback: try to handle unexpected format
+            console.warn('Unexpected users response format:', response);
+            usersRaw = [];
           }
           
           // Transform snake_case to camelCase
-          this.users = usersRaw.map((u: any) => ({
+          this.users = (usersRaw || []).map((u: any) => ({
             id: u.id?.toString() || '',
             email: u.email || '',
             name: u.name || '',
