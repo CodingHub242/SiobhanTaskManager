@@ -11,8 +11,8 @@ ion-header {
     --border-color: #2d5a3d !important;
     --min-height: 64px !important;
     padding: 0 16px;
-    display: flex;
-    justify-content: space-between;
+    // display: flex;
+    // justify-content: space-between;
   }
 }
 
@@ -43,7 +43,7 @@ ion-buttons {
     --padding-start: 8px;
     --padding-end: 12px;
     --border-radius: 8px;
-    display: flex;
+    //display: flex;
     
     &:hover {
       --background: rgba(212, 175, 55, 0.1);
@@ -83,8 +83,8 @@ ion-buttons {
 
 ion-avatar {
   margin-right: 0;
-  width: 50px;
-  height: 50px;
+  // width: 50px;
+  // height: 50px;
 }
 
 ion-popover {
@@ -104,7 +104,7 @@ ion-item {
   --color: #e8dcc8;
   --border-color: #1a4a2a;
   --ripple-color: #d4af37;
-  border-radius: 8px;
+  --border-radius: 8px;
   margin-bottom: 4px;
   
   &:hover {
