@@ -67,16 +67,19 @@
                     <p style="text-align: center;color:darkgray;">&copy; 2026 Siobhan Tasks. All rights reserved.</p>
                 </div>
 
+                 <!--Api Response-->
+                <span style="text-align: center;margin: auto;color: maroon;text-transform: capitalize;width: 100%;display: block;margin-top: 30px;background: #bfafaf;padding: 10px;border-radius: 10px;" *ngIf="hasError" class="api-response">{{ showerror }}</span>
+
                
             </div>
         </div>
     </div>
    
   </div>
-  <ion-toast
+  <!-- <ion-toast
     [isOpen]="isToastOpen"
     message="{{ toastMessage }}"
     duration="2000"
     (didDismiss)="setToastOpen(false)">
-  </ion-toast>
+  </ion-toast> -->
 </ion-content>

@@ -41,13 +41,19 @@ export class LoginPage implements OnInit {
       .subscribe({
         next: () => {
           this.isLoading = false;
+          this.hasError = false;
           this.navigateToDashboard();
         },
         error: (error) => {
           this.isLoading = false;
           this.hasError = true;
+          this.showerror = '';
           this.showerror = error.error.errors || 'Login failed';
           this.showToast('Invalid credentials');
+
+           setTimeout(() => {
+            this.showerror = '';
+          }, 3000);
         }
       });
   }
