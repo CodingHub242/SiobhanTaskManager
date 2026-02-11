@@ -86,6 +86,10 @@ ion-avatar {
   margin-right: 0;
   width: 50px;
   height: 50px;
+
+  img{
+    border-radius: 50%;
+  }
 }
 
 ion-popover {
@@ -138,12 +142,14 @@ ion-checkbox {
 ion-item-options {
   background: transparent;
   display: flex;
+  color: darkgoldenrod;
 }
 
 ion-item-option {
   --background: transparent;
   background: transparent;
   min-width: 56px;
+  color: darkgoldenrod;
   
   &.ion-color-secondary {
     --background: rgba(212, 175, 55, 0.2);
