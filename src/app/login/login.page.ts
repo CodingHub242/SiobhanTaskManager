@@ -53,6 +53,7 @@ export class LoginPage implements OnInit {
 
            setTimeout(() => {
             this.showerror = '';
+            this.hasError = false;
           }, 3000);
         }
       });
