@@ -423,4 +423,7 @@ export class ProfilePage implements OnInit {
     await toast.present();
   }
 
+  goback(): void {
+    this.navController.back();
+  }
 }
