@@ -1,13 +1,351 @@
-<ion-header [translucent]="true">
+<ion-header>
   <ion-toolbar>
-    <ion-title>employee-dashboard</ion-title>
+    <ion-title>
+      <span class="dashboard-title">
+        <ion-icon name="briefcase"></ion-icon>
+        My Tasks
+      </span>
+    </ion-title>
+    <ion-buttons slot="end">
+      <ion-button id="user-menu-trigger">
+        <ion-avatar slot="start">
+          <img *ngIf="getCurrentUser()?.avatar" [src]="getAvatarUrl()" alt="Avatar" />
+          <div *ngIf="!getCurrentUser()?.avatar" class="user-avatar">
+            {{ getUserInitials() }}
+          </div>
+        </ion-avatar>
+        <span class="user-name">{{ getCurrentUser()?.name }}</span>
+        <ion-icon name="chevron-down"></ion-icon>
+      </ion-button>
+      <ion-popover trigger="user-menu-trigger" dismiss-on-select>
+        <ng-template>
+          <ion-content>
+            <ion-list>
+              <ion-item button (click)="navigateToProfile()">
+                <ion-icon name="person" slot="start"></ion-icon>
+                <ion-label>Profile</ion-label>
+              </ion-item>
+              <ion-item button (click)="logout()">
+                <ion-icon name="log-out" slot="start"></ion-icon>
+                <ion-label>Logout</ion-label>
+              </ion-item>
+            </ion-list>
+          </ion-content>
+        </ng-template>
+      </ion-popover>
+    </ion-buttons>
   </ion-toolbar>
 </ion-header>
 
 <ion-content [fullscreen]="true">
-  <ion-header collapse="condense">
-    <ion-toolbar>
-      <ion-title size="large">employee-dashboard</ion-title>
-    </ion-toolbar>
-  </ion-header>
+  <!-- Dashboard Header with Stats -->
+  <div class="dashboard-header">
+    <div class="welcome-section">
+      <h1>Welcome back, {{ getCurrentUser()?.name }}</h1>
+      <p>{{ currentDate | date:'EEEE, MMMM d, yyyy' }}</p>
+    </div>
+    
+    <!-- Quick Stats Row -->
+    <div class="quick-stats">
+      <div class="stat-item">
+        <div class="stat-icon-wrapper total">
+          <ion-icon name="layers"></ion-icon>
+        </div>
+        <div class="stat-info">
+          <span class="stat-number">{{ getTotalTasks() }}</span>
+          <span class="stat-text">Total Tasks</span>
+        </div>
+      </div>
+      <div class="stat-item">
+        <div class="stat-icon-wrapper completed">
+          <ion-icon name="checkmark-circle"></ion-icon>
+        </div>
+        <div class="stat-info">
+          <span class="stat-number">{{ getCompletedTasks() }}</span>
+          <span class="stat-text">Completed</span>
+        </div>
+      </div>
+      <div class="stat-item">
+        <div class="stat-icon-wrapper pending">
+          <ion-icon name="time"></ion-icon>
+        </div>
+        <div class="stat-info">
+          <span class="stat-number">{{ getPendingTasks() }}</span>
+          <span class="stat-text">In Progress</span>
+        </div>
+      </div>
+      <div class="stat-item">
+        <div class="stat-icon-wrapper overdue">
+          <ion-icon name="server-outline"></ion-icon>
+        </div>
+        <div class="stat-info">
+          <span class="stat-number">{{ getProgressPercentage() }}%</span>
+          <span class="stat-text">Progress</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Main Content Area -->
+  <div class="main-content">
+    <!-- Side Navigation -->
+    <div class="side-nav">
+      <ion-list>
+        <ion-item [class.active]="viewMode === 'list'" (click)="viewMode = 'list'">
+          <ion-icon name="list" slot="start"></ion-icon>
+          <ion-label>My Tasks</ion-label>
+        </ion-item>
+        <ion-item [class.active]="viewMode === 'calendar'" (click)="viewMode = 'calendar'">
+          <ion-icon name="calendar" slot="start"></ion-icon>
+          <ion-label>Calendar</ion-label>
+        </ion-item>
+        <ion-item [class.active]="viewMode === 'analytics'" (click)="viewMode = 'analytics'">
+          <ion-icon name="analytics" slot="start"></ion-icon>
+          <ion-label>My Stats</ion-label>
+        </ion-item>
+      </ion-list>
+    </div>
+
+    <!-- Content Panel -->
+    <div class="content-panel">
+      <!-- List View -->
+      <div *ngIf="viewMode === 'list'" class="view-container">
+        <div class="section-header">
+          <div class="section-title">
+            <h2>My Tasks</h2>
+            <ion-chip color="warning">
+              <ion-icon name="trending-up"></ion-icon>
+              {{ getProgressPercentage() }}% Complete
+            </ion-chip>
+          </div>
+          <ion-segment [(ngModel)]="filter" (ionChange)="setFilter($any($event.detail.value))">
+            <ion-segment-button value="all">
+              <ion-label>All</ion-label>
+            </ion-segment-button>
+            <ion-segment-button value="pending">
+              <ion-label>Pending</ion-label>
+            </ion-segment-button>
+            <ion-segment-button value="completed">
+              <ion-label>Completed</ion-label>
+            </ion-segment-button>
+          </ion-segment>
+        </div>
+
+        <ion-searchbar 
+          [(ngModel)]="searchTerm" 
+          (ionInput)="onSearchChange()"
+          placeholder="Search tasks..."
+          class="custom-searchbar">
+        </ion-searchbar>
+
+        <ion-list *ngIf="filteredTasks.length > 0; else noTasks" class="task-list">
+          <ion-item-sliding *ngFor="let task of filteredTasks" class="task-item-row">
+            <ion-item>
+              <ion-checkbox 
+                slot="start" 
+                [checked]="task.completed" 
+                (ionChange)="toggleTaskCompletion(task)">
+              </ion-checkbox>
+              <ion-label [class.completed-task]="task.completed">
+                <div class="task-main" (click)="showTaskOptions(task)">
+                  <h2>{{ task.title }}</h2>
+                  <p>{{ task.description }}</p>
+                </div>
+                <div class="task-meta">
+                  <div class="task-badges">
+                    <span class="badge priority" [class]="task.priority">
+                      <ion-icon name="flag"></ion-icon>
+                      {{ task.priority | titlecase }}
+                    </span>
+                    <span class="badge due-date" [class]="getDueDateClass(task)">
+                      <ion-icon name="calendar"></ion-icon>
+                      {{ task.dueDate | date:'MMM d' }}
+                    </span>
+                    <span class="badge status" [class]="task.completed ? 'completed' : 'pending'">
+                      <ion-icon [name]="task.completed ? 'checkmark-circle' : 'time'"></ion-icon>
+                      {{ task.completed ? 'Completed' : 'Pending' }}
+                    </span>
+                  </div>
+                </div>
+              </ion-label>
+            </ion-item>
+            <ion-item-options side="end">
+              <ion-item-option color="secondary" (click)="showTaskOptions(task)">
+                <ion-icon name="ellipsis-vertical"></ion-icon>
+              </ion-item-option>
+            </ion-item-options>
+          </ion-item-sliding>
+        </ion-list>
+      </div>
+
+      <!-- Calendar View -->
+      <div *ngIf="viewMode === 'calendar'" class="view-container">
+        <div class="calendar-panel">
+          <div class="calendar-header-row">
+            <div class="calendar-nav">
+              <ion-button fill="clear" (click)="previousMonth()">
+                <ion-icon name="chevron-back"></ion-icon>
+              </ion-button>
+              <h3>{{ currentMonth | date:'MMMM yyyy' }}</h3>
+              <ion-button fill="clear" (click)="nextMonth()">
+                <ion-icon name="chevron-forward"></ion-icon>
+              </ion-button>
+            </div>
+            <div class="calendar-actions">
+              <ion-button fill="outline" size="small" (click)="resetToToday()">Today</ion-button>
+              <ion-button size="small" (click)="openAddTaskModal()">
+                <ion-icon name="add"></ion-icon>
+                Add Task
+              </ion-button>
+            </div>
+          </div>
+          
+          <div class="calendar-grid">
+            <div class="calendar-weekdays">
+              <div *ngFor="let day of ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat']" class="weekday">
+                {{ day }}
+              </div>
+            </div>
+            
+            <div class="calendar-days">
+              <div 
+                *ngFor="let day of calendarDays" 
+                class="calendar-day"
+                [class.other-month]="!day.isCurrentMonth"
+                [class.today]="day.isToday"
+                [class.has-tasks]="day.tasks.length > 0"
+                (click)="openAddTaskModal(day.date)">
+                <span class="day-number">{{ day.date | date:'d' }}</span>
+                <div class="day-tasks">
+                  <div 
+                    *ngFor="let task of day.tasks.slice(0, 3)" 
+                    class="task-pill"
+                    [class.completed]="task.completed"
+                    [class]="task.priority">
+                    <span class="task-title">{{ task.title }}</span>
+                  </div>
+                  <span *ngIf="day.tasks.length > 3" class="more-tasks">+{{ day.tasks.length - 3 }} more</span>
+                </div>
+              </div>
+            </div>
+          </div>
+          
+          <div class="calendar-legend">
+            <div class="legend-item"><span class="dot high"></span> High</div>
+            <div class="legend-item"><span class="dot medium"></span> Medium</div>
+            <div class="legend-item"><span class="dot low"></span> Low</div>
+            <div class="legend-item"><span class="dot completed"></span> Done</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Analytics View -->
+      <div *ngIf="viewMode === 'analytics'" class="view-container">
+        <div class="analytics-grid">
+          <!-- Progress Card -->
+          <ion-card class="analytics-card large">
+            <ion-card-header>
+              <ion-card-title>My Progress</ion-card-title>
+            </ion-card-header>
+            <ion-card-content>
+              <div class="progress-section">
+                <div class="progress-ring">
+                  <svg viewBox="0 0 100 100">
+                    <circle cx="50" cy="50" r="45" fill="none" stroke="#1a4a2a" stroke-width="8"/>
+                    <circle 
+                      cx="50" cy="50" r="45" fill="none" 
+                      stroke="#d4af37"
+                      stroke-width="8"
+                      stroke-linecap="round"
+                      [attr.stroke-dasharray]="getProgressPercentage() * 2.83"
+                      stroke-dashoffset="0"
+                      transform="rotate(-90 50 50)"/>
+                  </svg>
+                  <div class="progress-text">{{ getProgressPercentage() }}%</div>
+                </div>
+                <div class="progress-stats">
+                  <div class="progress-stat">
+                    <span class="value">{{ getCompletedTasks() }}</span>
+                    <span class="label">Completed</span>
+                  </div>
+                  <div class="progress-stat">
+                    <span class="value">{{ getPendingTasks() }}</span>
+                    <span class="label">Remaining</span>
+                  </div>
+                  <div class="progress-stat">
+                    <span class="value">{{ getTotalTasks() }}</span>
+                    <span class="label">Total</span>
+                  </div>
+                </div>
+              </div>
+            </ion-card-content>
+          </ion-card>
+
+          <!-- Priority Chart -->
+          <ion-card class="analytics-card">
+            <ion-card-header>
+              <ion-card-title>By Priority</ion-card-title>
+            </ion-card-header>
+            <ion-card-content>
+              <div class="bar-chart">
+                <div *ngFor="let item of tasksByPriority" class="bar-item">
+                  <span class="bar-label">{{ item.label }}</span>
+                  <div class="bar-container">
+                    <div 
+                      class="bar-fill" 
+                      [style.width.%]="(item.value / tasks.length * 100) || 0">
+                    </div>
+                  </div>
+                  <span class="bar-value">{{ item.value }}</span>
+                </div>
+              </div>
+            </ion-card-content>
+          </ion-card>
+
+          <!-- Weekly Overview -->
+          <ion-card class="analytics-card">
+            <ion-card-header>
+              <ion-card-title>Weekly Overview</ion-card-title>
+            </ion-card-header>
+            <ion-card-content>
+              <div class="weekly-chart">
+                <div *ngFor="let item of weeklyTasks" class="week-bar">
+                  <div class="week-bar-fill" [style.height.%]="(item.value / 5 * 100) || 0"></div>
+                  <div class="week-label">{{ item.label }}</div>
+                </div>
+              </div>
+            </ion-card-content>
+          </ion-card>
+
+          <!-- Status Distribution -->
+          <ion-card class="analytics-card">
+            <ion-card-header>
+              <ion-card-title>Status</ion-card-title>
+            </ion-card-header>
+            <ion-card-content>
+              <div class="donut-chart">
+                <div *ngFor="let item of tasksByStatus" class="donut-item">
+                  <div class="donut-color" [style.background]="item.color"></div>
+                  <span class="donut-label">{{ item.label }}</span>
+                  <span class="donut-value">{{ item.value }}</span>
+                </div>
+              </div>
+            </ion-card-content>
+          </ion-card>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <ng-template #noTasks>
+    <div class="no-tasks-container">
+      <div class="empty-state">
+        <ion-icon name="checkmark-circle-outline"></ion-icon>
+        <h3 *ngIf="filter === 'all'">No tasks assigned</h3>
+        <h3 *ngIf="filter !== 'all'">No {{ filter }} tasks</h3>
+        <p *ngIf="filter === 'all'">You're all caught up!</p>
+        <p *ngIf="filter !== 'all'">No tasks match this filter</p>
+      </div>
+    </div>
+  </ng-template>
 </ion-content>
