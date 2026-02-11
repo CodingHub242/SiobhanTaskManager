@@ -1,13 +1,181 @@
-<ion-header [translucent]="true">
+<ion-header>
   <ion-toolbar>
-    <ion-title>profile</ion-title>
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="/admin-dashboard"></ion-back-button>
+    </ion-buttons>
+    <ion-title>
+      <span class="page-title">
+        <ion-icon name="person"></ion-icon>
+        My Profile
+      </span>
+    </ion-title>
   </ion-toolbar>
 </ion-header>
 
 <ion-content [fullscreen]="true">
-  <ion-header collapse="condense">
-    <ion-toolbar>
-      <ion-title size="large">profile</ion-title>
-    </ion-toolbar>
-  </ion-header>
+  <div class="profile-container">
+    <!-- Profile Header -->
+    <div class="profile-header">
+      <div class="avatar-section">
+        <div class="avatar-wrapper" (click)="changeProfilePicture()">
+          <!-- Show avatar image if exists -->
+          <img 
+            *ngIf="user?.avatar" 
+            [src]="getAvatarUrl()" 
+            alt="Profile Picture" 
+            class="avatar avatar-image">
+          <!-- Show initials if no avatar -->
+          <div *ngIf="!user?.avatar" class="avatar">
+            {{ getUserInitials() }}
+          </div>
+          <div class="avatar-overlay">
+            <ion-icon name="camera"></ion-icon>
+            <span>Change</span>
+          </div>
+        </div>
+      </div>
+      <div class="user-info">
+        <h1>{{ user?.name }}</h1>
+        <p class="email">{{ getHashedEmail() }}</p>
+        <ion-chip color="secondary">
+          <ion-icon name="shield-checkmark"></ion-icon>
+          {{ user?.role | titlecase }}
+        </ion-chip>
+      </div>
+    </div>
+
+    <!-- Profile Section -->
+    <div class="section-card">
+      <div class="section-header">
+        <h2>
+          <ion-icon name="create"></ion-icon>
+          Personal Information
+        </h2>
+        <ion-button fill="clear" size="small" (click)="toggleEditMode()">
+          <ion-icon [name]="editMode ? 'close' : 'pencil'"></ion-icon>
+          {{ editMode ? 'Cancel' : 'Edit' }}
+        </ion-button>
+      </div>
+      
+      <div class="form-group">
+        <ion-item>
+          <ion-label position="stacked">Full Name</ion-label>
+          <ion-input 
+            [readonly]="!editMode" 
+            [(ngModel)]="editName" 
+            placeholder="Enter your name">
+          </ion-input>
+        </ion-item>
+        
+        <ion-item>
+          <ion-label position="stacked">Email Address</ion-label>
+          <ion-input 
+            [readonly]="true" 
+            [value]="user?.email || ''" 
+            type="email">
+          </ion-input>
+        </ion-item>
+        
+        <ion-item>
+          <ion-label position="stacked">Phone Number</ion-label>
+          <ion-input 
+            [readonly]="!editMode" 
+            [(ngModel)]="editPhone" 
+            placeholder="Enter your phone number"
+            type="tel">
+          </ion-input>
+        </ion-item>
+      </div>
+      
+      <div class="form-actions" *ngIf="editMode">
+        <ion-button expand="block" (click)="updateProfile()">
+          <ion-icon name="save"></ion-icon>
+          Save Changes
+        </ion-button>
+      </div>
+    </div>
+
+    <!-- Password Section -->
+    <div class="section-card">
+      <div class="section-header">
+        <h2>
+          <ion-icon name="lock-closed"></ion-icon>
+          Change Password
+        </h2>
+      </div>
+      
+      <div class="form-group">
+        <ion-item>
+          <ion-label position="stacked">Current Password</ion-label>
+          <ion-input 
+            [(ngModel)]="currentPassword" 
+            placeholder="Enter current password"
+            type="password">
+          </ion-input>
+        </ion-item>
+        
+        <ion-item>
+          <ion-label position="stacked">New Password</ion-label>
+          <ion-input 
+            [(ngModel)]="newPassword" 
+            placeholder="Enter new password"
+            type="password">
+          </ion-input>
+        </ion-item>
+        
+        <ion-item>
+          <ion-label position="stacked">Confirm New Password</ion-label>
+          <ion-input 
+            [(ngModel)]="confirmPassword" 
+            placeholder="Confirm new password"
+            type="password">
+          </ion-input>
+        </ion-item>
+      </div>
+      
+      <div class="form-actions">
+        <ion-button expand="block" fill="outline" (click)="resetPassword()">
+          <ion-icon name="key"></ion-icon>
+          Update Password
+        </ion-button>
+      </div>
+    </div>
+
+    <!-- Account Info -->
+    <div class="section-card">
+      <div class="section-header">
+        <h2>
+          <ion-icon name="information-circle"></ion-icon>
+          Account Information
+        </h2>
+      </div>
+      
+      <div class="info-list">
+        <div class="info-item">
+          <span class="label">Account ID</span>
+          <span class="value">{{ user?.id }}</span>
+        </div>
+        <div class="info-item">
+          <span class="label">Role</span>
+          <span class="value">{{ user?.role | titlecase }}</span>
+        </div>
+        <div class="info-item" *ngIf="user?.department">
+          <span class="label">Department</span>
+          <span class="value">{{ user?.department }}</span>
+        </div>
+        <div class="info-item">
+          <span class="label">Member Since</span>
+          <span class="value">{{ user?.created_at | date:'MMM d, yyyy' }}</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Logout Button -->
+    <div class="logout-section">
+      <ion-button expand="block" fill="outline" (click)="logout()">
+        <ion-icon name="log-out"></ion-icon>
+        Logout
+      </ion-button>
+    </div>
+  </div>
 </ion-content>
