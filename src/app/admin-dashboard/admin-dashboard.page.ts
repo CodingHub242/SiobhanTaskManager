@@ -236,7 +236,7 @@ export class AdminDashboardPage implements OnInit {
       component: DayTasksModalPage,
       componentProps: { 
         selectedDate: day.date, 
-        tasks: this.tasks,
+        tasks: day.tasks,
         users: this.users
       }
     });
