@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, CUSTOM_ELEMENTS_SCHEMA, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { IonContent, IonHeader, IonTitle, IonToolbar } from '@ionic/angular/standalone';
@@ -32,6 +32,7 @@ interface ChartData {
   selector: 'app-admin-dashboard',
   templateUrl: './admin-dashboard.page.html',
   styleUrls: ['./admin-dashboard.page.scss'],
+  schemas:[CUSTOM_ELEMENTS_SCHEMA],
   standalone: true,
   imports: [IonContent,IonicModule, IonHeader, IonTitle, IonToolbar, CommonModule, FormsModule]
 })
