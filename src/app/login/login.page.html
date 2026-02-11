@@ -1,13 +1,82 @@
-<ion-header [translucent]="true">
-  <ion-toolbar>
-    <ion-title>login</ion-title>
-  </ion-toolbar>
-</ion-header>
+<ion-content [fullscreen]="true" class="login-page">
+  <div class="login-wrapper">
+     <div class="login-container">
+        <div class="login-card">
 
-<ion-content [fullscreen]="true">
-  <ion-header collapse="condense">
-    <ion-toolbar>
-      <ion-title size="large">login</ion-title>
-    </ion-toolbar>
-  </ion-header>
+            <!-- Right Side -->
+            <div class="login-right">
+                <div class="login-header">
+                    <h2>Siobhan Tasks</h2>
+                    <p>Manage All Tasks In One Place</p>
+                </div>
+
+                <form (ngSubmit)="login()">
+                   
+
+                    <div class="form-group">
+                        <label for="email">Email Address</label>
+                        <i class="bi bi-envelope input-icon"></i>
+                        <input id="email"
+                              type="email" 
+                              [(ngModel)]="email" 
+                              name="email"
+                               class="form-control" 
+                               name="email" 
+                               value="" 
+                               required 
+                               autocomplete="email" 
+                               autofocus
+                               placeholder="Enter your email">
+                       
+                    </div>
+
+                    <div class="form-group">
+                        <label for="password">Password</label>
+                        <i class="bi bi-lock input-icon"></i>
+                        <input id="password" 
+                              [(ngModel)]="password"
+                               type="password" 
+                               class="form-control" 
+                               name="password" 
+                               required 
+                               autocomplete="current-password"
+                               placeholder="Enter your password">
+                       
+                    </div>
+
+                   
+
+                   
+
+                    <button type="submit" class="btn-login" [disabled]="isLoading">
+                        <span *ngIf="!isLoading">Sign In</span>
+                        <span *ngIf="isLoading">
+                            <ion-spinner name="crescent" style="width: 16px; height: 16px; margin-right: 8px;"></ion-spinner>
+                            Signing In...
+                        </span>
+                    </button>
+                </form>
+
+                <div class="divider">
+                    <span>Siobhan</span>
+                </div>
+
+              
+
+                <div class="links">
+                    <p style="text-align: center;color:darkgray;">&copy; 2026 Siobhan Tasks. All rights reserved.</p>
+                </div>
+
+               
+            </div>
+        </div>
+    </div>
+   
+  </div>
+  <!-- <ion-toast
+    [isOpen]="isToastOpen"
+    message="{{ toastMessage }}"
+    duration="2000"
+    (didDismiss)="setToastOpen(false)">
+  </ion-toast> -->
 </ion-content>
