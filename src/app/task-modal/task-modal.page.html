@@ -60,7 +60,7 @@
 
   <ion-item *ngIf="mode !== 'view'">
     <ion-label position="stacked">Assign To</ion-label>
-    <ion-select [(ngModel)]="assignedTo" placeholder="Select employee">
+    <ion-select style="--color:#fff;color: #fff !important;" [(ngModel)]="assignedTo" placeholder="Select employee">
       <ion-select-option *ngFor="let user of users" [value]="user.id">
         {{ user.name }} ({{ user.role | titlecase }})
       </ion-select-option>
