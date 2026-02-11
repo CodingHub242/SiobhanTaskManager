@@ -10,7 +10,7 @@ import { TaskService } from '../services/task.service';
 import { AuthService } from '../services/auth.service';
 import { ApiService } from '../services/api.service';
 import { addIcons } from 'ionicons';
-import { briefcase,add, trash, create, mail, document, close, eye, download, checkmark, arrowBack, arrowUp, arrowDown, filter, cloudUpload, checkmarkCircle, layers, time, alertCircle } from 'ionicons/icons';
+import { briefcase,add, trash, create, mail, document, close, eye, download, checkmark, arrowBack, arrowUp, arrowDown, filter, cloudUpload, checkmarkCircle, layers, time, alertCircle, chevronBack } from 'ionicons/icons';
 import { TaskModalPage } from '../task-modal/task-modal.page';
 import { DayTasksModalPage } from '../day-tasks-modal/day-tasks-modal.page';
 
@@ -62,7 +62,7 @@ export class AdminDashboardPage implements OnInit {
     private actionSheetController: ActionSheetController,
     private toastController: ToastController,
     private popoverController: PopoverController) {
-      addIcons({briefcase,alertCircle, add, trash, create, mail, document, close, eye, download, checkmark, arrowBack, arrowUp, arrowDown, filter,checkmarkCircle,cloudUpload,layers,time});
+      addIcons({briefcase,chevronBack,alertCircle, add, trash, create, mail, document, close, eye, download, checkmark, arrowBack, arrowUp, arrowDown, filter,checkmarkCircle,cloudUpload,layers,time});
      }
 
   ngOnInit() {
