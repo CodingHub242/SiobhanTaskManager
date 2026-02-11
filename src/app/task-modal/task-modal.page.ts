@@ -14,7 +14,7 @@ import { ApiService } from '../services/api.service';
   styleUrls: ['./task-modal.page.scss'],
   schemas:[CUSTOM_ELEMENTS_SCHEMA],
   standalone: true,
-  imports: [IonContent, IonHeader, IonTitle, IonToolbar, CommonModule, FormsModule]
+  imports: [IonicModule, IonContent, IonHeader, IonTitle, IonToolbar, CommonModule, FormsModule]
 })
 export class TaskModalPage implements OnInit {
  @Input() mode: 'add' | 'edit' | 'view' = 'add';

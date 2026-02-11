@@ -1,4 +1,4 @@
-import { Component, CUSTOM_ELEMENTS_SCHEMA, OnInit } from '@angular/core';
+import { Component, Input, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { IonContent, IonHeader, IonTitle, IonToolbar, IonButtons, IonButton, IonList, IonItem, IonLabel } from '@ionic/angular/standalone';
@@ -10,14 +10,13 @@ import { User } from '../models/user.model';
   selector: 'app-day-tasks-modal',
   templateUrl: './day-tasks-modal.page.html',
   styleUrls: ['./day-tasks-modal.page.scss'],
-  schemas:[CUSTOM_ELEMENTS_SCHEMA],
   standalone: true,
   imports: [IonicModule, IonContent, IonHeader, IonTitle, IonToolbar, IonButtons, IonButton, IonList, IonItem, IonLabel, CommonModule, FormsModule]
 })
 export class DayTasksModalPage implements OnInit {
-  selectedDate: Date = new Date();
-  tasks: Task[] = [];
-  users: User[] = [];
+  @Input() selectedDate: Date = new Date();
+  @Input() tasks: Task[] = [];
+  @Input() users: User[] = [];
 
   constructor(private modalController: ModalController) { }
 
