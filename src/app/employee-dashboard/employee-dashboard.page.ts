@@ -1,7 +1,8 @@
 import { Component, CUSTOM_ELEMENTS_SCHEMA, OnInit,OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { IonicModule,IonContent,IonHeader,IonTitle,IonToolbar, ModalController, AlertController, NavController, ActionSheetController, PopoverController, ToastController } from '@ionic/angular';
+import { IonicModule, ModalController,PopoverController,AlertController, ToastController, ActionSheetController, NavController, LoadingController } from '@ionic/angular';
+import { IonButton, IonButtons, IonContent, IonHeader, IonTitle, IonToolbar, IonInput, IonItem, IonLabel, IonTextarea, IonSelect, IonSelectOption, IonSegment, IonSegmentButton, IonChip, IonIcon, IonSpinner, IonBackButton } from '@ionic/angular/standalone';
 import { Subject, takeUntil } from 'rxjs';
 import { Task } from '../models/task.model';
 import { User } from '../models/user.model';
