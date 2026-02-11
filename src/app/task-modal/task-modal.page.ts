@@ -2,7 +2,7 @@ import { Component, CUSTOM_ELEMENTS_SCHEMA, Input, OnInit } from '@angular/core'
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { IonButton, IonButtons, IonContent, IonHeader, IonTitle, IonToolbar, IonInput, IonItem, IonLabel, IonTextarea, IonSelect, IonSelectOption, IonSegment, IonSegmentButton, IonChip, IonIcon, IonSpinner } from '@ionic/angular/standalone';
-import { IonicModule, ModalController, AlertController, ToastController } from '@ionic/angular';
+import { ModalController, AlertController, ToastController } from '@ionic/angular';
 import { addIcons } from 'ionicons';
 import { close, documentText, chevronForward, checkmarkCircle, time } from 'ionicons/icons';
 import { Task, TaskReport } from '../models/task.model';
