@@ -66,6 +66,8 @@ export class ProfilePage implements OnInit {
 
   ngOnInit() {
      this.loadUserProfile();
+
+     $('ion-spinner').hide();
   }
 
    loadUserProfile(): void {
@@ -242,7 +244,7 @@ export class ProfilePage implements OnInit {
     console.log('processAndUploadImage called with:', webPath);
     
    // let loading: HTMLIonLoadingElement | null = null;
-    
+    $('ion-spinner').show();
     try {
       // // Show loading indicator
       // loading = await this.loadingController.create({
@@ -269,6 +271,7 @@ export class ProfilePage implements OnInit {
         if (this.user) {
           console.log('Full response:', response);
           console.log('Response data:', response.data);
+          $('ion-spinner').hide();
           // Use avatar_path from server response (any type since response structure varies)
           const avatarPath = (response as any).data?.avatar_path || (response as any).data?.avatar || (response as any).avatar_path || (response as any).avatar;
           console.log('Extracted avatar path:', avatarPath);
@@ -287,6 +290,7 @@ export class ProfilePage implements OnInit {
         this.showToast(response.message || 'Failed to upload profile picture');
       }
     } catch (error) {
+      $('ion-spinner').hide();
       // Dismiss loading if still showing
       // if (loading) {
       //   try {
