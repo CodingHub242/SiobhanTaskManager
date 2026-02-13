@@ -419,4 +419,8 @@ export class ProfilePage implements OnInit {
     await toast.present();
   }
 
+  back(){
+    history.back();
+  }
+
 }
