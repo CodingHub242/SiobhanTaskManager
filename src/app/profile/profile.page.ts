@@ -7,6 +7,7 @@ import { IonButton, IonButtons, IonContent, IonHeader, IonTitle, IonToolbar, Ion
 import { ApiService } from '../services/api.service';
 import { User } from '../models/user.model';
 import { addIcons } from 'ionicons';
+import $ from 'jquery';
 import { Camera, CameraResultType, CameraSource } from '@capacitor/camera';
 import { arrowBack, camera, create, informationCircle, informationCircleOutline, key, lockClosed, pencil, shieldCheckmark } from 'ionicons/icons';
 
