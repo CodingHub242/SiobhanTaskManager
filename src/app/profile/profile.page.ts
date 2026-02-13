@@ -221,10 +221,14 @@ export class ProfilePage implements OnInit {
         resultType: CameraResultType.Base64
       });
 
-        console.log('Selected image from gallery:', image);
+        
 
       if (image.base64String) {
+        console.log('Selected image from gallery:', image);
         await this.processAndUploadImage(image.base64String);
+      }
+      else{
+        console.log('Selected image from:', image);
       }
     } catch (error: any) {
       if (error.message !== 'User cancelled photos') {
