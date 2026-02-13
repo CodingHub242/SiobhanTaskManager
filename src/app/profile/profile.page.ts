@@ -224,12 +224,12 @@ export class ProfilePage implements OnInit {
         
 
       if (image.base64String) {
-        console.log('Selected image from gallery:', image);
+        // console.log('Selected image from gallery:', image);
         await this.processAndUploadImage(image.base64String);
       }
-      else{
-        console.log('Selected image from:', image);
-      }
+      // else{
+      //   console.log('Selected image from:', image);
+      // }
     } catch (error: any) {
       if (error.message !== 'User cancelled photos') {
         this.showToast('Failed to select image');
@@ -244,6 +244,8 @@ export class ProfilePage implements OnInit {
       spinner: 'circular'
     });
     await loading.present();
+
+     console.log('Selected image from gallery:', imageData);
 
     try {
       // The imageData is already base64 from CameraResultType.Base64
