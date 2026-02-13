@@ -241,15 +241,15 @@ export class ProfilePage implements OnInit {
   async processAndUploadImage(webPath: string): Promise<void> {
     console.log('processAndUploadImage called with:', webPath);
     
-    let loading: HTMLIonLoadingElement | null = null;
+   // let loading: HTMLIonLoadingElement | null = null;
     
     try {
-      // Show loading indicator
-      loading = await this.loadingController.create({
-        message: 'Uploading...',
-        spinner: 'circular'
-      });
-      await loading.present();
+      // // Show loading indicator
+      // loading = await this.loadingController.create({
+      //   message: 'Uploading...',
+      //   spinner: 'circular'
+      // });
+      // await loading.present();
       
       // Convert the image to base64
       const base64Data = await this.readImageAsBase64(webPath);
@@ -258,11 +258,11 @@ export class ProfilePage implements OnInit {
       // Upload to server
       const response = await this.uploadAvatarToServer(base64Data);
       
-      // Dismiss loading
-      if (loading) {
-        await loading.dismiss();
-        loading = null;
-      }
+      // // Dismiss loading
+      // if (loading) {
+      //   await loading.dismiss();
+      //   loading = null;
+      // }
       
       if (response.success) {
         // Update local user with avatar_path returned from server
@@ -288,13 +288,13 @@ export class ProfilePage implements OnInit {
       }
     } catch (error) {
       // Dismiss loading if still showing
-      if (loading) {
-        try {
-          await loading.dismiss();
-        } catch (e) {
-          // Ignore dismiss error
-        }
-      }
+      // if (loading) {
+      //   try {
+      //     await loading.dismiss();
+      //   } catch (e) {
+      //     // Ignore dismiss error
+      //   }
+      // }
       this.showToast('Failed to upload profile picture');
       console.error('Upload error:', error);
     }

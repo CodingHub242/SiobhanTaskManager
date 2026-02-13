@@ -21,6 +21,7 @@
       <div class="avatar-section">
         <div class="avatar-wrapper" (click)="changeProfilePicture()">
           <!-- Show avatar image if exists -->
+          <ion-spinner name="circles"></ion-spinner>
           <img 
             *ngIf="user?.avatar" 
             [src]="getAvatarUrl()" 
