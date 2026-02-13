@@ -8,7 +8,7 @@ import { ApiService } from '../services/api.service';
 import { User } from '../models/user.model';
 import { addIcons } from 'ionicons';
 import { Camera, CameraResultType, CameraSource, Photo } from '@capacitor/camera';
-import { arrowBack, create, informationCircle, informationCircleOutline, key, lockClosed, pencil, shieldCheckmark } from 'ionicons/icons';
+import { arrowBack, camera, create, informationCircle, informationCircleOutline, key, lockClosed, pencil, shieldCheckmark } from 'ionicons/icons';
 
 @Component({
   selector: 'app-profile',
@@ -61,7 +61,7 @@ export class ProfilePage implements OnInit {
     private navController: NavController,
     private loadingController: LoadingController,
     private cdr: ChangeDetectorRef) { 
-      addIcons({shieldCheckmark,create,pencil,lockClosed,key,informationCircleOutline,informationCircle,arrowBack});
+      addIcons({shieldCheckmark,create,pencil,lockClosed,key,informationCircleOutline,informationCircle,arrowBack,camera});
     }
 
   ngOnInit() {
@@ -94,11 +94,14 @@ export class ProfilePage implements OnInit {
 
   getAvatarUrl(): string {
     if (!this.user?.avatar) return '';
+    // If avatar is already a data URI, return as is
+    if (this.user.avatar.startsWith('data:')) {
+      return this.user.avatar;
+    }
     // If avatar is a full URL, return as is
     if (this.user.avatar.startsWith('http') || this.user.avatar.startsWith('https')) {
       return this.user.avatar;
     }
-   // console.log('Avatar path from user data:', this.user.avatar);
     // If avatar is a storage path, prepend the storage URL
     return `https://ecg.codepps.online/storage/${this.user.avatar}`;
   }
@@ -254,8 +257,10 @@ export class ProfilePage implements OnInit {
           if (avatarPath) {
             this.user.avatar = avatarPath;
           } else {
-            // Fallback: clear avatar if no path returned
-            this.user.avatar = undefined;
+            // In demo mode or when no path returned, save base64 as avatar for local preview
+            // Remove the data:image/jpeg;base64 prefix if present
+            const base64Image = imageData.startsWith('data:image') ? imageData.split(',')[1] : imageData;
+            this.user.avatar = `data:image/jpeg;base64,${base64Image}`;
           }
           this.updateLocalUser();
           // Trigger change detection to refresh UI
@@ -406,7 +411,4 @@ export class ProfilePage implements OnInit {
     await toast.present();
   }
 
-  goback(): void {
-    this.navController.back();
-  }
 }
