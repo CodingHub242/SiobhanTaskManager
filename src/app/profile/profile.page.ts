@@ -191,68 +191,69 @@ export class ProfilePage implements OnInit {
   }
 
   async takePhoto(): Promise<void> {
+    console.log('takePhoto called');
     try {
       const image = await Camera.getPhoto({
         source: CameraSource.Camera,
         quality: 90,
         allowEditing: true,
-        resultType: CameraResultType.Base64
+        resultType: CameraResultType.Uri
       });
 
-      console.log('Captured image:', image);
+      console.log('Camera result:', image);
+      console.log('webPath:', image.webPath);
 
-      if (image.base64String) {
-        await this.processAndUploadImage(image.base64String);
+      if (image.webPath) {
+        await this.processAndUploadImage(image.webPath);
       }
     } catch (error: any) {
+      console.error('Camera error:', error);
       if (error.message !== 'User cancelled photos') {
         this.showToast('Failed to take photo');
-        console.error('Camera error:', error);
       }
     }
   }
 
   async chooseFromGallery(): Promise<void> {
+    console.log('chooseFromGallery called');
     try {
       const image = await Camera.getPhoto({
         source: CameraSource.Photos,
         quality: 90,
         allowEditing: true,
-        resultType: CameraResultType.Base64
+        resultType: CameraResultType.Uri
       });
 
-        
+      console.log('Gallery result:', image);
+      console.log('webPath:', image.webPath);
 
-      if (image.base64String) {
-        // console.log('Selected image from gallery:', image);
-        await this.processAndUploadImage(image.base64String);
+      if (image.webPath) {
+        await this.processAndUploadImage(image.webPath);
       }
-      // else{
-      //   console.log('Selected image from:', image);
-      // }
     } catch (error: any) {
+      console.error('Gallery error:', error);
       if (error.message !== 'User cancelled photos') {
         this.showToast('Failed to select image');
-        console.error('Gallery error:', error);
       }
     }
   }
 
-  async processAndUploadImage(imageData: string): Promise<void> {
+  async processAndUploadImage(webPath: string): Promise<void> {
+    console.log('processAndUploadImage called with:', webPath);
+    
     const loading = await this.loadingController.create({
       message: 'Uploading...',
       spinner: 'circular'
     });
     await loading.present();
 
-     console.log('Selected image from gallery:', imageData);
-
     try {
-      // The imageData is already base64 from CameraResultType.Base64
-      const base64Data = `data:image/jpeg;base64,${imageData}`;
+      // Convert the image to base64
+      const base64Data = await this.readImageAsBase64(webPath);
+      console.log('Base64 data length:', base64Data.length);
       
       // Upload to server
-      const response = await this.uploadAvatarToServer(imageData);
+      const response = await this.uploadAvatarToServer(base64Data);
       
       await loading.dismiss();
       
@@ -268,9 +269,7 @@ export class ProfilePage implements OnInit {
             this.user.avatar = avatarPath;
           } else {
             // In demo mode or when no path returned, save base64 as avatar for local preview
-            // Remove the data:image/jpeg;base64 prefix if present
-            const base64Image = imageData.startsWith('data:image') ? imageData.split(',')[1] : imageData;
-            this.user.avatar = `data:image/jpeg;base64,${base64Image}`;
+            this.user.avatar = base64Data;
           }
           this.updateLocalUser();
           // Trigger change detection to refresh UI
@@ -284,6 +283,23 @@ export class ProfilePage implements OnInit {
       await loading.dismiss();
       this.showToast('Failed to upload profile picture');
       console.error('Upload error:', error);
+    }
+  }
+
+  private async readImageAsBase64(webPath: string): Promise<string> {
+    try {
+      const response = await fetch(webPath);
+      const blob = await response.blob();
+      
+      return new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onloadend = () => resolve(reader.result as string);
+        reader.onerror = reject;
+        reader.readAsDataURL(blob);
+      });
+    } catch (error) {
+      console.error('Error reading image:', error);
+      throw error;
     }
   }
 
