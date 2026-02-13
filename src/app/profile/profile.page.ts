@@ -8,7 +8,7 @@ import { ApiService } from '../services/api.service';
 import { User } from '../models/user.model';
 import { addIcons } from 'ionicons';
 import { Camera, CameraResultType, CameraSource, Photo } from '@capacitor/camera';
-import { create, informationCircle, informationCircleOutline, key, lockClosed, pencil, shieldCheckmark } from 'ionicons/icons';
+import { arrowBack, create, informationCircle, informationCircleOutline, key, lockClosed, pencil, shieldCheckmark } from 'ionicons/icons';
 
 @Component({
   selector: 'app-profile',
@@ -61,7 +61,7 @@ export class ProfilePage implements OnInit {
     private navController: NavController,
     private loadingController: LoadingController,
     private cdr: ChangeDetectorRef) { 
-      addIcons({shieldCheckmark,create,pencil,lockClosed,key,informationCircleOutline,informationCircle});
+      addIcons({shieldCheckmark,create,pencil,lockClosed,key,informationCircleOutline,informationCircle,arrowBack});
     }
 
   ngOnInit() {
