@@ -193,11 +193,11 @@ export class ProfilePage implements OnInit {
         source: CameraSource.Camera,
         quality: 90,
         allowEditing: true,
-        resultType: CameraResultType.Uri
+        resultType: CameraResultType.Base64
       });
 
-      if (image.webPath) {
-        await this.processAndUploadImage(image.webPath);
+      if (image.base64String) {
+        await this.processAndUploadImage(image.base64String);
       }
     } catch (error: any) {
       if (error.message !== 'User cancelled photos') {
@@ -213,11 +213,11 @@ export class ProfilePage implements OnInit {
         source: CameraSource.Photos,
         quality: 90,
         allowEditing: true,
-        resultType: CameraResultType.Uri
+        resultType: CameraResultType.Base64
       });
 
-      if (image.webPath) {
-        await this.processAndUploadImage(image.webPath);
+      if (image.base64String) {
+        await this.processAndUploadImage(image.base64String);
       }
     } catch (error: any) {
       if (error.message !== 'User cancelled photos') {
@@ -227,7 +227,7 @@ export class ProfilePage implements OnInit {
     }
   }
 
-  async processAndUploadImage(webPath: string): Promise<void> {
+  async processAndUploadImage(imageData: string): Promise<void> {
     const loading = await this.loadingController.create({
       message: 'Uploading...',
       spinner: 'circular'
@@ -235,11 +235,11 @@ export class ProfilePage implements OnInit {
     await loading.present();
 
     try {
-      // Convert the image to base64
-      const base64Data = await this.readImageAsBase64(webPath);
+      // The imageData is already base64 from CameraResultType.Base64
+      const base64Data = `data:image/jpeg;base64,${imageData}`;
       
       // Upload to server
-      const response = await this.uploadAvatarToServer(base64Data);
+      const response = await this.uploadAvatarToServer(imageData);
       
       await loading.dismiss();
       
@@ -269,23 +269,6 @@ export class ProfilePage implements OnInit {
       await loading.dismiss();
       this.showToast('Failed to upload profile picture');
       console.error('Upload error:', error);
-    }
-  }
-
-  private async readImageAsBase64(webPath: string): Promise<string> {
-    try {
-      const response = await fetch(webPath);
-      const blob = await response.blob();
-      
-      return new Promise((resolve, reject) => {
-        const reader = new FileReader();
-        reader.onloadend = () => resolve(reader.result as string);
-        reader.onerror = reject;
-        reader.readAsDataURL(blob);
-      });
-    } catch (error) {
-      console.error('Error reading image:', error);
-      throw error;
     }
   }
 
