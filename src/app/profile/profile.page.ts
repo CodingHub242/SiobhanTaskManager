@@ -287,20 +287,22 @@ export class ProfilePage implements OnInit {
   }
 
   private async readImageAsBase64(webPath: string): Promise<string> {
-    try {
-      const response = await fetch(webPath);
-      const blob = await response.blob();
-      
-      return new Promise((resolve, reject) => {
+    return new Promise((resolve, reject) => {
+      const xhr = new XMLHttpRequest();
+      xhr.responseType = 'blob';
+      xhr.onload = () => {
         const reader = new FileReader();
         reader.onloadend = () => resolve(reader.result as string);
         reader.onerror = reject;
-        reader.readAsDataURL(blob);
-      });
-    } catch (error) {
-      console.error('Error reading image:', error);
-      throw error;
-    }
+        reader.readAsDataURL(xhr.response);
+      };
+      xhr.onerror = () => {
+        console.error('XHR error loading image');
+        reject(new Error('Failed to load image'));
+      };
+      xhr.open('GET', webPath);
+      xhr.send();
+    });
   }
 
   private async uploadAvatarToServer(base64Image: string): Promise<{ success: boolean; message?: string; data?: any }> {
