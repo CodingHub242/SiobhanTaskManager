@@ -241,11 +241,11 @@ export class ProfilePage implements OnInit {
   async processAndUploadImage(webPath: string): Promise<void> {
     console.log('processAndUploadImage called with:', webPath);
     
-    const loading = await this.loadingController.create({
-      message: 'Uploading...',
-      spinner: 'circular'
-    });
-    await loading.present();
+    // const loading = await this.loadingController.create({
+    //   message: 'Uploading...',
+    //   spinner: 'circular'
+    // });
+    // await loading.present();
 
     try {
       // Convert the image to base64
@@ -255,7 +255,7 @@ export class ProfilePage implements OnInit {
       // Upload to server
       const response = await this.uploadAvatarToServer(base64Data);
       
-      await loading.dismiss();
+      //await loading.dismiss();
       
       if (response.success) {
         // Update local user with avatar_path returned from server
@@ -280,7 +280,7 @@ export class ProfilePage implements OnInit {
         this.showToast(response.message || 'Failed to upload profile picture');
       }
     } catch (error) {
-      await loading.dismiss();
+      //await loading.dismiss();
       this.showToast('Failed to upload profile picture');
       console.error('Upload error:', error);
     }
