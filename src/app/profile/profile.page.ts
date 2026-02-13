@@ -199,6 +199,8 @@ export class ProfilePage implements OnInit {
         resultType: CameraResultType.Base64
       });
 
+      console.log('Captured image:', image);
+
       if (image.base64String) {
         await this.processAndUploadImage(image.base64String);
       }
@@ -218,6 +220,8 @@ export class ProfilePage implements OnInit {
         allowEditing: true,
         resultType: CameraResultType.Base64
       });
+
+        console.log('Selected image from gallery:', image);
 
       if (image.base64String) {
         await this.processAndUploadImage(image.base64String);
