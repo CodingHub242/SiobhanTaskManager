@@ -71,16 +71,15 @@ export class ProfilePage implements OnInit {
 
    loadUserProfile(): void {
     // First try to get user from local storage/auth service
-   // this.user = this.authService.getCurrentUser();
-   this.fetchUserFromApi();
-    
-    if (this.user) {
-      this.editName = this.user.name;
-      this.editPhone = this.user.phone || '';
-    } else {
-      // If no user in localStorage, try to fetch from API
-      this.fetchUserFromApi();
-    }
+    //this.user = this.authService.getCurrentUser();
+    this.fetchUserFromApi();
+    // if (this.user) {
+    //   this.editName = this.user.name;
+    //   this.editPhone = this.user.phone || '';
+    // } else {
+    //   // If no user in localStorage, try to fetch from API
+    //   this.fetchUserFromApi();
+    // }
 
     // Subscribe to auth changes for reactive updates
     this.authService.currentUser$.pipe(takeUntil(this.destroy$)).subscribe(user => {
@@ -99,13 +98,28 @@ export class ProfilePage implements OnInit {
     const userId = localStorage.getItem('userId');
     if (userId) {
       this.apiService.getUserById(userId).pipe(takeUntil(this.destroy$)).subscribe({
-        next: (user: User) => {
-          this.user = user;
-          this.editName = user.name;
-          this.editPhone = user.phone || '';
-          // Update local storage with fresh data
-          localStorage.setItem('currentUser', JSON.stringify(user));
-          this.cdr.markForCheck();
+        next: (response: any) => {
+          // Handle wrapped response: { data: [...] }
+          const userData = response.data ? response.data[0] : response;
+          if (userData) {
+            const user: User = {
+              id: userData.id?.toString() || '',
+              email: userData.email || '',
+              name: userData.name || '',
+              role: userData.role || 'employee',
+              department: userData.department || userData.dept_name || undefined,
+              avatar: userData.avatar || userData.avatar_path || undefined,
+              phone: userData.phone || undefined,
+              createdAt: userData.created_at ? new Date(userData.created_at) : new Date(),
+              updatedAt: userData.updated_at ? new Date(userData.updated_at) : new Date()
+            };
+            this.user = user;
+            this.editName = user.name;
+            this.editPhone = user.phone || '';
+            // Update local storage with fresh data
+            localStorage.setItem('currentUser', JSON.stringify(user));
+            this.cdr.markForCheck();
+          }
         },
         error: (err) => {
           console.error('Failed to fetch user from API:', err);
