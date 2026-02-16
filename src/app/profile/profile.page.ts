@@ -71,7 +71,8 @@ export class ProfilePage implements OnInit {
 
    loadUserProfile(): void {
     // First try to get user from local storage/auth service
-    this.user = this.authService.getCurrentUser();
+   // this.user = this.authService.getCurrentUser();
+   this.fetchUserFromApi();
     
     if (this.user) {
       this.editName = this.user.name;
