@@ -9,6 +9,7 @@ export interface Task {
   createdAt: Date;
   updatedAt: Date;
   report?: TaskReport;
+  status?: string;
 }
 
 export interface TaskReport {

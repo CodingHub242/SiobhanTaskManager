@@ -93,10 +93,11 @@ export class EmployeeDashboardPage implements OnInit {
       description: task.description || '',
       priority: task.priority || 'medium',
       dueDate: task.due_date ? new Date(task.due_date) : new Date(),
-      completed: task.completed || false,
+      completed: (task.status == 'completed') ? true : task.completed || false,
       employeeId: task.employee_id || task.assigned_to || undefined,
       createdAt: task.created_at ? new Date(task.created_at) : new Date(),
-      updatedAt: task.updated_at ? new Date(task.updated_at) : new Date()
+      updatedAt: task.updated_at ? new Date(task.updated_at) : new Date(),
+      status: task.status || 'pending'
     };
   }
 
@@ -123,6 +124,7 @@ export class EmployeeDashboardPage implements OnInit {
 
           const tasks = tasksRaw.map(t => this.transformTask(t));
           this.tasks = tasks;
+          console.log('Tasks '+ tasks );
           this.filterTasksLocal();
           this.generateCalendar();
           this.calculateChartData();
@@ -136,6 +138,8 @@ export class EmployeeDashboardPage implements OnInit {
 
   filterTasksLocal(): void {
     let filtered = this.tasks;
+
+    console.log('Filtered tasks:', filtered);
 
     if (this.filter === 'completed') {
       filtered = this.tasks.filter(t => t.completed);
