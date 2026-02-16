@@ -51,6 +51,10 @@ export class ApiService {
     return this.http.put<Task>(`${this.baseUrl}/tasks/${id}`, updates, { headers: this.getHeaders() });
   }
 
+  updateTaskStat(id: string, updates: Partial<Task>): Observable<Task> {
+    return this.http.put<Task>(`${this.baseUrl}/tasks/${id}/status`, updates, { headers: this.getHeaders() });
+  }
+
   deleteTask(id: string): Observable<void> {
     return this.http.delete<void>(`${this.baseUrl}/tasks/${id}`, { headers: this.getHeaders() });
   }
