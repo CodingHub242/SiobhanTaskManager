@@ -2,7 +2,7 @@ import { Component, CUSTOM_ELEMENTS_SCHEMA, OnInit,OnDestroy } from '@angular/co
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { IonicModule, ModalController,PopoverController,AlertController, ToastController, ActionSheetController, NavController, LoadingController } from '@ionic/angular';
-import { IonButton, IonButtons, IonContent, IonHeader, IonTitle, IonToolbar, IonInput, IonItem, IonLabel, IonTextarea, IonSelect, IonSelectOption, IonSegment, IonSegmentButton, IonChip, IonIcon, IonSpinner, IonBackButton } from '@ionic/angular/standalone';
+import { IonContent, IonHeader, IonTitle, IonToolbar, IonButton, IonButtons, IonAvatar, IonList, IonItem, IonLabel, IonIcon, IonCheckbox, IonChip, IonCard, IonCardHeader, IonCardTitle, IonCardContent } from '@ionic/angular/standalone';
 import { Subject, takeUntil } from 'rxjs';
 import { Task } from '../models/task.model';
 import { User } from '../models/user.model';
@@ -33,7 +33,21 @@ interface ChartData {
   styleUrls: ['./employee-dashboard.page.scss'],
   schemas:[CUSTOM_ELEMENTS_SCHEMA],
   standalone: true,
-  imports: [IonicModule, CommonModule, FormsModule, TaskModalPage, DayTasksModalPage]
+  imports: [IonicModule, 
+    // IonContent, 
+    // IonHeader, 
+    // IonTitle, 
+    // IonToolbar, 
+    // IonButton, 
+    // IonButtons, 
+   // IonAvatar, 
+   // IonList, 
+   // IonItem, 
+   // IonLabel, 
+   // IonIcon, 
+    //IonCheckbox, 
+    //IonChip, 
+    IonCard, IonCardHeader, IonCardTitle, IonCardContent, CommonModule, FormsModule, TaskModalPage, DayTasksModalPage]
 })
 export class EmployeeDashboardPage implements OnInit {
  tasks: Task[] = [];
