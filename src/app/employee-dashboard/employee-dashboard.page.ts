@@ -124,7 +124,7 @@ export class EmployeeDashboardPage implements OnInit {
 
           const tasks = tasksRaw.map(t => this.transformTask(t));
           this.tasks = tasks;
-          console.log('Tasks '+ tasks );
+          //console.log('Tasks '+ tasks );
           this.filterTasksLocal();
           this.generateCalendar();
           this.calculateChartData();
@@ -139,7 +139,7 @@ export class EmployeeDashboardPage implements OnInit {
   filterTasksLocal(): void {
     let filtered = this.tasks;
 
-    console.log('Filtered tasks:', filtered);
+  //  console.log('Filtered tasks:', filtered);
 
     if (this.filter === 'completed') {
       filtered = this.tasks.filter(t => t.completed);
