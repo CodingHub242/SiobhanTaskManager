@@ -66,6 +66,8 @@ export class ProfilePage implements OnInit {
       this.editName = this.user.name;
       this.editPhone = this.user.phone || '';
     }
+
+    console.log('Loaded user profile:', this.editName);
   }
 
   getUserInitials(): string {
