@@ -23,13 +23,13 @@ import { Subject } from 'rxjs';
     IonicModule,
     CommonModule,
     FormsModule,
-    // IonInput,
-    // IonTextarea,
-    // IonSelect,
-    // IonSelectOption,
-    // IonSegment,
-    // IonSegmentButton,
-    // IonBackButton
+    IonInput,
+    IonTextarea,
+    IonSelect,
+    IonSelectOption,
+    IonSegment,
+    IonSegmentButton,
+    IonBackButton
   ]
 })
 export class ProfilePage implements OnInit {
@@ -130,7 +130,9 @@ export class ProfilePage implements OnInit {
               avatar: userData.avatar || userData.avatar_path || undefined,
               phone: userData.phone || undefined,
               createdAt: userData.created_at ? new Date(userData.created_at) : new Date(),
-              updatedAt: userData.updated_at ? new Date(userData.updated_at) : new Date()
+              updatedAt: userData.updated_at ? new Date(userData.updated_at) : new Date(),
+              created_at: userData.created_at ? new Date(userData.created_at) : undefined,
+              updated_at: userData.updated_at ? new Date(userData.updated_at) : undefined
             };
             // Use setTimeout to ensure change detection runs after view update
             setTimeout(() => {
