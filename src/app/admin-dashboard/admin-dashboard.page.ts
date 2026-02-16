@@ -34,7 +34,21 @@ interface ChartData {
   styleUrls: ['./admin-dashboard.page.scss'],
   schemas:[CUSTOM_ELEMENTS_SCHEMA],
   standalone: true,
-  imports: [IonicModule, IonContent, IonHeader, IonTitle, IonToolbar, IonButton, IonButtons, IonAvatar, IonList, IonItem, IonLabel, IonIcon, IonCheckbox, IonChip, IonCard, IonCardHeader, IonCardTitle, IonCardContent, CommonModule, FormsModule, TaskModalPage, DayTasksModalPage]
+  imports: [IonicModule, 
+    // IonContent, 
+    // IonHeader, 
+    // IonTitle, 
+    // IonToolbar, 
+    // IonButton, 
+    // IonButtons, 
+   // IonAvatar, 
+   // IonList, 
+   // IonItem, 
+   // IonLabel, 
+   // IonIcon, 
+    //IonCheckbox, 
+    //IonChip, 
+    IonCard, IonCardHeader, IonCardTitle, IonCardContent, CommonModule, FormsModule, TaskModalPage, DayTasksModalPage]
 })
 export class AdminDashboardPage implements OnInit {
  tasks: Task[] = [];

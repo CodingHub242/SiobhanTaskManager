@@ -16,7 +16,15 @@ import { ApiService } from '../services/api.service';
   styleUrls: ['./task-modal.page.scss'],
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
   standalone: true,
-  imports: [IonicModule, IonInput, IonItem, IonLabel, IonTextarea, IonSelect, IonSelectOption, IonSegment, IonSegmentButton, IonChip, IonIcon, IonSpinner, CommonModule, FormsModule]
+  imports: [IonicModule, 
+    //IonInput, 
+   // IonItem, 
+   // IonLabel, 
+   // IonTextarea, 
+    IonSelect, IonSelectOption, IonSegment, IonSegmentButton, 
+    //IonChip, 
+    //IonIcon, 
+    IonSpinner, CommonModule, FormsModule]
 })
 export class TaskModalPage implements OnInit {
   @Input() mode: 'add' | 'edit' | 'view' = 'add';

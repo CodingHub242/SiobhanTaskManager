@@ -13,7 +13,12 @@ import { User } from '../models/user.model';
   templateUrl: './day-tasks-modal.page.html',
   styleUrls: ['./day-tasks-modal.page.scss'],
   standalone: true,
-  imports: [IonicModule, IonCheckbox, IonList, IonItem, IonLabel, CommonModule, FormsModule]
+  imports: [IonicModule, 
+    //IonCheckbox, 
+    //IonList, 
+    // IonItem, 
+    // IonLabel, 
+    CommonModule, FormsModule]
 })
 export class DayTasksModalPage implements OnInit {
   @Input() selectedDate: Date = new Date();
@@ -30,6 +35,13 @@ export class DayTasksModalPage implements OnInit {
   }
 
   ngOnInit() {
+    // Ensure tasks and users are never null
+    if (!this.tasks) {
+      this.tasks = [];
+    }
+    if (!this.users) {
+      this.users = [];
+    }
     this.calculateSummary();
   }
 
