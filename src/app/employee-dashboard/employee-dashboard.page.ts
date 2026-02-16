@@ -256,7 +256,7 @@ export class EmployeeDashboardPage implements OnInit {
   }
 
   async toggleTaskCompletion(task: Task): Promise<void> {
-    const updated = await this.apiService.updateTaskStat(task.id, { completed: !task.completed }).toPromise();
+    const updated = await this.apiService.updateTaskStat(task.id, { completed: !task.completed },'completed').toPromise();
     if (updated) {
       this.loadTasks();
       const message = !task.completed ? 'Task marked as complete!' : 'Task marked as pending';
