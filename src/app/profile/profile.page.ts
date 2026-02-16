@@ -71,15 +71,15 @@ export class ProfilePage implements OnInit {
 
    loadUserProfile(): void {
     // First try to get user from local storage/auth service
-    //this.user = this.authService.getCurrentUser();
-    this.fetchUserFromApi();
-    // if (this.user) {
-    //   this.editName = this.user.name;
-    //   this.editPhone = this.user.phone || '';
-    // } else {
-    //   // If no user in localStorage, try to fetch from API
-    //   this.fetchUserFromApi();
-    // }
+    this.user = this.authService.getCurrentUser();
+    
+    if (this.user) {
+      this.editName = this.user.name;
+      this.editPhone = this.user.phone || '';
+    } else {
+      // If no user in localStorage, try to fetch from API
+      this.fetchUserFromApi();
+    }
 
     // Subscribe to auth changes for reactive updates
     this.authService.currentUser$.pipe(takeUntil(this.destroy$)).subscribe(user => {
@@ -87,7 +87,7 @@ export class ProfilePage implements OnInit {
         this.user = user;
         this.editName = user.name;
         this.editPhone = user.phone || '';
-        this.cdr.markForCheck();
+        this.cdr.detectChanges();
       }
     });
 
@@ -95,10 +95,29 @@ export class ProfilePage implements OnInit {
   }
 
   private fetchUserFromApi(): void {
-    const userId = localStorage.getItem('userId');
+    // Try to get userId from localStorage, or extract from currentUser if available
+    let userId = localStorage.getItem('userId');
+    
+    // If no userId, try to get from currentUser in auth service
+    if (!userId) {
+      const currentUser = this.authService.getCurrentUser();
+      if (currentUser?.id) {
+        userId = currentUser.id;
+      }
+    }
+    
+    // Also check if we have an auth token - if not, user is not logged in
+    const token = localStorage.getItem('authToken');
+    if (!token) {
+      console.log('No auth token found, user not logged in');
+      return;
+    }
+    
     if (userId) {
+      console.log('Fetching user with ID:', userId);
       this.apiService.getUserById(userId).pipe(takeUntil(this.destroy$)).subscribe({
         next: (response: any) => {
+          console.log('User API response:', response);
           // Handle wrapped response: { data: [...] }
           const userData = response.data ? response.data[0] : response;
           if (userData) {
@@ -113,18 +132,29 @@ export class ProfilePage implements OnInit {
               createdAt: userData.created_at ? new Date(userData.created_at) : new Date(),
               updatedAt: userData.updated_at ? new Date(userData.updated_at) : new Date()
             };
-            this.user = user;
-            this.editName = user.name;
-            this.editPhone = user.phone || '';
-            // Update local storage with fresh data
-            localStorage.setItem('currentUser', JSON.stringify(user));
-            this.cdr.markForCheck();
+            // Use setTimeout to ensure change detection runs after view update
+            setTimeout(() => {
+              this.user = user;
+              this.editName = user.name;
+              this.editPhone = user.phone || '';
+              // Update local storage with fresh data
+              localStorage.setItem('currentUser', JSON.stringify(user));
+              // Also store userId if not already stored
+              if (!localStorage.getItem('userId')) {
+                localStorage.setItem('userId', user.id);
+              }
+              // Force change detection to update UI
+              this.cdr.detectChanges();
+              console.log('User loaded:', this.user);
+            }, 100);
           }
         },
         error: (err) => {
           console.error('Failed to fetch user from API:', err);
         }
       });
+    } else {
+      console.log('No userId found in localStorage or auth service');
     }
   }
 
