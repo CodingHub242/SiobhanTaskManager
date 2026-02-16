@@ -1,4 +1,4 @@
-import { Component, OnInit,ChangeDetectorRef, CUSTOM_ELEMENTS_SCHEMA  } from '@angular/core';
+import { Component, OnInit, OnDestroy, ChangeDetectorRef, CUSTOM_ELEMENTS_SCHEMA  } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { IonicModule, AlertController, ToastController, ActionSheetController, NavController, LoadingController } from '@ionic/angular';
@@ -10,6 +10,8 @@ import { addIcons } from 'ionicons';
 import $ from 'jquery';
 import { Camera, CameraResultType, CameraSource } from '@capacitor/camera';
 import { arrowBack, camera, create, informationCircle, informationCircleOutline, key, lockClosed, pencil, shieldCheckmark } from 'ionicons/icons';
+import { takeUntil } from 'rxjs';
+import { Subject } from 'rxjs';
 
 @Component({
   selector: 'app-profile',
@@ -31,7 +33,7 @@ import { arrowBack, camera, create, informationCircle, informationCircleOutline,
   ]
 })
 export class ProfilePage implements OnInit {
- user: User | null = null;
+  user: User | null = null;
   editMode = false;
   
   // Form data
@@ -42,6 +44,8 @@ export class ProfilePage implements OnInit {
   currentPassword = '';
   newPassword = '';
   confirmPassword = '';
+
+  private destroy$ = new Subject<void>();
 
   constructor( private authService: AuthService,
     private apiService: ApiService,
@@ -60,14 +64,53 @@ export class ProfilePage implements OnInit {
      $('ion-spinner').hide();
   }
 
+  ngOnDestroy(): void {
+    this.destroy$.next();
+    this.destroy$.complete();
+  }
+
    loadUserProfile(): void {
+    // First try to get user from local storage/auth service
     this.user = this.authService.getCurrentUser();
+    
     if (this.user) {
       this.editName = this.user.name;
       this.editPhone = this.user.phone || '';
+    } else {
+      // If no user in localStorage, try to fetch from API
+      this.fetchUserFromApi();
     }
 
+    // Subscribe to auth changes for reactive updates
+    this.authService.currentUser$.pipe(takeUntil(this.destroy$)).subscribe(user => {
+      if (user) {
+        this.user = user;
+        this.editName = user.name;
+        this.editPhone = user.phone || '';
+        this.cdr.markForCheck();
+      }
+    });
+
     console.log('Loaded user profile:', this.editName);
+  }
+
+  private fetchUserFromApi(): void {
+    const userId = localStorage.getItem('userId');
+    if (userId) {
+      this.apiService.getUserById(userId).pipe(takeUntil(this.destroy$)).subscribe({
+        next: (user: User) => {
+          this.user = user;
+          this.editName = user.name;
+          this.editPhone = user.phone || '';
+          // Update local storage with fresh data
+          localStorage.setItem('currentUser', JSON.stringify(user));
+          this.cdr.markForCheck();
+        },
+        error: (err) => {
+          console.error('Failed to fetch user from API:', err);
+        }
+      });
+    }
   }
 
   getUserInitials(): string {

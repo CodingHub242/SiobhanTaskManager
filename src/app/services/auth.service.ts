@@ -18,10 +18,18 @@ export class AuthService {
   private loadStoredAuth(): void {
     const storedUser = localStorage.getItem('currentUser');
     const storedToken = localStorage.getItem('authToken');
+    const storedUserId = localStorage.getItem('userId');
     
     if (storedUser && storedToken) {
       this.currentUserSubject.next(JSON.parse(storedUser));
       this.tokenSubject.next(storedToken);
+      // Also set userId if not already set
+      if (!storedUserId) {
+        const user = JSON.parse(storedUser);
+        if (user && user.id) {
+          localStorage.setItem('userId', user.id);
+        }
+      }
     }
   }
 
@@ -103,6 +111,7 @@ export class AuthService {
   private setAuth(response: AuthResponse): void {
     localStorage.setItem('currentUser', JSON.stringify(response.user));
     localStorage.setItem('authToken', response.token);
+    localStorage.setItem('userId', response.user.id);
     this.currentUserSubject.next(response.user);
     this.tokenSubject.next(response.token);
   }
