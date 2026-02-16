@@ -33,7 +33,7 @@ interface ChartData {
   styleUrls: ['./employee-dashboard.page.scss'],
   schemas:[CUSTOM_ELEMENTS_SCHEMA],
   standalone: true,
-  imports: [IonicModule,IonContent, IonHeader, IonTitle, IonToolbar, CommonModule, FormsModule, TaskModalPage, DayTasksModalPage]
+  imports: [IonicModule, CommonModule, FormsModule, TaskModalPage, DayTasksModalPage]
 })
 export class EmployeeDashboardPage implements OnInit {
  tasks: Task[] = [];

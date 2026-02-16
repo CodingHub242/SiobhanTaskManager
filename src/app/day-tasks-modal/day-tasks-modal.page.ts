@@ -13,7 +13,7 @@ import { User } from '../models/user.model';
   templateUrl: './day-tasks-modal.page.html',
   styleUrls: ['./day-tasks-modal.page.scss'],
   standalone: true,
-  imports: [IonicModule, IonCheckbox, IonContent, IonHeader, IonTitle, IonToolbar, IonButtons, IonButton, IonList, IonItem, IonLabel, IonIcon, CommonModule, FormsModule]
+  imports: [IonicModule, IonCheckbox, IonList, IonItem, IonLabel, CommonModule, FormsModule]
 })
 export class DayTasksModalPage implements OnInit {
   @Input() selectedDate: Date = new Date();

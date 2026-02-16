@@ -1,13 +1,60 @@
-<ion-header [translucent]="true">
+<ion-header>
   <ion-toolbar>
-    <ion-title>task-report-modal</ion-title>
+    <ion-buttons slot="start">
+      <ion-button (click)="dismiss()">Cancel</ion-button>
+    </ion-buttons>
+    <ion-title>Upload Task Report</ion-title>
+    <ion-buttons slot="end">
+      <ion-button (click)="uploadReport()" [disabled]="!description.trim() || isUploading">
+        Upload
+      </ion-button>
+    </ion-buttons>
   </ion-toolbar>
 </ion-header>
 
-<ion-content [fullscreen]="true">
-  <ion-header collapse="condense">
-    <ion-toolbar>
-      <ion-title size="large">task-report-modal</ion-title>
-    </ion-toolbar>
-  </ion-header>
+<ion-content class="ion-padding">
+  <h3>{{ task?.title }}</h3>
+  <p>{{ task?.description }}</p>
+
+  <ion-item>
+    <ion-label position="stacked">Description *</ion-label>
+    <ion-textarea 
+      [(ngModel)]="description" 
+      placeholder="Describe your progress..."
+      rows="4"
+      maxlength="1000">
+    </ion-textarea>
+  </ion-item>
+
+  <div class="image-upload-section">
+    <ion-label position="stacked">Attach Image (Optional)</ion-label>
+    
+    <div *ngIf="!imagePreview" class="upload-area" (click)="triggerFileInput()">
+      <ion-icon name="cloud-upload" size="large"></ion-icon>
+      <p>Tap to select an image</p>
+    </div>
+
+    <div *ngIf="imagePreview" class="image-preview">
+      <img [src]="imagePreview" alt="Preview">
+      <ion-button fill="clear" color="danger" (click)="selectedImage = null; imagePreview = null">
+        <ion-icon name="close-circle"></ion-icon>
+      </ion-button>
+    </div>
+
+    <input 
+      type="file" 
+      #fileInput 
+      accept="image/*" 
+      style="display: none" 
+      (change)="onImageSelected($event)">
+  </div>
+
+  <!-- <ion-button 
+    expand="block" 
+    (click)="uploadReport()" 
+    [disabled]="!description.trim() || isUploading"
+    class="upload-btn">
+    <ion-spinner *ngIf="isUploading" name="lines"></ion-spinner>
+    <span *ngIf="!isUploading">Submit Report</span>
+  </ion-button> -->
 </ion-content>
