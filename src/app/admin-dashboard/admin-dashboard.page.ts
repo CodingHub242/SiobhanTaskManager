@@ -400,13 +400,18 @@ export class AdminDashboardPage implements OnInit {
 
   private async createReassignedTask(originalTask: Task, newEmployeeId: string): Promise<void> {
     try {
+      // Calculate tomorrow's date to ensure it's valid (due date must be today or later)
+      const tomorrow = new Date();
+      tomorrow.setDate(tomorrow.getDate() + 1);
+      tomorrow.setHours(0, 0, 0, 0);
+      
       // Create a new task for the new employee
       const newTaskData = {
         title: originalTask.title,
         description: originalTask.description,
         priority: originalTask.priority,
-        //dueDate should be a date ahead of the original due date
-        dueDate: new Date(originalTask.dueDate.getTime() + 24 * 60 * 60 * 1000),
+        //dueDate should be tomorrow to pass validation
+        dueDate: tomorrow,
         completed: false,
         employee_id: newEmployeeId
       };
