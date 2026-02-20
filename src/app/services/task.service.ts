@@ -93,6 +93,18 @@ export class TaskService {
     );
   }
 
+  updateTaskStat(id: string, updates: Partial<Task>,status: string): Observable<Task> {
+    return this.apiService.updateTaskStat(id, updates,status).pipe(
+      tap(updatedTask => {
+        const transformedTask = this.transformTask(updatedTask);
+        const tasks = this.tasksSubject.value.map(task =>
+          task.id === id ? transformedTask : task
+        );
+        this.tasksSubject.next(tasks);
+      })
+    );
+  }
+
   deleteTask(id: string): Observable<void> {
     return this.apiService.deleteTask(id).pipe(
       tap(() => {
@@ -108,10 +120,10 @@ export class TaskService {
       //add status==completed if completed=true and status==pending if completed=false and send status and completed to api
       if(task.status == 'completed') {
         task.status = 'pending';
-        this.updateTask(id, { status: task.status, completed: !task.completed }).subscribe();
+        this.updateTaskStat(id, { completed: !task.completed },task.status).subscribe();
       } else {
         task.status = 'completed';
-        this.updateTask(id, { status: task.status, completed: !task.completed }).subscribe();
+        this.updateTaskStat(id, { completed: !task.completed },task.status).subscribe();
       }
      
       //this.updateTask(id, { completed: !task.completed }).subscribe();
