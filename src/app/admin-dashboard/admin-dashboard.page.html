@@ -125,6 +125,21 @@
           </ion-button>
         </div>
 
+        <ion-segment [(ngModel)]="filter" (ionChange)="setFilter($any($event.detail.value))" class="task-filter-segment">
+          <ion-segment-button value="all">
+            <ion-label>All</ion-label>
+          </ion-segment-button>
+          <ion-segment-button value="pending">
+            <ion-label>Pending</ion-label>
+          </ion-segment-button>
+          <ion-segment-button value="completed">
+            <ion-label>Completed</ion-label>
+          </ion-segment-button>
+          <ion-segment-button value="overdue">
+            <ion-label>Overdue</ion-label>
+          </ion-segment-button>
+        </ion-segment>
+
         <ion-list *ngIf="paginatedTasks.length > 0; else noTasks" class="task-list">
           <ion-item-sliding *ngFor="let task of paginatedTasks" class="task-item-row">
             <ion-item class="listitem">

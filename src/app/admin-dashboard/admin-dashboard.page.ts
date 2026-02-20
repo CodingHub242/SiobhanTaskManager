@@ -53,6 +53,7 @@ interface ChartData {
 export class AdminDashboardPage implements OnInit {
   Math = Math;
   tasks: Task[] = [];
+  filteredTasks: Task[] = [];
   paginatedTasks: Task[] = [];
   users: User[] = [];
   selectedDate: Date = new Date();
@@ -68,6 +69,9 @@ export class AdminDashboardPage implements OnInit {
   pageSize: number = 10;
   totalItems: number = 0;
   totalPages: number = 0;
+  
+  // Filter
+  filter: 'all' | 'completed' | 'pending' | 'overdue' = 'all';
   
   private destroy$ = new Subject<void>();
 
@@ -113,6 +117,7 @@ export class AdminDashboardPage implements OnInit {
         })
         this.totalItems = this.tasks.length;
         this.totalPages = Math.ceil(this.totalItems / this.pageSize);
+        this.filterTasksLocal();
         this.updatePaginatedTasks();
         this.generateCalendar();
         this.calculateChartData();
@@ -376,11 +381,37 @@ export class AdminDashboardPage implements OnInit {
     await alert.present();
   }
 
+  // Filter methods
+  setFilter(filter: 'all' | 'completed' | 'pending' | 'overdue'): void {
+    this.filter = filter;
+    this.currentPage = 1;
+    this.filterTasksLocal();
+  }
+
+  filterTasksLocal(): void {
+    let filtered = this.tasks;
+
+    if (this.filter === 'completed') {
+      filtered = this.tasks.filter(t => t.completed);
+    } else if (this.filter === 'pending') {
+      filtered = this.tasks.filter(t => !t.completed);
+    } else if (this.filter === 'overdue') {
+      const today = new Date();
+      today.setHours(0, 0, 0, 0);
+      filtered = this.tasks.filter(t => !t.completed && new Date(t.dueDate) < today);
+    }
+
+    this.filteredTasks = filtered;
+    this.totalItems = this.filteredTasks.length;
+    this.totalPages = Math.ceil(this.totalItems / this.pageSize);
+    this.updatePaginatedTasks();
+  }
+
   // Pagination methods
   updatePaginatedTasks(): void {
     const startIndex = (this.currentPage - 1) * this.pageSize;
     const endIndex = startIndex + this.pageSize;
-    this.paginatedTasks = this.tasks.slice(startIndex, endIndex);
+    this.paginatedTasks = this.filteredTasks.slice(startIndex, endIndex);
   }
 
   getPageNumbers(): number[] {

@@ -426,6 +426,27 @@ ion-fab-button {
     }
   }
 
+  // Task Filter Segment
+  .task-filter-segment {
+    --background: #14291d;
+    border-radius: 8px;
+    padding: 4px;
+    margin-bottom: 20px;
+  }
+
+  .task-filter-segment::part(thumb) {
+    background: #d4af37;
+  }
+
+  .task-filter-segment ion-segment-button {
+    --color: #a8b5a8;
+    --color-checked: #0d2818;
+    --indicator-color: #d4af37;
+    --border-radius: 6px;
+    min-height: 36px;
+    font-weight: 600;
+  }
+
   // Task List Styles
   .task-list {
     background: transparent;
