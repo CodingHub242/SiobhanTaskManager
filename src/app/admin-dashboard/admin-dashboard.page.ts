@@ -158,8 +158,8 @@ export class AdminDashboardPage implements OnInit {
       { label: 'Low', value: priorityCounts.low, color: '#2dd36f' }
     ];
 
-    // Tasks by Status
-    const completed = (this.tasks || []).filter(t => t.completed).length;
+    // Tasks by Status  completed: (task.status == 'completed') ? true : task.completed || false,
+    const completed = (this.tasks || []).filter(t => (t.status == 'completed') ? true : t.completed).length;
     const pending = (this.tasks || []).filter(t => !t.completed).length;
     const overdue = (this.tasks || []).filter(t => !t.completed && new Date(t.dueDate) < new Date()).length;
     this.tasksByStatus = [
