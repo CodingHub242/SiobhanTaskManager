@@ -101,8 +101,11 @@ export class TaskService {
           task.id === id ? transformedTask : task
         );
         this.tasksSubject.next(tasks);
+        //load tasks after update
+        this.loadTasks();
       })
     );
+    
   }
 
   deleteTask(id: string): Observable<void> {
