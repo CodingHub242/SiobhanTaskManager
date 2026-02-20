@@ -133,7 +133,7 @@
                 [checked]="task.completed" 
                 (ionChange)="toggleTask(task)">
               </ion-checkbox>
-              <ion-label [class.completed-task]="task.status==='completed' || task.completed">
+              <ion-label [class.completed-task]="task.completed">
                 <div class="task-main" (click)="viewTask(task)">
                   <h2>{{ task.title }}</h2>
                   <p>{{ task.description }}</p>

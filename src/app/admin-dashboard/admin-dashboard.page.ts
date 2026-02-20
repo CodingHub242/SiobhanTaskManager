@@ -97,6 +97,12 @@ export class AdminDashboardPage implements OnInit {
       .subscribe((tasks: any) => {
         // Ensure tasks is always an array
         this.tasks = Array.isArray(tasks) ? tasks : [];
+        //make sure completed status is set to true for completed tasks
+        this.tasks.forEach(task => {
+          if (task.status == 'completed') {
+            task.completed = true;
+          }
+        })
         this.generateCalendar();
         this.calculateChartData();
       });
