@@ -50,11 +50,16 @@ export class TaskService {
             tasksRaw = response;
           }
 
+          console.log('TaskService loadTasks - raw response:', tasksRaw);
+
           // Transform snake_case to camelCase
           const tasks = tasksRaw.map(t => this.transformTask(t));
           this.tasksSubject.next(tasks);
         },
-        error: () => this.tasksSubject.next([])
+        error: (err) => {
+          console.error('TaskService loadTasks error:', err);
+          this.tasksSubject.next([])
+        }
       });
   }
 

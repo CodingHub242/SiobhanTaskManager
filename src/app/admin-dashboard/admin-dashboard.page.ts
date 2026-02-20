@@ -104,9 +104,13 @@ export class AdminDashboardPage implements OnInit {
   }
 
   loadTasks(): void {
+    // First load tasks from service, then subscribe to observable
+    this.taskService.loadTasks();
+    
     this.taskService.tasks$
       .pipe(takeUntil(this.destroy$))
       .subscribe((tasks: any) => {
+        console.log('AdminDashboard received tasks:', tasks);
         // Ensure tasks is always an array
         this.tasks = Array.isArray(tasks) ? tasks : [];
         //make sure completed status is set to true for completed tasks
@@ -115,6 +119,7 @@ export class AdminDashboardPage implements OnInit {
             task.completed = true;
           }
         })
+        console.log('AdminDashboard processed tasks:', this.tasks.length);
         this.totalItems = this.tasks.length;
         this.totalPages = Math.ceil(this.totalItems / this.pageSize);
         this.filterTasksLocal();
@@ -403,25 +408,31 @@ export class AdminDashboardPage implements OnInit {
       // Calculate tomorrow's date to ensure it's valid (due date must be today or later)
       const tomorrow = new Date();
       tomorrow.setDate(tomorrow.getDate() + 1);
-      tomorrow.setHours(0, 0, 0, 0);
+      
+      // Format date as YYYY-MM-DD for the API
+      const formattedDate = tomorrow.toISOString().split('T')[0];
       
       // Create a new task for the new employee
-      const newTaskData = {
+      const newTaskData: any = {
         title: originalTask.title,
         description: originalTask.description,
         priority: originalTask.priority,
         //dueDate should be tomorrow to pass validation
-        dueDate: tomorrow,
+        dueDate: formattedDate,
         completed: false,
         employee_id: newEmployeeId
       };
 
+      console.log('Creating reassigned task with data:', newTaskData);
+
       this.apiService.createTask(newTaskData).subscribe({
-        next: () => {
+        next: (response) => {
+          console.log('Task reassigned successfully, response:', response);
           this.showToast('Task reassigned successfully');
           this.taskService.loadTasks();
         },
-        error: () => {
+        error: (error) => {
+          console.error('Failed to reassign task:', error);
           this.showToast('Failed to reassign task');
         }
       });
