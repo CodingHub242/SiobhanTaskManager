@@ -407,7 +407,7 @@ export class AdminDashboardPage implements OnInit {
         priority: originalTask.priority,
         dueDate: new Date(originalTask.dueDate),
         completed: false,
-        employeeId: newEmployeeId
+        employee_id: newEmployeeId
       };
 
       this.apiService.createTask(newTaskData).subscribe({
