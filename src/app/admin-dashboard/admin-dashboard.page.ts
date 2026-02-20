@@ -10,7 +10,7 @@ import { TaskService } from '../services/task.service';
 import { AuthService } from '../services/auth.service';
 import { ApiService } from '../services/api.service';
 import { addIcons } from 'ionicons';
-import { briefcase,add, trash, create, mail, document, close, eye, download, checkmark, arrowBack, arrowUp, arrowDown, filter, cloudUpload, checkmarkCircle, layers, time, alertCircle, chevronBack, chevronForward, chevronDown, person, logOut, list, calendar, analytics, trendingUp, flag, folderOpen, ellipse, business } from 'ionicons/icons';
+import { briefcase,add, trash, create, mail, document, close, eye, download, checkmark, arrowBack, arrowUp, arrowDown, filter, cloudUpload, checkmarkCircle, layers, time, alertCircle, chevronBack, chevronForward, chevronDown, person, logOut, list, calendar, analytics, trendingUp, flag, folderOpen, ellipse, business, swapHorizontal } from 'ionicons/icons';
 import { TaskModalPage } from '../task-modal/task-modal.page';
 import { DayTasksModalPage } from '../day-tasks-modal/day-tasks-modal.page';
 
@@ -89,7 +89,7 @@ export class AdminDashboardPage implements OnInit {
     private actionSheetController: ActionSheetController,
     private toastController: ToastController,
     private popoverController: PopoverController) {
-      addIcons({briefcase,chevronBack,chevronForward,chevronDown,alertCircle, add, trash, create, mail, document, close, eye, download, checkmark, arrowBack, arrowUp, arrowDown, filter,checkmarkCircle,cloudUpload,layers,time,person,logOut,list,calendar,analytics,trendingUp,flag,folderOpen,ellipse,business});
+      addIcons({briefcase,chevronBack,chevronForward,chevronDown,alertCircle, add, trash, create, mail, document, close, eye, download, checkmark, arrowBack, arrowUp, arrowDown, filter,checkmarkCircle,cloudUpload,layers,time,person,logOut,list,calendar,analytics,trendingUp,flag,folderOpen,ellipse,business,swapHorizontal});
      }
 
   ngOnInit() {
@@ -379,6 +379,49 @@ export class AdminDashboardPage implements OnInit {
       ]
     });
     await alert.present();
+  }
+
+  // Reassign task - keep completed and create new one for reassignment
+  async reassignTask(task: Task): Promise<void> {
+    const employees = this.users.filter(u => u.role === 'employee' || !u.role);
+    
+    const actionSheet = await this.actionSheetController.create({
+      header: 'Reassign Task to:',
+      buttons: [
+        ...employees.map(emp => ({
+          text: emp.name,
+          handler: () => this.createReassignedTask(task, emp.id)
+        })),
+        { text: 'Cancel', icon: 'close', role: 'cancel' }
+      ]
+    });
+    await actionSheet.present();
+  }
+
+  private async createReassignedTask(originalTask: Task, newEmployeeId: string): Promise<void> {
+    try {
+      // Create a new task for the new employee
+      const newTaskData = {
+        title: originalTask.title,
+        description: originalTask.description,
+        priority: originalTask.priority,
+        dueDate: new Date(originalTask.dueDate),
+        completed: false,
+        employeeId: newEmployeeId
+      };
+
+      this.apiService.createTask(newTaskData).subscribe({
+        next: () => {
+          this.showToast('Task reassigned successfully');
+          this.taskService.loadTasks();
+        },
+        error: () => {
+          this.showToast('Failed to reassign task');
+        }
+      });
+    } catch (error) {
+      this.showToast('Error reassigning task');
+    }
   }
 
   // Filter methods

@@ -175,6 +175,9 @@
               <ion-item-option color="secondary" (click)="openEditTaskModal(task)">
                 <ion-icon name="create"></ion-icon>
               </ion-item-option>
+              <ion-item-option color="tertiary" (click)="reassignTask(task)">
+                <ion-icon name="swap-horizontal"></ion-icon>
+              </ion-item-option>
               <ion-item-option color="danger" (click)="deleteTask(task)">
                 <ion-icon name="trash"></ion-icon>
               </ion-item-option>

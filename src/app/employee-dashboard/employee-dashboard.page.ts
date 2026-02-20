@@ -54,7 +54,7 @@ export class EmployeeDashboardPage implements OnInit {
   tasks: Task[] = [];
   filteredTasks: Task[] = [];
   paginatedTasks: Task[] = [];
-  filter: 'all' | 'completed' | 'pending' = 'all';
+  filter: 'all' | 'completed' | 'pending' | 'overdue' = 'all';
   searchTerm: string = '';
   viewMode: 'list' | 'calendar' | 'analytics' = 'list';
   currentMonth: Date = new Date();
@@ -153,6 +153,10 @@ export class EmployeeDashboardPage implements OnInit {
       filtered = this.tasks.filter(t => t.completed);
     } else if (this.filter === 'pending') {
       filtered = this.tasks.filter(t => !t.completed);
+    } else if (this.filter === 'overdue') {
+      const today = new Date();
+      today.setHours(0, 0, 0, 0);
+      filtered = this.tasks.filter(t => !t.completed && new Date(t.dueDate) < today);
     }
 
     if (this.searchTerm.trim()) {
