@@ -884,6 +884,69 @@ ion-item-option {
   min-height: 400px;
 }
 
+// ==================== PAGINATION ====================
+.pagination-controls {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+  padding: 24px 0;
+  margin-top: 16px;
+  background: linear-gradient(145deg, #14291d 0%, #0d2818 100%);
+  border: 1px solid #2d5a3d;
+  border-radius: 12px;
+}
+
+.pagination-info {
+  font-size: 0.9rem;
+  color: #a8b5a8;
+}
+
+.pagination-buttons {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+
+  ion-button {
+    --color: #d4af37;
+    font-weight: 600;
+
+    &[disabled] {
+      --color: #5a6b5c;
+      opacity: 0.5;
+    }
+
+    &.active {
+      --background: rgba(212, 175, 55, 0.2);
+      --border-color: #d4af37;
+      border: 1px solid #d4af37;
+    }
+  }
+}
+
+.page-numbers {
+  display: flex;
+  gap: 4px;
+}
+
+.page-size-selector {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.9rem;
+  color: #a8b5a8;
+
+  ion-select {
+    --background: #0d2818;
+    --color: #f0e6d3;
+    --border-color: #2d5a3d;
+    border: 1px solid #2d5a3d;
+    border-radius: 8px;
+    padding: 8px 12px;
+    min-width: 80px;
+  }
+}
+
 .empty-state {
   text-align: center;
   

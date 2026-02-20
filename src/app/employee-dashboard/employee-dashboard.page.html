@@ -138,8 +138,8 @@
           class="custom-searchbar">
         </ion-searchbar>
 
-        <ion-list *ngIf="filteredTasks.length > 0; else noTasks" class="task-list">
-          <ion-item-sliding *ngFor="let task of filteredTasks" class="task-item-row">
+        <ion-list *ngIf="paginatedTasks.length > 0; else noTasks" class="task-list">
+          <ion-item-sliding *ngFor="let task of paginatedTasks" class="task-item-row">
             <ion-item class="listitem">
               <ion-checkbox 
                 slot="start" 
@@ -176,6 +176,47 @@
             </ion-item-options>
           </ion-item-sliding>
         </ion-list>
+
+        <!-- Pagination Controls -->
+        <div class="pagination-controls" *ngIf="totalItems > pageSize">
+          <div class="pagination-info">
+            Showing {{ (currentPage - 1) * pageSize + 1 }} - {{ Math.min(currentPage * pageSize, totalItems) }} of {{ totalItems }} tasks
+          </div>
+          <div class="pagination-buttons">
+            <ion-button 
+              fill="clear" 
+              [disabled]="currentPage === 1" 
+              (click)="previousPage()">
+              <ion-icon name="chevron-back"></ion-icon>
+              Previous
+            </ion-button>
+            <span class="page-numbers">
+              <ion-button 
+                *ngFor="let page of getPageNumbers()" 
+                fill="clear"
+                [class.active]="page === currentPage"
+                (click)="goToPage(page)">
+                {{ page }}
+              </ion-button>
+            </span>
+            <ion-button 
+              fill="clear" 
+              [disabled]="currentPage === totalPages" 
+              (click)="nextPage()">
+              Next
+              <ion-icon name="chevron-forward"></ion-icon>
+            </ion-button>
+          </div>
+          <div class="page-size-selector">
+            <span>Show:</span>
+            <ion-select [(ngModel)]="pageSize" (ionChange)="onPageSizeChange()" interface="popover">
+              <ion-select-option [value]="5">5</ion-select-option>
+              <ion-select-option [value]="10">10</ion-select-option>
+              <ion-select-option [value]="20">20</ion-select-option>
+              <ion-select-option [value]="50">50</ion-select-option>
+            </ion-select>
+          </div>
+        </div>
       </div>
 
       <!-- Calendar View -->

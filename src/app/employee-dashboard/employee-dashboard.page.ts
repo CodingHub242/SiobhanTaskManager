@@ -2,7 +2,7 @@ import { Component, CUSTOM_ELEMENTS_SCHEMA, OnInit,OnDestroy } from '@angular/co
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { IonicModule, ModalController,PopoverController,AlertController, ToastController, ActionSheetController, NavController, LoadingController } from '@ionic/angular';
-import { IonContent, IonHeader, IonTitle, IonToolbar, IonButton, IonButtons, IonAvatar, IonList, IonItem, IonLabel, IonIcon, IonCheckbox, IonChip, IonCard, IonCardHeader, IonCardTitle, IonCardContent } from '@ionic/angular/standalone';
+import { IonContent, IonHeader, IonTitle, IonToolbar, IonButton, IonButtons, IonAvatar, IonList, IonItem, IonLabel, IonIcon, IonCheckbox, IonChip, IonCard, IonCardHeader, IonCardTitle, IonCardContent, IonSelect, IonSelectOption } from '@ionic/angular/standalone';
 import { Subject, takeUntil } from 'rxjs';
 import { Task } from '../models/task.model';
 import { User } from '../models/user.model';
@@ -47,17 +47,25 @@ interface ChartData {
    // IonIcon, 
     //IonCheckbox, 
     //IonChip, 
-    IonCard, IonCardHeader, IonCardTitle, IonCardContent, CommonModule, FormsModule, TaskModalPage, DayTasksModalPage]
+    IonCard, IonCardHeader, IonCardTitle, IonCardContent, IonSelect, IonSelectOption, CommonModule, FormsModule, TaskModalPage, DayTasksModalPage]
 })
 export class EmployeeDashboardPage implements OnInit {
- tasks: Task[] = [];
+  Math = Math;
+  tasks: Task[] = [];
   filteredTasks: Task[] = [];
+  paginatedTasks: Task[] = [];
   filter: 'all' | 'completed' | 'pending' = 'all';
   searchTerm: string = '';
   viewMode: 'list' | 'calendar' | 'analytics' = 'list';
   currentMonth: Date = new Date();
   calendarDays: CalendarDay[] = [];
   currentDate: Date = new Date();
+  
+  // Pagination
+  currentPage: number = 1;
+  pageSize: number = 10;
+  totalItems: number = 0;
+  totalPages: number = 0;
   
   // Chart data
   tasksByPriority: ChartData[] = [];
@@ -156,11 +164,65 @@ export class EmployeeDashboardPage implements OnInit {
     }
 
     this.filteredTasks = filtered.sort((a, b) => new Date(a.dueDate).getTime() - new Date(b.dueDate).getTime());
+    this.totalItems = this.filteredTasks.length;
+    this.totalPages = Math.ceil(this.totalItems / this.pageSize);
+    this.updatePaginatedTasks();
   }
 
   setFilter(filter: 'all' | 'completed' | 'pending'): void {
     this.filter = filter;
+    this.currentPage = 1;
     this.filterTasksLocal();
+  }
+
+  // Pagination methods
+  updatePaginatedTasks(): void {
+    const startIndex = (this.currentPage - 1) * this.pageSize;
+    const endIndex = startIndex + this.pageSize;
+    this.paginatedTasks = this.filteredTasks.slice(startIndex, endIndex);
+  }
+
+  getPageNumbers(): number[] {
+    const pages: number[] = [];
+    const maxVisiblePages = 5;
+    let startPage = Math.max(1, this.currentPage - Math.floor(maxVisiblePages / 2));
+    let endPage = Math.min(this.totalPages, startPage + maxVisiblePages - 1);
+    
+    if (endPage - startPage + 1 < maxVisiblePages) {
+      startPage = Math.max(1, endPage - maxVisiblePages + 1);
+    }
+    
+    for (let i = startPage; i <= endPage; i++) {
+      pages.push(i);
+    }
+    return pages;
+  }
+
+  onPageSizeChange(): void {
+    this.currentPage = 1;
+    this.totalPages = Math.ceil(this.totalItems / this.pageSize);
+    this.updatePaginatedTasks();
+  }
+
+  goToPage(page: number): void {
+    if (page >= 1 && page <= this.totalPages) {
+      this.currentPage = page;
+      this.updatePaginatedTasks();
+    }
+  }
+
+  nextPage(): void {
+    if (this.currentPage < this.totalPages) {
+      this.currentPage++;
+      this.updatePaginatedTasks();
+    }
+  }
+
+  previousPage(): void {
+    if (this.currentPage > 1) {
+      this.currentPage--;
+      this.updatePaginatedTasks();
+    }
   }
 
   onSearchChange(): void {
