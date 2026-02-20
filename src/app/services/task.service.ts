@@ -21,10 +21,11 @@ export class TaskService {
       description: task.description || '',
       priority: task.priority || 'medium',
       dueDate: task.due_date ? new Date(task.due_date) : new Date(),
-      completed: task.completed || false,
+      completed: (task.status == 'completed') ? true : task.completed || false,
       employeeId: task.employee_id || task.assigned_to || undefined,
       createdAt: task.created_at ? new Date(task.created_at) : new Date(),
-      updatedAt: task.updated_at ? new Date(task.updated_at) : new Date()
+      updatedAt: task.updated_at ? new Date(task.updated_at) : new Date(),
+      status: task.status || 'pending'
     };
   }
 
