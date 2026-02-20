@@ -105,7 +105,9 @@ export class TaskService {
   toggleTaskCompletion(id: string): void {
     const task = this.getTaskById(id);
     if (task) {
-      this.updateTask(id, { completed: !task.completed }).subscribe();
+      //add status==completed if completed=true and status==pending if completed=false and send status and completed to api
+      this.updateTask(id, { status: task.completed ? 'completed' : 'pending' }).subscribe();
+      //this.updateTask(id, { completed: !task.completed }).subscribe();
     }
   }
 }
