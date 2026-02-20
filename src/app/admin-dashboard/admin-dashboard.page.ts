@@ -405,7 +405,8 @@ export class AdminDashboardPage implements OnInit {
         title: originalTask.title,
         description: originalTask.description,
         priority: originalTask.priority,
-        dueDate: new Date(originalTask.dueDate),
+        //dueDate should be a date ahead of the original due date
+        dueDate: new Date(originalTask.dueDate.getTime() + 24 * 60 * 60 * 1000),
         completed: false,
         employee_id: newEmployeeId
       };
