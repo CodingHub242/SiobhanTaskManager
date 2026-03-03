@@ -131,6 +131,8 @@ ion-back-button {
 // Tasks Table
 .tasks-table-container {
   overflow-x: auto;
+  overflow-y: auto;
+  max-height: 300px;
 }
 
 .tasks-table {
