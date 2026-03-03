@@ -1,4 +1,4 @@
-import { Component, CUSTOM_ELEMENTS_SCHEMA, OnInit } from '@angular/core';
+import { Component, CUSTOM_ELEMENTS_SCHEMA, OnInit, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { IonContent, IonHeader, IonTitle, IonToolbar, IonButton, IonButtons, IonAvatar, IonList, IonItem, IonLabel, IonIcon, IonCheckbox, IonChip, IonCard, IonCardHeader, IonCardTitle, IonCardContent, IonSelect, IonSelectOption, IonDatetime, IonModal } from '@ionic/angular/standalone';
@@ -99,7 +99,8 @@ export class AdminDashboardPage implements OnInit {
   tasksByStatus: ChartData[] = [];
   weeklyTasks: ChartData[] = [];
 
-  constructor( private taskService: TaskService,
+  constructor( private cdr: ChangeDetectorRef,
+    private taskService: TaskService,
     private apiService: ApiService,
     private authService: AuthService,
     private modalController: ModalController,
@@ -597,6 +598,7 @@ export class AdminDashboardPage implements OnInit {
 
   toggleUserMenu(): void {
     this.showUserMenu = !this.showUserMenu;
+    this.cdr.detectChanges();
   }
 
   async navigateToProfile(): Promise<void> {

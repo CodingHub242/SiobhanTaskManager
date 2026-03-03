@@ -7,7 +7,7 @@
       </span>
     </ion-title>
     <div class="user-menu-container" slot="end">
-      <ion-button id="user-menu-trigger" (click)="toggleUserMenu()">
+      <ion-button id="user-menu-trigger" (tap)="toggleUserMenu()">
         <ion-avatar slot="start">
           <img *ngIf="getCurrentUser()?.avatar" [src]="getAvatarUrl()" alt="Avatar" />
           <div *ngIf="!getCurrentUser()?.avatar" class="user-avatar">
@@ -18,11 +18,11 @@
         <ion-icon name="chevron-down"></ion-icon>
       </ion-button>
       <div class="user-dropdown" *ngIf="showUserMenu">
-        <div class="dropdown-item" (click)="navigateToProfile(); showUserMenu = false">
+        <div class="dropdown-item" (tap)="navigateToProfile(); showUserMenu = false">
           <ion-icon name="person"></ion-icon>
           <span>Profile</span>
         </div>
-        <div class="dropdown-item" (click)="logout(); showUserMenu = false">
+        <div class="dropdown-item" (tap)="logout(); showUserMenu = false">
           <ion-icon name="log-out"></ion-icon>
           <span>Logout</span>
         </div>
