@@ -17,8 +17,7 @@
         <span class="user-name">{{ getCurrentUser()?.name }}</span>
         <ion-icon name="chevron-down"></ion-icon>
       </ion-button>
-      <ion-popover trigger="user-menu-trigger" dismiss-on-select>
-        <ng-template>
+        <ion-popover trigger="user-menu-trigger" dismiss-on-select>
           <ion-content style="--background: #ffffff;">
             <ion-list>
               <ion-item class="menu-item" button (click)="navigateToProfile()">
@@ -31,8 +30,7 @@
               </ion-item>
             </ion-list>
           </ion-content>
-        </ng-template>
-      </ion-popover>
+        </ion-popover>
     </ion-buttons>
   </ion-toolbar>
 </ion-header>
@@ -531,35 +529,33 @@
 
   <!-- Date Picker Modal for Reassignment -->
   <ion-modal [isOpen]="showDatePicker" (didDismiss)="cancelReassign()" [breakpoints]="[0.5, 0.9]" [initialBreakpoint]="0.5">
-    <ng-template>
-      <ion-header>
-        <ion-toolbar>
-          <ion-title>Select Due Date</ion-title>
-          <ion-buttons slot="end">
-            <ion-button (click)="cancelReassign()">Cancel</ion-button>
-          </ion-buttons>
-        </ion-toolbar>
-      </ion-header>
-      <ion-content class="date-picker-content">
-        <div class="date-picker-container">
-          <p class="date-picker-info">Select a due date for the reassigned task:</p>
-          <ion-datetime
-            [(ngModel)]="selectedReassignDate"
-            presentation="date"
-            [preferWheel]="true"
-            [min]="getMinDate()"
-            [showDefaultButtons]="true"
-            doneText="Continue">
-          </ion-datetime>
-          <div class="selected-date-display">
-            <strong>Selected:</strong> {{ selectedReassignDate | date:'fullDate' }}
-          </div>
-          <ion-button expand="block" (click)="onDateSelected()" class="continue-button">
-            Select Employee
-          </ion-button>
+    <ion-header>
+      <ion-toolbar>
+        <ion-title>Select Due Date</ion-title>
+        <ion-buttons slot="end">
+          <ion-button (click)="cancelReassign()">Cancel</ion-button>
+        </ion-buttons>
+      </ion-toolbar>
+    </ion-header>
+    <ion-content class="date-picker-content">
+      <div class="date-picker-container">
+        <p class="date-picker-info">Select a due date for the reassigned task:</p>
+        <ion-datetime
+          [(ngModel)]="selectedReassignDate"
+          presentation="date"
+          [preferWheel]="true"
+          [min]="getMinDate()"
+          [showDefaultButtons]="true"
+          doneText="Continue">
+        </ion-datetime>
+        <div class="selected-date-display">
+          <strong>Selected:</strong> {{ selectedReassignDate | date:'fullDate' }}
         </div>
-      </ion-content>
-    </ng-template>
+        <ion-button expand="block" (click)="onDateSelected()" class="continue-button">
+          Select Employee
+        </ion-button>
+      </div>
+    </ion-content>
   </ion-modal>
 
   <!-- <ion-fab vertical="bottom" horizontal="end" slot="fixed" *ngIf="viewMode === 'list'">
