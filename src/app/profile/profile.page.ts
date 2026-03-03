@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy, ChangeDetectorRef, CUSTOM_ELEMENTS_SCHEMA, ViewChild, ElementRef } from '@angular/core';
+import { Component, OnInit, OnDestroy, ChangeDetectorRef, CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { IonicModule, AlertController, ToastController, ActionSheetController, NavController, LoadingController } from '@ionic/angular';
@@ -325,13 +325,6 @@ export class ProfilePage implements OnInit {
     
     this.isLoading = true;
     try {
-      // // Show loading indicator
-      // loading = await this.loadingController.create({
-      //   message: 'Uploading...',
-      //   spinner: 'circular'
-      // });
-      // await loading.present();
-      
       // Convert the image to base64
       const base64Data = await this.readImageAsBase64(webPath);
       console.log('Base64 data length:', base64Data.length);
@@ -339,19 +332,14 @@ export class ProfilePage implements OnInit {
       // Upload to server
       const response = await this.uploadAvatarToServer(base64Data);
       
-      // // Dismiss loading
-      // if (loading) {
-      //   await loading.dismiss();
-      //   loading = null;
-      // }
+      this.isLoading = false;
       
       if (response.success) {
         // Update local user with avatar_path returned from server
         if (this.user) {
           console.log('Full response:', response);
           console.log('Response data:', response.data);
-          $('ion-spinner').hide();
-          // Use avatar_path from server response (any type since response structure varies)
+          // Use avatar_path from server response
           const avatarPath = (response as any).data?.avatar_path || (response as any).data?.avatar || (response as any).avatar_path || (response as any).avatar;
           console.log('Extracted avatar path:', avatarPath);
           if (avatarPath) {
@@ -369,15 +357,7 @@ export class ProfilePage implements OnInit {
         this.showToast(response.message || 'Failed to upload profile picture');
       }
     } catch (error) {
-      $('ion-spinner').hide();
-      // Dismiss loading if still showing
-      // if (loading) {
-      //   try {
-      //     await loading.dismiss();
-      //   } catch (e) {
-      //     // Ignore dismiss error
-      //   }
-      // }
+      this.isLoading = false;
       this.showToast('Failed to upload profile picture');
       console.error('Upload error:', error);
     }
