@@ -1168,3 +1168,67 @@ ion-fab-button {
     }
   }
 }
+
+// ==================== DATE PICKER MODAL ====================
+.date-picker-content {
+  --background: linear-gradient(135deg, #0d2818 0%, #14291d 100%);
+  padding: 20px;
+}
+
+.date-picker-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+}
+
+.date-picker-info {
+  color: #e8dcc8;
+  font-size: 1rem;
+  text-align: center;
+  margin: 0;
+}
+
+.selected-date-display {
+  background: rgba(45, 90, 61, 0.3);
+  border: 1px solid #2d5a3d;
+  border-radius: 8px;
+  padding: 12px 20px;
+  color: #d4af37;
+  font-size: 1rem;
+}
+
+.continue-button {
+  --background: linear-gradient(135deg, #d4af37 0%, #b8942e 100%);
+  --color: #0d2818;
+  --border-radius: 8px;
+  --font-weight: 600;
+  margin-top: 16px;
+  width: 100%;
+  max-width: 300px;
+}
+
+ion-datetime {
+  --background: #14291d;
+  --background-rgb: rgb(20, 41, 29);
+  border-radius: 12px;
+  border: 1px solid #2d5a3d;
+  color: #f0e6d3;
+  
+  .datetime-text {
+    color: #f0e6d3;
+  }
+}
+
+ion-modal {
+  --background: #0d2818;
+  
+  ion-header {
+    --background: #0d2818 !important;
+    
+    ion-toolbar {
+      --background: linear-gradient(135deg, #0d2818 0%, #1a4a2a 100%) !important;
+      --color: #f0e6d3 !important;
+    }
+  }
+}

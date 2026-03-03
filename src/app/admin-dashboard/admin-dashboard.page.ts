@@ -1,7 +1,7 @@
 import { Component, CUSTOM_ELEMENTS_SCHEMA, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { IonContent, IonHeader, IonTitle, IonToolbar, IonButton, IonButtons, IonAvatar, IonList, IonItem, IonLabel, IonIcon, IonCheckbox, IonChip, IonCard, IonCardHeader, IonCardTitle, IonCardContent, IonSelect, IonSelectOption } from '@ionic/angular/standalone';
+import { IonContent, IonHeader, IonTitle, IonToolbar, IonButton, IonButtons, IonAvatar, IonList, IonItem, IonLabel, IonIcon, IonCheckbox, IonChip, IonCard, IonCardHeader, IonCardTitle, IonCardContent, IonSelect, IonSelectOption, IonDatetime, IonModal } from '@ionic/angular/standalone';
 import { IonicModule, ModalController, AlertController, NavController, ActionSheetController, ToastController, PopoverController } from '@ionic/angular';
 import { Subject, takeUntil } from 'rxjs';
 import { Task } from '../models/task.model';
@@ -48,7 +48,7 @@ interface ChartData {
    // IonIcon, 
     //IonCheckbox, 
     //IonChip, 
-    IonCard, IonCardHeader, IonCardTitle, IonCardContent, IonSelect, IonSelectOption, CommonModule, FormsModule, TaskModalPage, DayTasksModalPage]
+    IonCard, IonCardHeader, IonCardTitle, IonCardContent, IonSelect, IonSelectOption, IonDatetime, IonModal, CommonModule, FormsModule, TaskModalPage, DayTasksModalPage]
 })
 export class AdminDashboardPage implements OnInit {
   Math = Math;
@@ -61,6 +61,9 @@ export class AdminDashboardPage implements OnInit {
   calendarDays: CalendarDay[] = [];
   viewMode: 'list' | 'calendar' | 'analytics' = 'list';
   showAssignModal: boolean = false;
+  showDatePicker: boolean = false;
+  selectedReassignDate: string = new Date().toISOString();
+  pendingReassignTask: Task | null = null;
   selectedCalendarDate: Date | null = null;
   currentDate: Date = new Date();
   
@@ -386,8 +389,16 @@ export class AdminDashboardPage implements OnInit {
     await alert.present();
   }
 
-  // Reassign task - keep completed and create new one for reassignment
+  // Reassign task - show date picker first, then employee selector
   async reassignTask(task: Task): Promise<void> {
+    this.pendingReassignTask = task;
+    this.selectedReassignDate = new Date().toISOString(); // Default to today
+    this.showDatePicker = true;
+  }
+
+  async onDateSelected(): Promise<void> {
+    if (!this.pendingReassignTask) return;
+    
     const employees = this.users.filter(u => u.role === 'employee' || !u.role);
     
     const actionSheet = await this.actionSheetController.create({
@@ -395,22 +406,28 @@ export class AdminDashboardPage implements OnInit {
       buttons: [
         ...employees.map(emp => ({
           text: emp.name,
-          handler: () => this.createReassignedTask(task, emp.id)
+          handler: () => {
+            const selectedDate = new Date(this.selectedReassignDate);
+            this.createReassignedTask(this.pendingReassignTask!, emp.id, selectedDate);
+          }
         })),
         { text: 'Cancel', icon: 'close', role: 'cancel' }
       ]
     });
+    
+    this.showDatePicker = false;
     await actionSheet.present();
   }
 
-  private async createReassignedTask(originalTask: Task, newEmployeeId: string): Promise<void> {
+  cancelReassign(): void {
+    this.showDatePicker = false;
+    this.pendingReassignTask = null;
+  }
+
+  private async createReassignedTask(originalTask: Task, newEmployeeId: string, selectedDate: Date): Promise<void> {
     try {
-      // Calculate tomorrow's date to ensure it's valid (due date must be today or later)
-      const tomorrow = new Date();
-      tomorrow.setDate(tomorrow.getDate() + 1);
-      
       // Format date as YYYY-MM-DD for the API
-      const formattedDate = tomorrow.toISOString().split('T')[0];
+      const formattedDate = selectedDate.toISOString().split('T')[0];
       
       // Create a new task for the new employee
       const newTaskData: any = {
@@ -553,6 +570,10 @@ export class AdminDashboardPage implements OnInit {
       return user.avatar;
     }
     return `https://ecg.codepps.online/storage/${user.avatar}`;
+  }
+
+  getMinDate(): string {
+    return new Date().toISOString().split('T')[0];
   }
 
   // Stats methods
