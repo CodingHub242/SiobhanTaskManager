@@ -1,4 +1,4 @@
-import { Component, CUSTOM_ELEMENTS_SCHEMA, OnInit, ChangeDetectorRef } from '@angular/core';
+import { Component, CUSTOM_ELEMENTS_SCHEMA, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { IonContent, IonHeader, IonTitle, IonToolbar, IonButton, IonButtons, IonAvatar, IonList, IonItem, IonLabel, IonIcon, IonCheckbox, IonChip, IonCard, IonCardHeader, IonCardTitle, IonCardContent, IonSelect, IonSelectOption, IonDatetime, IonModal } from '@ionic/angular/standalone';
@@ -61,6 +61,7 @@ interface EmployeeTaskGroup {
 })
 export class AdminDashboardPage implements OnInit {
   Math = Math;
+  showUserMenu = false;
   tasks: Task[] = [];
   filteredTasks: Task[] = [];
   paginatedTasks: Task[] = [];
@@ -98,8 +99,7 @@ export class AdminDashboardPage implements OnInit {
   tasksByStatus: ChartData[] = [];
   weeklyTasks: ChartData[] = [];
 
-  constructor( private cdr: ChangeDetectorRef,
-    private taskService: TaskService,
+  constructor( private taskService: TaskService,
     private apiService: ApiService,
     private authService: AuthService,
     private modalController: ModalController,
@@ -589,7 +589,6 @@ export class AdminDashboardPage implements OnInit {
   }
 
   async logout(): Promise<void> {
-    this.showUserMenu = false;
     await this.popoverController.dismiss();
     this.authService.logout();
     this.navController.navigateRoot('/login');
@@ -601,7 +600,6 @@ export class AdminDashboardPage implements OnInit {
   }
 
   async navigateToEmployeeTasks(filter: string): Promise<void> {
-    this.showUserMenu = false;
     try {
       // Try to dismiss any open popover, but don't fail if none exists
       const popover = await this.popoverController.getTop();
