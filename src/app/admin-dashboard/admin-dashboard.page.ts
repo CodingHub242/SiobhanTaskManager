@@ -61,6 +61,7 @@ interface EmployeeTaskGroup {
 })
 export class AdminDashboardPage implements OnInit {
   Math = Math;
+  showUserMenu = false;
   tasks: Task[] = [];
   filteredTasks: Task[] = [];
   paginatedTasks: Task[] = [];
@@ -588,9 +589,14 @@ export class AdminDashboardPage implements OnInit {
   }
 
   async logout(): Promise<void> {
+    this.showUserMenu = false;
     await this.popoverController.dismiss();
     this.authService.logout();
     this.navController.navigateRoot('/login');
+  }
+
+  toggleUserMenu(): void {
+    this.showUserMenu = !this.showUserMenu;
   }
 
   async navigateToProfile(): Promise<void> {
@@ -599,6 +605,7 @@ export class AdminDashboardPage implements OnInit {
   }
 
   async navigateToEmployeeTasks(filter: string): Promise<void> {
+    this.showUserMenu = false;
     try {
       // Try to dismiss any open popover, but don't fail if none exists
       const popover = await this.popoverController.getTop();
