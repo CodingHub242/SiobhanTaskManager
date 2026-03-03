@@ -61,7 +61,6 @@ interface EmployeeTaskGroup {
 })
 export class AdminDashboardPage implements OnInit {
   Math = Math;
-  showUserMenu = false;
   tasks: Task[] = [];
   filteredTasks: Task[] = [];
   paginatedTasks: Task[] = [];
@@ -594,11 +593,6 @@ export class AdminDashboardPage implements OnInit {
     await this.popoverController.dismiss();
     this.authService.logout();
     this.navController.navigateRoot('/login');
-  }
-
-  toggleUserMenu(): void {
-    this.showUserMenu = !this.showUserMenu;
-    this.cdr.detectChanges();
   }
 
   async navigateToProfile(): Promise<void> {
