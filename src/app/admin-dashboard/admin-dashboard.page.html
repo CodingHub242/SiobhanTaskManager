@@ -139,8 +139,124 @@
           </ion-segment-button>
         </ion-segment>
 
-        <!-- Task Table View -->
-        <div *ngIf="paginatedTasks.length > 0; else noTasks" class="task-table-container">
+        <!-- View Toggle: All Tasks vs Grouped by Employee -->
+        <div class="view-toggle">
+          <ion-button-group>
+            <ion-button [fill]="listViewMode === 'grouped' ? 'solid' : 'outline'" size="small" (click)="setListViewMode('grouped')">
+              <ion-icon name="person"></ion-icon>
+              By Employee
+            </ion-button>
+            <ion-button [fill]="listViewMode === 'all' ? 'solid' : 'outline'" size="small" (click)="setListViewMode('all')">
+              <ion-icon name="list"></ion-icon>
+              All Tasks
+            </ion-button>
+          </ion-button-group>
+        </div>
+
+        <!-- Task Table View - Grouped by Employee -->
+        <div *ngIf="listViewMode === 'grouped'" class="employee-groups-container">
+          <div *ngIf="employeeTaskGroups.length > 0; else noGroupedTasks">
+            <div *ngFor="let group of employeeTaskGroups" class="employee-section">
+            <!-- Employee Header -->
+            <div class="employee-header">
+              <div class="employee-info">
+                <div class="employee-avatar">
+                  {{ getEmployeeInitialsFromUser(group.employee) }}
+                </div>
+                <div class="employee-details">
+                  <h3>{{ group.employee.name }}</h3>
+                  <p>{{ group.employee.email }}</p>
+                </div>
+              </div>
+              <div class="employee-stats">
+                <div class="stat-badge total">
+                  <ion-icon name="layers"></ion-icon>
+                  <span>{{ group.total }}</span>
+                </div>
+                <div class="stat-badge completed">
+                  <ion-icon name="checkmark"></ion-icon>
+                  <span>{{ group.completed }}</span>
+                </div>
+                <div class="stat-badge pending">
+                  <ion-icon name="time"></ion-icon>
+                  <span>{{ group.pending }}</span>
+                </div>
+                <div class="stat-badge overdue" *ngIf="group.overdue > 0">
+                  <ion-icon name="alert-circle"></ion-icon>
+                  <span>{{ group.overdue }}</span>
+                </div>
+              </div>
+            </div>
+            
+            <!-- Tasks Table for this Employee -->
+            <div class="task-table-container">
+              <table class="task-table">
+                <thead>
+                  <tr>
+                    <th style="width: 50px;">
+                      <ion-checkbox></ion-checkbox>
+                    </th>
+                    <th>Task</th>
+                    <th>Priority</th>
+                    <th>Due Date</th>
+                    <th style="width: 150px; text-align: center;">Actions</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr *ngFor="let task of group.tasks" [class.completed-row]="task.completed">
+                    <td>
+                      <ion-checkbox 
+                        [checked]="task.completed" 
+                        (ionChange)="toggleTask(task)">
+                      </ion-checkbox>
+                    </td>
+                    <td class="task-title-cell" (click)="viewTask(task)">
+                      <span class="task-title">{{ task.title }}</span>
+                      <span class="task-description">{{ task.description }}</span>
+                    </td>
+                    <td>
+                      <span class="priority-badge" [class]="task.priority">
+                        {{ task.priority | titlecase }}
+                      </span>
+                    </td>
+                    <td class="due-date-cell">
+                      <span class="due-date" [class]="getDueDateClass(task)">
+                        <ion-icon name="calendar"></ion-icon>
+                        {{ task.dueDate | date:'MMM d, yyyy' }}
+                      </span>
+                    </td>
+                    <td class="actions-cell">
+                      <div class="action-buttons">
+                        <ion-button fill="clear" (click)="openEditTaskModal(task)" title="Edit">
+                          <ion-icon name="create"></ion-icon>
+                        </ion-button>
+                        <ion-button fill="clear" (click)="reassignTask(task)" title="Reassign">
+                          <ion-icon name="swap-horizontal"></ion-icon>
+                        </ion-button>
+                        <ion-button fill="clear" class="delete-btn" (click)="deleteTask(task)" title="Delete">
+                          <ion-icon name="trash"></ion-icon>
+                        </ion-button>
+                      </div>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+          
+          <ng-template #noGroupedTasks>
+            <div class="no-tasks-container">
+              <div class="empty-state">
+                <ion-icon name="person"></ion-icon>
+                <h3>No tasks assigned</h3>
+                <p>No tasks found for the selected filter</p>
+              </div>
+            </div>
+          </ng-template>
+        </div>
+
+        <!-- Task Table View - Flat List -->
+        <div *ngIf="listViewMode === 'all' && paginatedTasks.length > 0; else noTasks" class="task-table-container">
           <table class="task-table">
             <thead>
               <tr>
@@ -203,7 +319,7 @@
         </div>
 
         <!-- Pagination Controls -->
-        <div class="pagination-controls" *ngIf="totalItems > pageSize">
+        <div class="pagination-controls" *ngIf="totalItems > pageSize && listViewMode === 'all'">
           <div class="pagination-info">
             Showing {{ (currentPage - 1) * pageSize + 1 }} - {{ Math.min(currentPage * pageSize, totalItems) }} of {{ totalItems }} tasks
           </div>

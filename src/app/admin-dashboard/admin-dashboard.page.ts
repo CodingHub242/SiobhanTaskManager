@@ -28,6 +28,15 @@ interface ChartData {
   color: string;
 }
 
+interface EmployeeTaskGroup {
+  employee: User;
+  tasks: Task[];
+  total: number;
+  completed: number;
+  pending: number;
+  overdue: number;
+}
+
 @Component({
   selector: 'app-admin-dashboard',
   templateUrl: './admin-dashboard.page.html',
@@ -75,6 +84,12 @@ export class AdminDashboardPage implements OnInit {
   
   // Filter
   filter: 'all' | 'completed' | 'pending' | 'overdue' = 'all';
+  
+  // View mode for list: 'all' (flat) or 'grouped' (by employee)
+  listViewMode: 'all' | 'grouped' = 'grouped';
+  
+  // Employee task groups
+  employeeTaskGroups: EmployeeTaskGroup[] = [];
   
   private destroy$ = new Subject<void>();
 
@@ -482,6 +497,40 @@ export class AdminDashboardPage implements OnInit {
     this.totalItems = this.filteredTasks.length;
     this.totalPages = Math.ceil(this.totalItems / this.pageSize);
     this.updatePaginatedTasks();
+    
+    // Also update employee groups
+    this.groupTasksByEmployee();
+  }
+
+  groupTasksByEmployee(): void {
+    const groups: EmployeeTaskGroup[] = [];
+    const employees = this.users.filter(u => u.role === 'employee' || !u.role);
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+
+    employees.forEach(employee => {
+      let employeeTasks = this.filteredTasks.filter(t => t.employeeId === employee.id);
+
+      if (employeeTasks.length > 0) {
+        const allEmployeeTasks = this.tasks.filter(t => t.employeeId === employee.id);
+        
+        groups.push({
+          employee,
+          tasks: employeeTasks,
+          total: allEmployeeTasks.length,
+          completed: allEmployeeTasks.filter(t => t.completed).length,
+          pending: allEmployeeTasks.filter(t => !t.completed).length,
+          overdue: allEmployeeTasks.filter(t => !t.completed && new Date(t.dueDate) < today).length
+        });
+      }
+    });
+
+    // Sort by total tasks (descending)
+    this.employeeTaskGroups = groups.sort((a, b) => b.total - a.total);
+  }
+
+  setListViewMode(mode: 'all' | 'grouped'): void {
+    this.listViewMode = mode;
   }
 
   // Pagination methods
@@ -637,6 +686,15 @@ export class AdminDashboardPage implements OnInit {
   getEmployeeInitials(employeeId?: string): string {
     if (!employeeId) return '';
     const user = this.users.find(u => u.id === employeeId);
+    if (!user) return '';
+    const names = user.name.split(' ');
+    if (names.length >= 2) {
+      return names[0][0] + names[1][0];
+    }
+    return names[0][0];
+  }
+
+  getEmployeeInitialsFromUser(user: User): string {
     if (!user) return '';
     const names = user.name.split(' ');
     if (names.length >= 2) {
