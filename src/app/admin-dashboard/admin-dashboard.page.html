@@ -6,30 +6,28 @@
         Siobhan Tasks
       </span>
     </ion-title>
-    <ion-buttons slot="end">
-      <div class="user-menu-container">
-        <ion-button id="user-menu-trigger" (click)="toggleUserMenu()">
-          <ion-avatar slot="start">
-            <img *ngIf="getCurrentUser()?.avatar" [src]="getAvatarUrl()" alt="Avatar" />
-            <div *ngIf="!getCurrentUser()?.avatar" class="user-avatar">
-              {{ getUserInitials() }}
-            </div>
-          </ion-avatar>
-          <span class="user-name">{{ getCurrentUser()?.name }}</span>
-          <ion-icon name="chevron-down"></ion-icon>
-        </ion-button>
-        <div class="user-dropdown" *ngIf="showUserMenu">
-          <div class="dropdown-item" (click)="navigateToProfile(); showUserMenu = false">
-            <ion-icon name="person"></ion-icon>
-            <span>Profile</span>
+    <div class="user-menu-container" slot="end">
+      <ion-button id="user-menu-trigger" (click)="toggleUserMenu()">
+        <ion-avatar slot="start">
+          <img *ngIf="getCurrentUser()?.avatar" [src]="getAvatarUrl()" alt="Avatar" />
+          <div *ngIf="!getCurrentUser()?.avatar" class="user-avatar">
+            {{ getUserInitials() }}
           </div>
-          <div class="dropdown-item" (click)="logout(); showUserMenu = false">
-            <ion-icon name="log-out"></ion-icon>
-            <span>Logout</span>
-          </div>
+        </ion-avatar>
+        <span class="user-name">{{ getCurrentUser()?.name }}</span>
+        <ion-icon name="chevron-down"></ion-icon>
+      </ion-button>
+      <div class="user-dropdown" *ngIf="showUserMenu">
+        <div class="dropdown-item" (click)="navigateToProfile(); showUserMenu = false">
+          <ion-icon name="person"></ion-icon>
+          <span>Profile</span>
+        </div>
+        <div class="dropdown-item" (click)="logout(); showUserMenu = false">
+          <ion-icon name="log-out"></ion-icon>
+          <span>Logout</span>
         </div>
       </div>
-    </ion-buttons>
+    </div>
   </ion-toolbar>
 </ion-header>
 

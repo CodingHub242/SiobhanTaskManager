@@ -41,22 +41,17 @@ ion-title {
 }
 
 // ==================== USER MENU ====================
-ion-buttons {
-  ion-button {
-    --padding-start: 8px;
-    --padding-end: 12px;
-    --border-radius: 8px;
-  }
-}
-
 .user-menu-container {
   position: relative;
+  display: flex;
+  align-items: center;
+  padding-right: 8px;
 }
 
 .user-dropdown {
   position: absolute;
   top: 100%;
-  right: 0;
+  right: 8px;
   background: #ffffff;
   border: 1px solid #e0e0e0;
   border-radius: 12px;
