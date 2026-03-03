@@ -47,7 +47,7 @@
     
     <!-- Quick Stats Row -->
     <div class="quick-stats">
-      <div class="stat-item clickable" (click)="navigateToEmployeeTasks('all')">
+      <div class="stat-item clickable" button (click)="navigateToEmployeeTasks('all')">
         <div class="stat-icon-wrapper total">
           <ion-icon name="layers"></ion-icon>
         </div>
@@ -56,7 +56,7 @@
           <span class="stat-text">Total Tasks</span>
         </div>
       </div>
-      <div class="stat-item clickable" (click)="navigateToEmployeeTasks('completed')">
+      <div class="stat-item clickable" button (click)="navigateToEmployeeTasks('completed')">
         <div class="stat-icon-wrapper completed">
           <ion-icon name="checkmark-circle"></ion-icon>
         </div>
@@ -65,7 +65,7 @@
           <span class="stat-text">Completed</span>
         </div>
       </div>
-      <div class="stat-item clickable" (click)="navigateToEmployeeTasks('pending')">
+      <div class="stat-item clickable" button (click)="navigateToEmployeeTasks('pending')">
         <div class="stat-icon-wrapper pending">
           <ion-icon name="time"></ion-icon>
         </div>
@@ -74,7 +74,7 @@
           <span class="stat-text">In Progress</span>
         </div>
       </div>
-      <div class="stat-item clickable" (click)="navigateToEmployeeTasks('overdue')">
+      <div class="stat-item clickable" button (click)="navigateToEmployeeTasks('overdue')">
         <div class="stat-icon-wrapper overdue">
           <ion-icon name="alert-circle"></ion-icon>
         </div>

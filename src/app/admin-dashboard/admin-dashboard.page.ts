@@ -550,8 +550,19 @@ export class AdminDashboardPage implements OnInit {
   }
 
   async navigateToEmployeeTasks(filter: string): Promise<void> {
-    await this.popoverController.dismiss();
-    this.navController.navigateRoot('/employee-tasks', {
+    try {
+      // Try to dismiss any open popover, but don't fail if none exists
+      const popover = await this.popoverController.getTop();
+      if (popover) {
+        await popover.dismiss();
+      }
+    } catch (error) {
+      // Ignore errors - popover may not exist
+      console.log('No popover to dismiss');
+    }
+    
+    // Navigate to employee tasks page with filter parameter
+    await this.navController.navigateForward('/employee-tasks', {
       queryParams: { filter: filter }
     });
   }
