@@ -319,6 +319,15 @@ ion-fab-button {
       transform: translateY(-2px);
       box-shadow: 0 4px 16px rgba(0, 123, 255, 0.1);
     }
+    
+    &.clickable {
+      cursor: pointer;
+      
+      &:hover {
+        border-color: #007bff;
+        background: rgba(0, 123, 255, 0.02);
+      }
+    }
   }
 
   .stat-icon-wrapper {

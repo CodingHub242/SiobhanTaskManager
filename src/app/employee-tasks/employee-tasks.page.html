@@ -1,0 +1,114 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-button (click)="goBack()">
+        <ion-icon name="arrow-back"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+    <ion-title>{{ pageTitle }}</ion-title>
+  </ion-toolbar>
+  <ion-toolbar>
+    <ion-segment [(ngModel)]="selectedFilter" (ionChange)="setFilter($any($event.detail.value))">
+      <ion-segment-button value="all">
+        <ion-label>All</ion-label>
+      </ion-segment-button>
+      <ion-segment-button value="completed">
+        <ion-label>Completed</ion-label>
+      </ion-segment-button>
+      <ion-segment-button value="pending">
+        <ion-label>Pending</ion-label>
+      </ion-segment-button>
+      <ion-segment-button value="overdue">
+        <ion-label>Overdue</ion-label>
+      </ion-segment-button>
+    </ion-segment>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true" class="employee-tasks-page">
+  <div class="employee-tasks-container">
+    <!-- Employee Task Groups -->
+    <div *ngFor="let group of employeeTaskGroups" class="employee-section">
+      <!-- Employee Header -->
+      <div class="employee-header" (click)="group.tasks.length > 0">
+        <div class="employee-info">
+          <div class="employee-avatar">
+            {{ getEmployeeInitials(group.employee) }}
+          </div>
+          <div class="employee-details">
+            <h3>{{ group.employee.name }}</h3>
+            <p>{{ group.employee.email }}</p>
+          </div>
+        </div>
+        <div class="employee-stats">
+          <div class="stat-badge total">
+            <ion-icon name="layers"></ion-icon>
+            <span>{{ group.total }}</span>
+          </div>
+          <div class="stat-badge completed">
+            <ion-icon name="checkmark"></ion-icon>
+            <span>{{ group.completed }}</span>
+          </div>
+          <div class="stat-badge pending">
+            <ion-icon name="time"></ion-icon>
+            <span>{{ group.pending }}</span>
+          </div>
+          <div class="stat-badge overdue" *ngIf="group.overdue > 0">
+            <ion-icon name="alert-circle"></ion-icon>
+            <span>{{ group.overdue }}</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Tasks Table -->
+      <div class="tasks-table-container" *ngIf="group.tasks.length > 0">
+        <table class="tasks-table">
+          <thead>
+            <tr>
+              <th>Task</th>
+              <th>Priority</th>
+              <th>Due Date</th>
+              <th>Status</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let task of group.tasks" [class.completed-row]="task.completed">
+              <td class="task-cell">
+                <span class="task-title">{{ task.title }}</span>
+                <span class="task-description">{{ task.description }}</span>
+              </td>
+              <td>
+                <span class="priority-badge" [class]="task.priority">
+                  {{ task.priority | titlecase }}
+                </span>
+              </td>
+              <td>
+                <span class="due-date" [class]="getDueDateClass(task)">
+                  <ion-icon name="calendar"></ion-icon>
+                  {{ task.dueDate | date:'MMM d, yyyy' }}
+                </span>
+              </td>
+              <td>
+                <span class="status-badge" [class]="task.completed ? 'completed' : 'pending'">
+                  <ion-icon [name]="task.completed ? 'checkmark' : 'time'"></ion-icon>
+                  {{ task.completed ? 'Completed' : 'Pending' }}
+                </span>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="no-tasks" *ngIf="group.tasks.length === 0">
+        <p>No {{ selectedFilter }} tasks for this employee</p>
+      </div>
+    </div>
+
+    <!-- Empty State -->
+    <div class="empty-state" *ngIf="employeeTaskGroups.length === 0">
+      <ion-icon name="layers"></ion-icon>
+      <h3>No tasks found</h3>
+      <p>No tasks match the current filter</p>
+    </div>
+  </div>
+</ion-content>

@@ -549,6 +549,13 @@ export class AdminDashboardPage implements OnInit {
     this.navController.navigateRoot('/profile');
   }
 
+  async navigateToEmployeeTasks(filter: string): Promise<void> {
+    await this.popoverController.dismiss();
+    this.navController.navigateRoot('/employee-tasks', {
+      queryParams: { filter: filter }
+    });
+  }
+
   getCurrentUser(): User | null {
     return this.authService.getCurrentUser();
   }

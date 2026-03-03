@@ -33,6 +33,10 @@ export const routes: Routes = [
     path: 'profile',
     loadComponent: () => import('./profile/profile.page').then( m => m.ProfilePage)
   },
+  {
+    path: 'employee-tasks',
+    loadComponent: () => import('./employee-tasks/employee-tasks.page').then( m => m.EmployeeTasksPage)
+  },
   // {
   //   path: 'task-report-modal',
   //   loadComponent: () => import('./task-report-modal/task-report-modal.page').then( m => m.TaskReportModalPage)
