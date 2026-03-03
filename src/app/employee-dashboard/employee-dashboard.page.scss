@@ -287,9 +287,9 @@ ion-item {
 
 .view-container {
   max-width: 1200px;
-    overflow-y: scroll;
-    height: 100vh;
-    max-height: 100%;
+    // overflow-y: scroll;
+    // height: calc(100vh - 120px);
+    // max-height: 100vh;
 }
 
 // Section Header
