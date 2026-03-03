@@ -17,21 +17,21 @@
         <span class="user-name">{{ getCurrentUser()?.name }}</span>
         <ion-icon name="chevron-down"></ion-icon>
       </ion-button>
-        <ion-popover trigger="user-menu-trigger" dismiss-on-select>
-          <ion-content style="--background: #ffffff;">
-            <ion-list>
-              <ion-item class="menu-item" button (click)="navigateToProfile()">
-                <ion-icon name="person" slot="start"></ion-icon>
-                <ion-label>Profile</ion-label>
-              </ion-item>
-              <ion-item class="menu-item" button (click)="logout()">
-                <ion-icon name="log-out" slot="start"></ion-icon>
-                <ion-label>Logout</ion-label>
-              </ion-item>
-            </ion-list>
-          </ion-content>
-        </ion-popover>
     </ion-buttons>
+    <ion-popover trigger="user-menu-trigger" dismiss-on-select>
+      <div style="background: #ffffff; padding: 8px;">
+        <ion-list>
+          <ion-item class="menu-item" button (click)="navigateToProfile()">
+            <ion-icon name="person" slot="start"></ion-icon>
+            <ion-label>Profile</ion-label>
+          </ion-item>
+          <ion-item class="menu-item" button (click)="logout()">
+            <ion-icon name="log-out" slot="start"></ion-icon>
+            <ion-label>Logout</ion-label>
+          </ion-item>
+        </ion-list>
+      </div>
+    </ion-popover>
   </ion-toolbar>
 </ion-header>
 
@@ -153,94 +153,95 @@
 
         <!-- Task Table View - Grouped by Employee -->
         <div *ngIf="listViewMode === 'grouped'" class="employee-groups-container">
-          <div *ngIf="employeeTaskGroups.length > 0; else noGroupedTasks">
+          <ng-container *ngIf="employeeTaskGroups.length > 0; else noGroupedTasks">
             <div *ngFor="let group of employeeTaskGroups" class="employee-section">
-            <!-- Employee Header -->
-            <div class="employee-header">
-              <div class="employee-info">
-                <div class="employee-avatar">
-                  {{ getEmployeeInitialsFromUser(group.employee) }}
+              <!-- Employee Header -->
+              <div class="employee-header">
+                <div class="employee-info">
+                  <div class="employee-avatar">
+                    {{ getEmployeeInitialsFromUser(group.employee) }}
+                  </div>
+                  <div class="employee-details">
+                    <h3>{{ group.employee.name }}</h3>
+                    <p>{{ group.employee.email }}</p>
+                  </div>
                 </div>
-                <div class="employee-details">
-                  <h3>{{ group.employee.name }}</h3>
-                  <p>{{ group.employee.email }}</p>
+                <div class="employee-stats">
+                  <div class="stat-badge total">
+                    <ion-icon name="layers"></ion-icon>
+                    <span>{{ group.total }}</span>
+                  </div>
+                  <div class="stat-badge completed">
+                    <ion-icon name="checkmark"></ion-icon>
+                    <span>{{ group.completed }}</span>
+                  </div>
+                  <div class="stat-badge pending">
+                    <ion-icon name="time"></ion-icon>
+                    <span>{{ group.pending }}</span>
+                  </div>
+                  <div class="stat-badge overdue" *ngIf="group.overdue > 0">
+                    <ion-icon name="alert-circle"></ion-icon>
+                    <span>{{ group.overdue }}</span>
+                  </div>
                 </div>
               </div>
-              <div class="employee-stats">
-                <div class="stat-badge total">
-                  <ion-icon name="layers"></ion-icon>
-                  <span>{{ group.total }}</span>
-                </div>
-                <div class="stat-badge completed">
-                  <ion-icon name="checkmark"></ion-icon>
-                  <span>{{ group.completed }}</span>
-                </div>
-                <div class="stat-badge pending">
-                  <ion-icon name="time"></ion-icon>
-                  <span>{{ group.pending }}</span>
-                </div>
-                <div class="stat-badge overdue" *ngIf="group.overdue > 0">
-                  <ion-icon name="alert-circle"></ion-icon>
-                  <span>{{ group.overdue }}</span>
-                </div>
+              
+              <!-- Tasks Table for this Employee -->
+              <div class="task-table-container">
+                <table class="task-table">
+                  <thead>
+                    <tr>
+                      <th style="width: 50px;">
+                        <ion-checkbox></ion-checkbox>
+                      </th>
+                      <th>Task</th>
+                      <th>Priority</th>
+                      <th>Due Date</th>
+                      <th style="width: 150px; text-align: center;">Actions</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr *ngFor="let task of group.tasks" [class.completed-row]="task.completed">
+                      <td>
+                        <ion-checkbox 
+                          [checked]="task.completed" 
+                          (ionChange)="toggleTask(task)">
+                        </ion-checkbox>
+                      </td>
+                      <td class="task-title-cell" (click)="viewTask(task)">
+                        <span class="task-title">{{ task.title }}</span>
+                        <span class="task-description">{{ task.description }}</span>
+                      </td>
+                      <td>
+                        <span class="priority-badge" [class]="task.priority">
+                          {{ task.priority | titlecase }}
+                        </span>
+                      </td>
+                      <td class="due-date-cell">
+                        <span class="due-date" [class]="getDueDateClass(task)">
+                          <ion-icon name="calendar"></ion-icon>
+                          {{ task.dueDate | date:'MMM d, yyyy' }}
+                        </span>
+                      </td>
+                      <td class="actions-cell">
+                        <div class="action-buttons">
+                          <ion-button fill="clear" (click)="openEditTaskModal(task)" title="Edit">
+                            <ion-icon name="create"></ion-icon>
+                          </ion-button>
+                          <ion-button fill="clear" (click)="reassignTask(task)" title="Reassign">
+                            <ion-icon name="swap-horizontal"></ion-icon>
+                          </ion-button>
+                          <ion-button fill="clear" class="delete-btn" (click)="deleteTask(task)" title="Delete">
+                            <ion-icon name="trash"></ion-icon>
+                          </ion-button>
+                        </div>
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
               </div>
             </div>
-            
-            <!-- Tasks Table for this Employee -->
-            <div class="task-table-container">
-              <table class="task-table">
-                <thead>
-                  <tr>
-                    <th style="width: 50px;">
-                      <ion-checkbox></ion-checkbox>
-                    </th>
-                    <th>Task</th>
-                    <th>Priority</th>
-                    <th>Due Date</th>
-                    <th style="width: 150px; text-align: center;">Actions</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr *ngFor="let task of group.tasks" [class.completed-row]="task.completed">
-                    <td>
-                      <ion-checkbox 
-                        [checked]="task.completed" 
-                        (ionChange)="toggleTask(task)">
-                      </ion-checkbox>
-                    </td>
-                    <td class="task-title-cell" (click)="viewTask(task)">
-                      <span class="task-title">{{ task.title }}</span>
-                      <span class="task-description">{{ task.description }}</span>
-                    </td>
-                    <td>
-                      <span class="priority-badge" [class]="task.priority">
-                        {{ task.priority | titlecase }}
-                      </span>
-                    </td>
-                    <td class="due-date-cell">
-                      <span class="due-date" [class]="getDueDateClass(task)">
-                        <ion-icon name="calendar"></ion-icon>
-                        {{ task.dueDate | date:'MMM d, yyyy' }}
-                      </span>
-                    </td>
-                    <td class="actions-cell">
-                      <div class="action-buttons">
-                        <ion-button fill="clear" (click)="openEditTaskModal(task)" title="Edit">
-                          <ion-icon name="create"></ion-icon>
-                        </ion-button>
-                        <ion-button fill="clear" (click)="reassignTask(task)" title="Reassign">
-                          <ion-icon name="swap-horizontal"></ion-icon>
-                        </ion-button>
-                        <ion-button fill="clear" class="delete-btn" (click)="deleteTask(task)" title="Delete">
-                          <ion-icon name="trash"></ion-icon>
-                        </ion-button>
-                      </div>
-                    </td>
-                  </tr>
-                </tbody>
-              </table>
-            </div>
-          </div>
+          </ng-container>
           
           <ng-template #noGroupedTasks>
             <div class="no-tasks-container">
@@ -254,67 +255,69 @@
         </div>
 
         <!-- Task Table View - Flat List -->
-        <div *ngIf="listViewMode === 'all' && paginatedTasks.length > 0; else noTasks" class="task-table-container">
-          <table class="task-table">
-            <thead>
-              <tr>
-                <th style="width: 50px;">
-                  <ion-checkbox></ion-checkbox>
-                </th>
-                <th>Task</th>
-                <th>Priority</th>
-                <th>Due Date</th>
-                <th>Assignee</th>
-                <th style="width: 150px; text-align: center;">Actions</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr *ngFor="let task of paginatedTasks" [class.completed-row]="task.completed">
-                <td>
-                  <ion-checkbox 
-                    [checked]="task.completed" 
-                    (ionChange)="toggleTask(task)">
-                  </ion-checkbox>
-                </td>
-                <td class="task-title-cell" (click)="viewTask(task)">
-                  <span class="task-title">{{ task.title }}</span>
-                  <span class="task-description">{{ task.description }}</span>
-                </td>
-                <td>
-                  <span class="priority-badge" [class]="task.priority">
-                    {{ task.priority | titlecase }}
-                  </span>
-                </td>
-                <td class="due-date-cell">
-                  <span class="due-date" [class]="getDueDateClass(task)">
-                    <ion-icon name="calendar"></ion-icon>
-                    {{ task.dueDate | date:'MMM d, yyyy' }}
-                  </span>
-                </td>
-                <td class="assignee-cell">
-                  <div class="assignee" *ngIf="getEmployeeName(task.employeeId)">
-                    <span class="assignee-avatar">{{ getEmployeeInitials(task.employeeId) }}</span>
-                    <span class="assignee-name">{{ getEmployeeName(task.employeeId) }}</span>
-                  </div>
-                  <span *ngIf="!getEmployeeName(task.employeeId)" class="no-assignee">Unassigned</span>
-                </td>
-                <td class="actions-cell">
-                  <div class="action-buttons">
-                    <ion-button fill="clear" (click)="openEditTaskModal(task)" title="Edit">
-                      <ion-icon name="create"></ion-icon>
-                    </ion-button>
-                    <ion-button fill="clear" (click)="reassignTask(task)" title="Reassign">
-                      <ion-icon name="swap-horizontal"></ion-icon>
-                    </ion-button>
-                    <ion-button fill="clear" class="delete-btn" (click)="deleteTask(task)" title="Delete">
-                      <ion-icon name="trash"></ion-icon>
-                    </ion-button>
-                  </div>
-                </td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
+        <ng-container *ngIf="listViewMode === 'all'">
+          <div *ngIf="paginatedTasks.length > 0; else noTasks" class="task-table-container">
+            <table class="task-table">
+              <thead>
+                <tr>
+                  <th style="width: 50px;">
+                    <ion-checkbox></ion-checkbox>
+                  </th>
+                  <th>Task</th>
+                  <th>Priority</th>
+                  <th>Due Date</th>
+                  <th>Assignee</th>
+                  <th style="width: 150px; text-align: center;">Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngFor="let task of paginatedTasks" [class.completed-row]="task.completed">
+                  <td>
+                    <ion-checkbox 
+                      [checked]="task.completed" 
+                      (ionChange)="toggleTask(task)">
+                    </ion-checkbox>
+                  </td>
+                  <td class="task-title-cell" (click)="viewTask(task)">
+                    <span class="task-title">{{ task.title }}</span>
+                    <span class="task-description">{{ task.description }}</span>
+                  </td>
+                  <td>
+                    <span class="priority-badge" [class]="task.priority">
+                      {{ task.priority | titlecase }}
+                    </span>
+                  </td>
+                  <td class="due-date-cell">
+                    <span class="due-date" [class]="getDueDateClass(task)">
+                      <ion-icon name="calendar"></ion-icon>
+                      {{ task.dueDate | date:'MMM d, yyyy' }}
+                    </span>
+                  </td>
+                  <td class="assignee-cell">
+                    <div class="assignee" *ngIf="getEmployeeName(task.employeeId)">
+                      <span class="assignee-avatar">{{ getEmployeeInitials(task.employeeId) }}</span>
+                      <span class="assignee-name">{{ getEmployeeName(task.employeeId) }}</span>
+                    </div>
+                    <span *ngIf="!getEmployeeName(task.employeeId)" class="no-assignee">Unassigned</span>
+                  </td>
+                  <td class="actions-cell">
+                    <div class="action-buttons">
+                      <ion-button fill="clear" (click)="openEditTaskModal(task)" title="Edit">
+                        <ion-icon name="create"></ion-icon>
+                      </ion-button>
+                      <ion-button fill="clear" (click)="reassignTask(task)" title="Reassign">
+                        <ion-icon name="swap-horizontal"></ion-icon>
+                      </ion-button>
+                      <ion-button fill="clear" class="delete-btn" (click)="deleteTask(task)" title="Delete">
+                        <ion-icon name="trash"></ion-icon>
+                      </ion-button>
+                    </div>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </ng-container>
 
         <!-- Pagination Controls -->
         <div class="pagination-controls" *ngIf="totalItems > pageSize && listViewMode === 'all'">
@@ -513,6 +516,7 @@
     </div>
   </div>
 
+  <!-- Empty State Template -->
   <ng-template #noTasks>
     <div class="no-tasks-container">
       <div class="empty-state">
@@ -557,10 +561,4 @@
       </div>
     </ion-content>
   </ion-modal>
-
-  <!-- <ion-fab vertical="bottom" horizontal="end" slot="fixed" *ngIf="viewMode === 'list'">
-    <ion-fab-button (click)="openAddTaskModal()">
-      <ion-icon name="add"></ion-icon>
-    </ion-fab-button>
-  </ion-fab> -->
 </ion-content>
