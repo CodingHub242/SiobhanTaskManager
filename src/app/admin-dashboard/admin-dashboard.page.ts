@@ -596,7 +596,7 @@ export class AdminDashboardPage implements OnInit {
 
   async navigateToProfile(): Promise<void> {
     await this.popoverController.dismiss();
-    this.navController.navigateRoot('/profile');
+    this.navController.navigateForward('/profile');
   }
 
   async navigateToEmployeeTasks(filter: string): Promise<void> {

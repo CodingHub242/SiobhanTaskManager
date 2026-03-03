@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy, ChangeDetectorRef, CUSTOM_ELEMENTS_SCHEMA  } from '@angular/core';
+import { Component, OnInit, OnDestroy, ChangeDetectorRef, CUSTOM_ELEMENTS_SCHEMA, ViewChild, ElementRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { IonicModule, AlertController, ToastController, ActionSheetController, NavController, LoadingController } from '@ionic/angular';
@@ -7,7 +7,6 @@ import { IonButton, IonButtons, IonContent, IonHeader, IonTitle, IonToolbar, Ion
 import { ApiService } from '../services/api.service';
 import { User } from '../models/user.model';
 import { addIcons } from 'ionicons';
-import $ from 'jquery';
 import { Camera, CameraResultType, CameraSource } from '@capacitor/camera';
 import { arrowBack, camera, create, informationCircle, informationCircleOutline, key, lockClosed, pencil, shieldCheckmark } from 'ionicons/icons';
 import { takeUntil } from 'rxjs';
@@ -35,6 +34,7 @@ import { Subject } from 'rxjs';
 export class ProfilePage implements OnInit {
   user: User | null = null;
   editMode = false;
+  isLoading = false;
   
   // Form data
   editName = '';
@@ -60,8 +60,6 @@ export class ProfilePage implements OnInit {
 
   ngOnInit() {
      this.loadUserProfile();
-
-     $('ion-spinner').hide();
   }
 
   ngOnDestroy(): void {
@@ -325,8 +323,7 @@ export class ProfilePage implements OnInit {
   async processAndUploadImage(webPath: string): Promise<void> {
     console.log('processAndUploadImage called with:', webPath);
     
-   // let loading: HTMLIonLoadingElement | null = null;
-    $('ion-spinner').show();
+    this.isLoading = true;
     try {
       // // Show loading indicator
       // loading = await this.loadingController.create({
