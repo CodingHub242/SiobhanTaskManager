@@ -589,13 +589,13 @@ export class AdminDashboardPage implements OnInit {
   }
 
   async logout(): Promise<void> {
-    await this.popoverController.dismiss();
+   // await this.popoverController.dismiss();
     this.authService.logout();
     this.navController.navigateRoot('/login');
   }
 
   async navigateToProfile(): Promise<void> {
-    await this.popoverController.dismiss();
+   // await this.popoverController.dismiss();
     this.navController.navigateForward('/profile');
   }
 
