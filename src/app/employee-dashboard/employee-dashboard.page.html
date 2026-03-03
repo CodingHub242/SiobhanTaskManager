@@ -19,14 +19,14 @@
       </ion-button>
       <ion-popover trigger="user-menu-trigger" dismiss-on-select>
         <ng-template>
-          <ion-content>
+          <ion-content style="--background: #ffffff;">
             <ion-list>
-             <ion-item class="menu-item" style="--color:#073336;" button (click)="navigateToProfile()">
-                <ion-icon style="color:#073336;" name="person" slot="start"></ion-icon>
+              <ion-item class="menu-item" button (click)="navigateToProfile()">
+                <ion-icon name="person" slot="start"></ion-icon>
                 <ion-label>Profile</ion-label>
               </ion-item>
-              <ion-item class="menu-item" style="--color:#073336;" button (click)="logout()">
-                <ion-icon style="color:#073336;" name="log-out" slot="start"></ion-icon>
+              <ion-item class="menu-item" button (click)="logout()">
+                <ion-icon name="log-out" slot="start"></ion-icon>
                 <ion-label>Logout</ion-label>
               </ion-item>
             </ion-list>
@@ -141,44 +141,60 @@
           class="custom-searchbar">
         </ion-searchbar>
 
-        <ion-list *ngIf="paginatedTasks.length > 0; else noTasks" class="task-list">
-          <ion-item-sliding *ngFor="let task of paginatedTasks" class="task-item-row">
-            <ion-item class="listitem">
-              <ion-checkbox 
-                slot="start" 
-                [checked]="task.completed" 
-                (ionChange)="toggleTaskCompletion(task)">
-              </ion-checkbox>
-              <ion-label [class.completed-task]="task.completed">
-                <div class="task-main" (click)="showTaskOptions(task)">
-                  <h2>{{ task.title }}</h2>
-                  <p>{{ task.description }}</p>
-                </div>
-                <div class="task-meta">
-                  <div class="task-badges">
-                    <span class="badge priority" [class]="task.priority">
-                      <ion-icon name="flag"></ion-icon>
-                      {{ task.priority | titlecase }}
-                    </span>
-                    <span class="badge due-date" [class]="getDueDateClass(task)">
-                      <ion-icon name="calendar"></ion-icon>
-                      {{ task.dueDate | date:'MMM d' }}
-                    </span>
-                    <span class="badge status" [class]="task.completed ? 'completed' : 'pending'">
-                      <ion-icon [name]="task.completed ? 'checkmark-circle' : 'time'"></ion-icon>
-                      {{ task.completed ? 'Completed' : 'Pending' }}
-                    </span>
+        <!-- Task Table View -->
+        <div *ngIf="paginatedTasks.length > 0; else noTasks" class="task-table-container">
+          <table class="task-table">
+            <thead>
+              <tr>
+                <th style="width: 50px;">
+                  <ion-checkbox></ion-checkbox>
+                </th>
+                <th>Task</th>
+                <th>Priority</th>
+                <th>Due Date</th>
+                <th>Status</th>
+                <th style="width: 100px; text-align: center;">Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let task of paginatedTasks" [class.completed-row]="task.completed">
+                <td>
+                  <ion-checkbox 
+                    [checked]="task.completed" 
+                    (ionChange)="toggleTaskCompletion(task)">
+                  </ion-checkbox>
+                </td>
+                <td class="task-title-cell" (click)="showTaskOptions(task)">
+                  <span class="task-title">{{ task.title }}</span>
+                  <span class="task-description">{{ task.description }}</span>
+                </td>
+                <td>
+                  <span class="priority-badge" [class]="task.priority">
+                    {{ task.priority | titlecase }}
+                  </span>
+                </td>
+                <td class="due-date-cell">
+                  <span class="due-date" [class]="getDueDateClass(task)">
+                    <ion-icon name="calendar"></ion-icon>
+                    {{ task.dueDate | date:'MMM d, yyyy' }}
+                  </span>
+                </td>
+                <td class="status-cell">
+                  <span class="priority-badge" [class]="task.completed ? 'completed' : 'pending'">
+                    {{ task.completed ? 'Completed' : 'Pending' }}
+                  </span>
+                </td>
+                <td class="actions-cell">
+                  <div class="action-buttons">
+                    <ion-button fill="clear" (click)="showTaskOptions(task)" title="View Details">
+                      <ion-icon name="ellipsis-vertical"></ion-icon>
+                    </ion-button>
                   </div>
-                </div>
-              </ion-label>
-            </ion-item>
-            <ion-item-options side="end">
-              <ion-item-option color="secondary" (click)="showTaskOptions(task)">
-                <ion-icon name="ellipsis-vertical"></ion-icon>
-              </ion-item-option>
-            </ion-item-options>
-          </ion-item-sliding>
-        </ion-list>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
 
         <!-- Pagination Controls -->
         <div class="pagination-controls" *ngIf="totalItems > pageSize">

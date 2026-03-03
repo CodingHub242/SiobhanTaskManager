@@ -616,6 +616,17 @@ export class AdminDashboardPage implements OnInit {
     return user ? user.name : '';
   }
 
+  getEmployeeInitials(employeeId?: string): string {
+    if (!employeeId) return '';
+    const user = this.users.find(u => u.id === employeeId);
+    if (!user) return '';
+    const names = user.name.split(' ');
+    if (names.length >= 2) {
+      return names[0][0] + names[1][0];
+    }
+    return names[0][0];
+  }
+
   getCompletionRate(): number {
     const tasks = this.tasks || [];
     if (tasks.length === 0) return 0;
