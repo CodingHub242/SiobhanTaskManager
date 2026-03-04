@@ -1416,8 +1416,7 @@ ion-fab-button {
 // ==================== DATE PICKER MODAL ====================
 .date-picker-content {
   --background: #ffffff;
-  padding: 20px;
-  --padding: 20px;
+  --padding: 16px;
   display: block;
   visibility: visible !important;
   
@@ -1431,7 +1430,8 @@ ion-fab-button {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 16px;
+  gap: 12px;
+  padding: 12px;
 }
 
 .date-picker-info {
@@ -1468,7 +1468,7 @@ ion-datetime {
   color: #333333;
   width: 100%;
   max-width: 100%;
-  min-height: 300px;
+  min-height: 250px;
   height: auto;
   display: block;
   visibility: visible !important;
