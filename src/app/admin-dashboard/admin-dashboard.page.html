@@ -514,36 +514,3 @@
       </div>
     </div>
   </ng-template>
-</ion-content>
-
-<ion-modal [isOpen]="showDatePicker" (didDismiss)="cancelReassign()" [breakpoints]="[0.5, 0.95]" [initialBreakpoint]="0.9">
-  <ng-template>
-    <ion-header>
-      <ion-toolbar>
-        <ion-title>Select Due Date</ion-title>
-        <ion-buttons slot="end">
-          <ion-button (click)="cancelReassign()">Cancel</ion-button>
-        </ion-buttons>
-      </ion-toolbar>
-    </ion-header>
-    <ion-content class="date-picker-content">
-      <div class="date-picker-container">
-        <p class="date-picker-info">Select a due date for the reassigned task:</p>
-        <ion-datetime
-          [(ngModel)]="selectedReassignDate"
-          presentation="date"
-          [min]="getMinDate()"
-          [showDefaultButtons]="true"
-          cancelText="Cancel"
-          doneText="Continue">
-        </ion-datetime>
-        <div class="selected-date-display">
-          <strong>Selected:</strong> {{ selectedReassignDate | date:'fullDate' }}
-        </div>
-        <ion-button expand="block" (click)="onDateSelected()" class="continue-button">
-          Select Employee
-        </ion-button>
-      </div>
-    </ion-content>
-  </ng-template>
-</ion-modal>

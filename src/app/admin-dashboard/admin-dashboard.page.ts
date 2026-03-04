@@ -1,7 +1,7 @@
 import { Component, CUSTOM_ELEMENTS_SCHEMA, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { IonContent, IonHeader, IonTitle, IonToolbar, IonButton, IonButtons, IonAvatar, IonList, IonItem, IonLabel, IonIcon, IonCheckbox, IonChip, IonCard, IonCardHeader, IonCardTitle, IonCardContent, IonSelect, IonSelectOption, IonDatetime, IonModal } from '@ionic/angular/standalone';
+import { IonContent, IonHeader, IonTitle, IonToolbar, IonButton, IonButtons, IonAvatar, IonList, IonItem, IonLabel, IonIcon, IonCheckbox, IonChip, IonCard, IonCardHeader, IonCardTitle, IonCardContent, IonSelect, IonSelectOption } from '@ionic/angular/standalone';
 import { IonicModule, ModalController, AlertController, NavController, ActionSheetController, ToastController, PopoverController } from '@ionic/angular';
 import { Subject, takeUntil } from 'rxjs';
 import { Task } from '../models/task.model';
@@ -57,7 +57,7 @@ interface EmployeeTaskGroup {
    // IonIcon, 
     //IonCheckbox, 
     //IonChip, 
-    IonCard, IonCardHeader, IonCardTitle, IonCardContent, IonSelect, IonSelectOption, IonDatetime, IonModal, CommonModule, FormsModule, TaskModalPage, DayTasksModalPage]
+    IonCard, IonCardHeader, IonCardTitle, IonCardContent, IonSelect, IonSelectOption, CommonModule, FormsModule, TaskModalPage, DayTasksModalPage]
 })
 export class AdminDashboardPage implements OnInit {
   Math = Math;
@@ -71,9 +71,6 @@ export class AdminDashboardPage implements OnInit {
   calendarDays: CalendarDay[] = [];
   viewMode: 'list' | 'calendar' | 'analytics' = 'list';
   showAssignModal: boolean = false;
-  showDatePicker: boolean = false;
-  selectedReassignDate: string = new Date().toISOString();
-  pendingReassignTask: Task | null = null;
   selectedCalendarDate: Date | null = null;
   currentDate: Date = new Date();
   
@@ -407,37 +404,89 @@ export class AdminDashboardPage implements OnInit {
 
   // Reassign task - show date picker first, then employee selector
   async reassignTask(task: Task): Promise<void> {
-    this.pendingReassignTask = task;
-    this.selectedReassignDate = new Date().toISOString(); // Default to today
-    this.showDatePicker = true;
-  }
-
-  async onDateSelected(): Promise<void> {
-    if (!this.pendingReassignTask) return;
-    
     const employees = this.users.filter(u => u.role === 'employee' || !u.role);
     
-    const actionSheet = await this.actionSheetController.create({
-      header: 'Reassign Task to:',
+    if (employees.length === 0) {
+      this.showToast('No employees available');
+      return;
+    }
+
+    // First, select the employee
+    const employeeActionSheet = await this.actionSheetController.create({
+      header: 'Select Employee to Reassign Task To:',
       buttons: [
         ...employees.map(emp => ({
           text: emp.name,
-          handler: () => {
-            const selectedDate = new Date(this.selectedReassignDate);
-            this.createReassignedTask(this.pendingReassignTask!, emp.id, selectedDate);
+          handler: async () => {
+            // After selecting employee, ask for due date
+            const dueDateActionSheet = await this.actionSheetController.create({
+              header: 'Select New Due Date:',
+              buttons: [
+                {
+                  text: 'Today',
+                  handler: () => {
+                    this.createReassignedTask(task, emp.id, new Date());
+                  }
+                },
+                {
+                  text: 'Tomorrow',
+                  handler: () => {
+                    const tomorrow = new Date();
+                    tomorrow.setDate(tomorrow.getDate() + 1);
+                    this.createReassignedTask(task, emp.id, tomorrow);
+                  }
+                },
+                {
+                  text: 'Next Week',
+                  handler: () => {
+                    const nextWeek = new Date();
+                    nextWeek.setDate(nextWeek.getDate() + 7);
+                    this.createReassignedTask(task, emp.id, nextWeek);
+                  }
+                },
+                {
+                  text: 'Custom Date',
+                  handler: async () => {
+                    // Use native date picker via prompt
+                    const prompt = await this.alertController.create({
+                      header: 'Enter Due Date',
+                      message: 'Enter the due date (YYYY-MM-DD):',
+                      inputs: [
+                        {
+                          name: 'date',
+                          type: 'date',
+                          value: new Date().toISOString().split('T')[0]
+                        }
+                      ],
+                      buttons: [
+                        {
+                          text: 'Cancel',
+                          role: 'cancel'
+                        },
+                        {
+                          text: 'Confirm',
+                          handler: (data) => {
+                            if (data.date) {
+                              this.createReassignedTask(task, emp.id, new Date(data.date));
+                            }
+                          }
+                        }
+                      ]
+                    });
+                    await prompt.present();
+                  }
+                },
+                { text: 'Cancel', icon: 'close', role: 'cancel' }
+              ]
+            });
+            await dueDateActionSheet.present();
           }
         })),
         { text: 'Cancel', icon: 'close', role: 'cancel' }
       ]
     });
     
-    this.showDatePicker = false;
-    await actionSheet.present();
-  }
-
-  cancelReassign(): void {
-    this.showDatePicker = false;
-    this.pendingReassignTask = null;
+    await employeeActionSheet.present();
   }
 
   private async createReassignedTask(originalTask: Task, newEmployeeId: string, selectedDate: Date): Promise<void> {
