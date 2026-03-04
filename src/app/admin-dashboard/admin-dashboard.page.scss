@@ -1417,6 +1417,14 @@ ion-fab-button {
 .date-picker-content {
   --background: #ffffff;
   padding: 20px;
+  --padding: 20px;
+  display: block;
+  visibility: visible !important;
+  
+  // Ensure all child elements are visible
+  * {
+    visibility: visible !important;
+  }
 }
 
 .date-picker-container {
@@ -1458,9 +1466,27 @@ ion-datetime {
   border-radius: 12px;
   border: 1px solid #e0e0e0;
   color: #333333;
+  width: 100%;
+  max-width: 100%;
+  min-height: 300px;
+  height: auto;
+  display: block;
+  visibility: visible !important;
+  opacity: 1 !important;
   
   .datetime-text {
     color: #333333;
+  }
+  
+  // Ensure calendar grid is visible
+  .calendar-day {
+    visibility: visible !important;
+  }
+  
+  // Ensure wheel picker is visible if used
+  picker-columns,
+  picker-col {
+    visibility: visible !important;
   }
 }
 
@@ -1474,6 +1500,11 @@ ion-modal {
       --background: #ffffff !important;
       --color: #333333 !important;
     }
+  }
+  
+  // Ensure modal content is properly visible
+  .ion-page {
+    visibility: visible !important;
   }
 }
 

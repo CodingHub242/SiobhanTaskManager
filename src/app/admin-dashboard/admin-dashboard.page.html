@@ -516,7 +516,7 @@
   </ng-template>
 
   <!-- Date Picker Modal for Reassignment -->
-  <ion-modal [isOpen]="showDatePicker" (didDismiss)="cancelReassign()" [breakpoints]="[0.5, 0.9]" [initialBreakpoint]="0.5">
+  <ion-modal [isOpen]="showDatePicker" (didDismiss)="cancelReassign()" [breakpoints]="[0.5, 0.9]" [initialBreakpoint]="0.7">
     <ion-header>
       <ion-toolbar>
         <ion-title>Select Due Date</ion-title>
@@ -533,7 +533,9 @@
           presentation="date"
           [min]="getMinDate()"
           [showDefaultButtons]="true"
-          doneText="Continue">
+          cancelText="Cancel"
+          doneText="Continue"
+          size="cover">
         </ion-datetime>
         <div class="selected-date-display">
           <strong>Selected:</strong> {{ selectedReassignDate | date:'fullDate' }}
