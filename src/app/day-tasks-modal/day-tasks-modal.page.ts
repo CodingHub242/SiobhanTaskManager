@@ -2,11 +2,13 @@ import { Component, Input, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { IonCheckbox, IonContent, IonHeader, IonTitle, IonToolbar, IonButtons, IonButton, IonList, IonItem, IonLabel, IonIcon } from '@ionic/angular/standalone';
-import { IonicModule, ModalController } from '@ionic/angular';
+import { IonicModule, ModalController,ToastController } from '@ionic/angular';
 import { addIcons } from 'ionicons';
 import { close, calendarOutline, chevronForward } from 'ionicons/icons';
 import { Task } from '../models/task.model';
 import { User } from '../models/user.model';
+import { TaskService } from '../services/task.service';
+import { TaskModalPage } from '../task-modal/task-modal.page';
 
 @Component({
   selector: 'app-day-tasks-modal',
@@ -30,7 +32,7 @@ export class DayTasksModalPage implements OnInit {
   pendingCount: number = 0;
   overdueCount: number = 0;
 
-  constructor(private modalController: ModalController) { 
+  constructor(private modalController: ModalController,private taskService: TaskService,private toastController: ToastController) { 
     addIcons({close, calendarOutline, chevronForward});
   }
 
@@ -66,5 +68,51 @@ export class DayTasksModalPage implements OnInit {
 
   async onTaskClick(task: Task): Promise<void> {
     await this.modalController.dismiss({ task, action: 'view' });
+  }
+
+  // async openTaskModal(task: Task): Promise<void> {
+  //   await this.modalController.dismiss({ task, action: 'edit' });
+  // }
+
+  //pass @Input selected date to task modal inside the openAddTaskModalWithDate function
+  async openAddTaskModalWithDate(): Promise<void> {
+
+    const modal = await this.modalController.create({
+      component: TaskModalPage,
+      componentProps: { mode: 'add', selectedDate: this.selectedDate, users: this.users }
+    });
+    
+    modal.onDidDismiss().then((result) => {
+      if (result.data?.success) {
+        this.showToast('Task created successfully');
+        this.taskService.loadTasks();
+      }
+    });
+    
+    await modal.present();
+  }
+  // async openAddTaskModalWithDate(date:): Promise<void> {
+
+  //     const modal = await this.modalController.create({
+  //       component: TaskModalPage,
+  //       componentProps: { mode: 'add', selectedDate: date, users: this.users }
+  //     });
+      
+  //     modal.onDidDismiss().then((result) => {
+  //       if (result.data?.success) {
+  //         this.showToast('Task created successfully');
+  //         this.taskService.loadTasks();
+  //       }
+  //     });
+      
+  //     await modal.present();
+  //   }
+
+    private async showToast(message: string): Promise<void> {
+    const toast = await this.toastController.create({
+      message,
+      duration: 2000
+    });
+    await toast.present();
   }
 }
