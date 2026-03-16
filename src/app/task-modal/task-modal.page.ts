@@ -20,7 +20,7 @@ import { ApiService } from '../services/api.service';
     //IonInput, 
    // IonItem, 
    // IonLabel, 
-   // IonTextarea, 
+    IonTextarea, 
     IonSelect, IonSelectOption, IonSegment, IonSegmentButton, 
     //IonChip, 
     //IonIcon, 
