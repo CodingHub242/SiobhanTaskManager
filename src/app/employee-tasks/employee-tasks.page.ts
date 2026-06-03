@@ -33,6 +33,7 @@ export class EmployeeTasksPage implements OnInit {
   users: User[] = [];
   employeeTaskGroups: EmployeeTaskGroup[] = [];
   selectedFilter: 'all' | 'completed' | 'pending' | 'overdue' = 'all';
+  selectedEmployeeId: string | null = null;
   pageTitle: string = 'All Tasks';
   showAllEmployees: boolean = true;
 
@@ -46,12 +47,14 @@ export class EmployeeTasksPage implements OnInit {
     addIcons({ arrowBack, person, calendar, flag, checkmark, close, layers, alertCircle, time });
   }
 
-  ngOnInit() {
-    // Get filter from query params
+ngOnInit() {
+    // Get filter and employeeId from query params
     this.route.queryParams.subscribe(params => {
       const filter = params['filter'] || 'all';
       this.selectedFilter = filter as 'all' | 'completed' | 'pending' | 'overdue';
+      this.selectedEmployeeId = params['employeeId'] || null;
       this.pageTitle = this.getFilterTitle(this.selectedFilter);
+      this.showAllEmployees = !this.selectedEmployeeId;
     });
     
     this.loadData();
@@ -94,9 +97,18 @@ export class EmployeeTasksPage implements OnInit {
     });
   }
 
-  groupTasksByEmployee() {
+groupTasksByEmployee() {
     const groups: EmployeeTaskGroup[] = [];
-    const employees = this.users.filter(u => u.role === 'employee' || !u.role);
+    let employees = this.users.filter(u => u.role === 'employee' || !u.role);
+
+    // Filter to specific employee if selectedEmployeeId is provided
+    if (this.selectedEmployeeId) {
+      employees = employees.filter(u => u.id === this.selectedEmployeeId);
+      if (employees.length > 0) {
+        const selectedEmployee = employees[0];
+        this.pageTitle = `${selectedEmployee.name}'s Tasks`;
+      }
+    }
 
     employees.forEach(employee => {
       let employeeTasks = this.tasks.filter(t => t.employeeId === employee.id);
@@ -112,7 +124,11 @@ export class EmployeeTasksPage implements OnInit {
         employeeTasks = employeeTasks.filter(t => !t.completed && new Date(t.dueDate) < today);
       }
 
-      if (employeeTasks.length > 0 || this.showAllEmployees) {
+      // Always show if showAllEmployees is true, OR 
+      // if this is the selected employee (even with 0 filtered tasks)
+      const shouldShow = this.showAllEmployees || (this.selectedEmployeeId && employee.id === this.selectedEmployeeId);
+      
+      if (employeeTasks.length > 0 || shouldShow) {
         const allEmployeeTasks = this.tasks.filter(t => t.employeeId === employee.id);
         const today = new Date();
         today.setHours(0, 0, 0, 0);
@@ -132,9 +148,15 @@ export class EmployeeTasksPage implements OnInit {
     this.employeeTaskGroups = groups.sort((a, b) => b.total - a.total);
   }
 
-  setFilter(filter: 'all' | 'completed' | 'pending' | 'overdue') {
+setFilter(filter: 'all' | 'completed' | 'pending' | 'overdue') {
     this.selectedFilter = filter;
-    this.pageTitle = this.getFilterTitle(filter);
+    // Only update title if not viewing a specific employee
+    if (!this.selectedEmployeeId) {
+      this.pageTitle = this.getFilterTitle(filter);
+    } else {
+      // For specific employee, update the filter part of the title
+      this.pageTitle = `${this.getEmployeeName()}'s ${this.getFilterTitle(filter)}`;
+    }
     this.groupTasksByEmployee();
   }
 
@@ -146,6 +168,12 @@ export class EmployeeTasksPage implements OnInit {
       case 'overdue': return 'Overdue Tasks';
       default: return 'Tasks';
     }
+  }
+
+  getEmployeeName(): string {
+    if (!this.selectedEmployeeId) return '';
+    const employee = this.users.find(u => u.id === this.selectedEmployeeId);
+    return employee ? employee.name : '';
   }
 
   getEmployeeInitials(employee: User): string {
@@ -171,7 +199,22 @@ export class EmployeeTasksPage implements OnInit {
     return '';
   }
 
-  goBack() {
+goBack() {
     this.navController.back();
+  }
+
+  toggleShowAllEmployees() {
+    this.showAllEmployees = !this.showAllEmployees;
+    this.selectedEmployeeId = this.showAllEmployees ? null : this.selectedEmployeeId;
+    if (this.showAllEmployees) {
+      this.pageTitle = this.getFilterTitle(this.selectedFilter);
+    } else if (this.selectedEmployeeId) {
+      this.pageTitle = `${this.getEmployeeName()}'s Tasks`;
+    }
+    this.groupTasksByEmployee();
+  }
+
+  get isViewingSpecificEmployee(): boolean {
+    return !!this.selectedEmployeeId;
   }
 }
