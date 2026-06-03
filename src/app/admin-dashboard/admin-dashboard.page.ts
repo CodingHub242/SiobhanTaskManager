@@ -133,7 +133,7 @@ ngOnInit() {
     this.generateCalendar();
   }
 
-  // Calculate employee cards with completion analytics
+// Calculate employee cards with completion analytics
   calculateEmployeeCards(): void {
     const employees = this.users.filter(u => u.role === 'employee' || !u.role);
     const today = new Date();
@@ -155,35 +155,48 @@ ngOnInit() {
       const employeeTasks = this.tasks.filter(t => t.employeeId === employee.id);
       const completedTasks = employeeTasks.filter(t => t.completed);
       
-      // Tasks completed today
+      // Tasks completed today (based on updatedAt)
       const todayCompleted = completedTasks.filter(t => {
         const taskDate = new Date(t.updatedAt);
         return taskDate >= startOfToday;
       }).length;
-      const todayTotal = employeeTasks.filter(t => {
+      
+      // Current active tasks today - all pending tasks with due date >= start of today
+      // This includes tasks that are either pending or completed today
+      const todayActiveTasks = employeeTasks.filter(t => {
         const taskDate = new Date(t.dueDate);
-        return taskDate >= startOfToday && taskDate <= today;
-      }).length;
+        return taskDate >= startOfToday;
+      });
+      const todayPending = todayActiveTasks.filter(t => !t.completed).length;
+      const todayTotal = todayActiveTasks.length;
       
       // Tasks completed this week
       const weekCompleted = completedTasks.filter(t => {
         const taskDate = new Date(t.updatedAt);
         return taskDate >= startOfWeek;
       }).length;
-      const weekTotal = employeeTasks.filter(t => {
+      
+      // Current active tasks this week - all pending tasks with due date >= start of week
+      const weekActiveTasks = employeeTasks.filter(t => {
         const taskDate = new Date(t.dueDate);
-        return taskDate >= startOfWeek && taskDate <= today;
-      }).length;
+        return taskDate >= startOfWeek;
+      });
+      const weekPending = weekActiveTasks.filter(t => !t.completed).length;
+      const weekTotal = weekActiveTasks.length;
       
       // Tasks completed this month
       const monthCompleted = completedTasks.filter(t => {
         const taskDate = new Date(t.updatedAt);
         return taskDate >= startOfMonth;
       }).length;
-      const monthTotal = employeeTasks.filter(t => {
+      
+      // Current active tasks this month - all pending tasks with due date >= start of month
+      const monthActiveTasks = employeeTasks.filter(t => {
         const taskDate = new Date(t.dueDate);
-        return taskDate >= startOfMonth && taskDate <= today;
-      }).length;
+        return taskDate >= startOfMonth;
+      });
+      const monthPending = monthActiveTasks.filter(t => !t.completed).length;
+      const monthTotal = monthActiveTasks.length;
       
       return {
         id: employee.id,
@@ -193,6 +206,7 @@ ngOnInit() {
         totalTasks: employeeTasks.length,
         completedTasks: completedTasks.length,
         pendingTasks: employeeTasks.length - completedTasks.length,
+        // Calculate based on current active tasks (both completed and pending for the period)
         dailyCompletion: todayTotal > 0 ? Math.round((todayCompleted / todayTotal) * 100) : 0,
         weeklyCompletion: weekTotal > 0 ? Math.round((weekCompleted / weekTotal) * 100) : 0,
         monthlyCompletion: monthTotal > 0 ? Math.round((monthCompleted / monthTotal) * 100) : 0,

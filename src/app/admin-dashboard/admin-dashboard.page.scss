@@ -1687,14 +1687,18 @@ ion-modal {
 // ==================== EMPLOYEE PERFORMANCE VIEW ====================
 .employee-slider {
   margin-bottom: 32px;
+  padding-right: 4px;
 }
 
 .employee-cards-container {
   display: flex;
   gap: 20px;
   overflow-x: auto;
-  padding: 16px 0;
+  overflow-y: hidden;
+  padding: 16px 4px;
   scroll-behavior: smooth;
+  -webkit-overflow-scrolling: touch;
+  scroll-snap-type: x mandatory;
   
   &::-webkit-scrollbar {
     height: 8px;
@@ -1718,6 +1722,7 @@ ion-modal {
 .employee-card {
   flex-shrink: 0;
   width: 300px;
+  min-width: 300px;
   background: #ffffff;
   border: 1px solid #e0e0e0;
   border-radius: 16px;

@@ -73,13 +73,13 @@
 <!-- Side Navigation -->
     <div class="side-nav">
       <ion-list>
-        <ion-item [class.active]="viewMode === 'list'" (click)="viewMode = 'list'">
-          <ion-icon name="list" slot="start"></ion-icon>
-          <ion-label>Tasks</ion-label>
-        </ion-item>
         <ion-item [class.active]="viewMode === 'employees'" (click)="viewMode = 'employees'">
           <ion-icon name="people" slot="start"></ion-icon>
           <ion-label>Employees</ion-label>
+        </ion-item>
+        <ion-item [class.active]="viewMode === 'list'" (click)="viewMode = 'list'">
+          <ion-icon name="list" slot="start"></ion-icon>
+          <ion-label>Tasks</ion-label>
         </ion-item>
         <ion-item [class.active]="viewMode === 'calendar'" (click)="viewMode = 'calendar'">
           <ion-icon name="calendar" slot="start"></ion-icon>
