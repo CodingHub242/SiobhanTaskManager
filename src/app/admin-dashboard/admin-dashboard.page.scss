@@ -311,6 +311,23 @@ ion-fab-button {
 
 // Page-specific styles
 .admin-dashboard-page {
+   --background:
+    radial-gradient(
+      circle at top left,
+      rgba(155,109,255,0.15),
+      transparent 40%
+    ),
+    radial-gradient(
+      circle at bottom right,
+      rgba(255,77,210,0.15),
+      transparent 40%
+    ),
+    radial-gradient(
+      circle at center,
+      rgba(91,108,255,0.12),
+      transparent 50%
+    ),
+    #0f1029;
   // ==================== DASHBOARD HEADER ====================
   .dashboard-header {
     background: #ffffff;

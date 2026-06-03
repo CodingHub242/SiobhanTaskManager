@@ -1,2 +1,33 @@
 // For information on how to create your own theme, please refer to:
 // https://ionicframework.com/docs/theming/
+ :root {
+
+  /* Background */
+  --app-bg: #0f1029;
+  --app-bg-secondary: #161837;
+
+  /* Glass */
+  --glass-bg: rgba(255,255,255,0.05);
+  --glass-border: rgba(255,255,255,0.08);
+
+  /* Text */
+  --text-primary: #ffffff;
+  --text-secondary: #a6a7c4;
+
+  /* Accent */
+  --accent-blue: #5b6cff;
+  --accent-purple: #9b6dff;
+  --accent-pink: #ff4dd2;
+
+  /* Glow */
+  --glow-blue: rgba(91,108,255,0.4);
+  --glow-purple: rgba(155,109,255,0.4);
+
+  /* Radius */
+  --radius-lg: 28px;
+  --radius-md: 20px;
+
+  /* Shadow */
+  --glass-shadow:
+    0 8px 32px rgba(0,0,0,0.3);
+}
