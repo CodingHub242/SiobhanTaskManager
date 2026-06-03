@@ -1046,12 +1046,38 @@ getAvatarUrl(): string {
     return 12;
   }
 
-  private async showToast(message: string): Promise<void> {
+private async showToast(message: string): Promise<void> {
     const toast = await this.toastController.create({
       message,
       duration: 2000
     });
     await toast.present();
+  }
+
+  async viewEmployeeTasks(employee: EmployeeCard): Promise<void> {
+    try {
+      // Dismiss any open popover first
+      const popover = await this.popoverController.getTop();
+      if (popover) {
+        await popover.dismiss();
+      }
+    } catch (error) {
+      // Ignore - popover may not exist
+    }
+    
+    // Navigate to employee tasks page with filter parameter
+    // First, let's try to get the employee's user ID from the users array
+    const user = this.users.find(u => u.id === employee.id);
+    if (user) {
+      await this.navController.navigateForward('/employee-tasks', {
+        queryParams: { filter: 'all', employeeId: user.id }
+      });
+    } else {
+      // Fallback: navigate without employeeId
+      await this.navController.navigateForward('/employee-tasks', {
+        queryParams: { filter: 'all' }
+      });
+    }
   }
 
 }
