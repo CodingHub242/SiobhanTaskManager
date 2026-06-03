@@ -124,7 +124,7 @@ export class AdminDashboardPage implements OnInit {
     private actionSheetController: ActionSheetController,
     private toastController: ToastController,
     private popoverController: PopoverController) {
-addIcons({briefcase,chevronBack,chevronForward,chevronDown,alertCircle, add, trash, create, mail, docIcon, close, eye, download, checkmark, arrowBack, arrowUp, arrowDown, filter,checkmarkCircle,cloudUpload,layers,time,person,logOut,list,calendar,analytics,trendingUp,flag,folderOpen,ellipse,business,swapHorizontal});
+addIcons({briefcase,people,chevronBack,chevronForward,chevronDown,alertCircle, add, trash, create, mail, docIcon, close, eye, download, checkmark, arrowBack, arrowUp, arrowDown, filter,checkmarkCircle,cloudUpload,layers,time,person,logOut,list,calendar,analytics,trendingUp,flag,folderOpen,ellipse,business,swapHorizontal});
      }
 
 ngOnInit() {
