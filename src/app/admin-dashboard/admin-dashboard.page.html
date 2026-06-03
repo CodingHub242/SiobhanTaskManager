@@ -536,8 +536,8 @@
 
         <!-- Horizontal Employee Cards Slider -->
         <div class="employee-slider">
-          <div class="employee-cards-container">
-            <div *ngFor="let emp of employeeCards" class="employee-card">
+<div class="employee-cards-container">
+            <div *ngFor="let emp of employeeCards" class="employee-card" (click)="viewEmployeeTasks(emp)">
               <div class="employee-header">
                 <div class="employee-avatar">
                   <img *ngIf="emp.avatar" [src]="getEmployeeAvatarUrl(emp.avatar)" alt="{{emp.name}}" />
