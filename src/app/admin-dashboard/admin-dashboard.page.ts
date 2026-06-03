@@ -327,8 +327,9 @@ ngOnInit() {
         this.totalPages = Math.ceil(this.totalItems / this.pageSize);
         this.filterTasksLocal();
         this.updatePaginatedTasks();
-        this.generateCalendar();
+this.generateCalendar();
         this.calculateChartData();
+        this.calculateEmployeeCards();
       });
   }
 
@@ -358,7 +359,7 @@ ngOnInit() {
           }
           
           // Transform snake_case to camelCase
-          this.users = (usersRaw || []).map((u: any) => ({
+this.users = (usersRaw || []).map((u: any) => ({
             id: u.id?.toString() || '',
             email: u.email || '',
             name: u.name || '',
@@ -369,6 +370,7 @@ ngOnInit() {
             createdAt: u.created_at ? new Date(u.created_at) : new Date(),
             updatedAt: u.updated_at ? new Date(u.updated_at) : new Date()
           }));
+          this.calculateEmployeeCards();
         },
         error: () => this.users = []
       });
