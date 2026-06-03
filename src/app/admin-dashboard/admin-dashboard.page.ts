@@ -82,7 +82,7 @@ export class AdminDashboardPage implements OnInit {
   selectedDate: Date = new Date();
   currentMonth: Date = new Date();
   calendarDays: CalendarDay[] = [];
-viewMode: 'list' | 'employees' | 'calendar' | 'analytics' = 'list';
+  viewMode: 'list' | 'employees' | 'calendar' | 'analytics' = 'employees';
   showAssignModal: boolean = false;
   selectedCalendarDate: Date | null = null;
   currentDate: Date = new Date();
