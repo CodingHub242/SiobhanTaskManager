@@ -70,12 +70,16 @@
 
   <!-- Main Content Area -->
   <div class="main-content">
-    <!-- Side Navigation -->
+<!-- Side Navigation -->
     <div class="side-nav">
       <ion-list>
         <ion-item [class.active]="viewMode === 'list'" (click)="viewMode = 'list'">
           <ion-icon name="list" slot="start"></ion-icon>
           <ion-label>Tasks</ion-label>
+        </ion-item>
+        <ion-item [class.active]="viewMode === 'employees'" (click)="viewMode = 'employees'">
+          <ion-icon name="people" slot="start"></ion-icon>
+          <ion-label>Employees</ion-label>
         </ion-item>
         <ion-item [class.active]="viewMode === 'calendar'" (click)="viewMode = 'calendar'">
           <ion-icon name="calendar" slot="start"></ion-icon>
@@ -402,8 +406,28 @@
         </div>
       </div>
 
-      <!-- Analytics View -->
+<!-- Analytics View -->
       <div *ngIf="viewMode === 'analytics'" class="view-container">
+        <div class="section-header">
+          <div class="section-title">
+            <h2>Analytics</h2>
+            <ion-chip color="warning">
+              <ion-icon name="trending-up"></ion-icon>
+              {{ getCompletionRate() }}% Completion Rate
+            </ion-chip>
+          </div>
+          <div class="export-controls">
+            <ion-select [(ngModel)]="exportPeriod" interface="popover" placeholder="Select Period">
+              <ion-select-option value="daily">Daily</ion-select-option>
+              <ion-select-option value="weekly">Weekly</ion-select-option>
+              <ion-select-option value="monthly">Monthly</ion-select-option>
+            </ion-select>
+            <ion-button fill="solid" (click)="exportAnalytics()">
+              <ion-icon name="download"></ion-icon>
+              Export
+            </ion-button>
+          </div>
+        </div>
         <div class="analytics-grid">
           <!-- Progress Card -->
           <ion-card class="analytics-card large">
@@ -495,6 +519,98 @@
               </div>
             </ion-card-content>
           </ion-card>
+        </div>
+      </div>
+
+      <!-- Employees View with Horizontal Cards Slider -->
+      <div *ngIf="viewMode === 'employees'" class="view-container">
+        <div class="section-header">
+          <div class="section-title">
+            <h2>Employee Performance</h2>
+            <ion-chip color="success" *ngIf="getTopPerformer('weekly')">
+              <ion-icon name="trophy"></ion-icon>
+              Top Performer: {{ getTopPerformer('weekly')?.name }}
+            </ion-chip>
+          </div>
+        </div>
+
+        <!-- Horizontal Employee Cards Slider -->
+        <div class="employee-slider">
+          <div class="employee-cards-container">
+            <div *ngFor="let emp of employeeCards" class="employee-card">
+              <div class="employee-header">
+                <div class="employee-avatar">
+                  <img *ngIf="emp.avatar" [src]="getEmployeeAvatarUrl(emp.avatar)" alt="{{emp.name}}" />
+                  <div *ngIf="!emp.avatar" class="avatar-initials">{{ getEmployeeInitials(emp.name) }}</div>
+                </div>
+                <div class="employee-info">
+                  <h3>{{ emp.name }}</h3>
+                  <p>{{ emp.department || 'Employee' }}</p>
+                </div>
+                <ion-icon *ngIf="emp.id === getTopPerformer('weekly')?.id" name="trophy" class="top-performer-badge"></ion-icon>
+              </div>
+              
+              <!-- Completion Analytics -->
+              <div class="completion-stats">
+                <div class="completion-item">
+                  <span class="completion-label">Daily</span>
+                  <div class="completion-bar">
+                    <div class="completion-fill" [style.width.%]="emp.dailyCompletion" [class.high]="emp.dailyCompletion >= 80"></div>
+                  </div>
+                  <span class="completion-value">{{ emp.dailyCompletion }}%</span>
+                </div>
+                <div class="completion-item">
+                  <span class="completion-label">Weekly</span>
+                  <div class="completion-bar">
+                    <div class="completion-fill" [style.width.%]="emp.weeklyCompletion" [class.high]="emp.weeklyCompletion >= 80"></div>
+                  </div>
+                  <span class="completion-value">{{ emp.weeklyCompletion }}%</span>
+                </div>
+                <div class="completion-item">
+                  <span class="completion-label">Monthly</span>
+                  <div class="completion-bar">
+                    <div class="completion-fill" [style.width.%]="emp.monthlyCompletion" [class.high]="emp.monthlyCompletion >= 80"></div>
+                  </div>
+                  <span class="completion-value">{{ emp.monthlyCompletion }}%</span>
+                </div>
+              </div>
+
+              <!-- Task Summary -->
+              <div class="task-summary">
+                <span>{{ emp.completedTasks }}/{{ emp.totalTasks }} completed</span>
+                <span>{{ emp.pendingTasks }} pending</span>
+              </div>
+
+              <!-- Export Button -->
+              <ion-button fill="outline" size="small" (click)="exportEmployeeReport(emp.id)">
+                <ion-icon name="download"></ion-icon>
+                Export Report
+              </ion-button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Pending Approvals Section -->
+        <div class="pending-approvals" *ngIf="getPendingApprovalTasks().length > 0">
+          <h3>Pending Approvals</h3>
+          <div class="approval-list">
+            <div *ngFor="let task of getPendingApprovalTasks()" class="approval-item">
+              <div class="approval-info">
+                <h4>{{ task.title }}</h4>
+                <p>Submitted by {{ getEmployeeName(task.employeeId) }}</p>
+              </div>
+              <div class="approval-actions">
+                <ion-button color="success" (click)="approveTask(task)">
+                  <ion-icon name="checkmark-circle"></ion-icon>
+                  Approve
+                </ion-button>
+                <ion-button color="danger" (click)="denyTask(task)">
+                  <ion-icon name="close-circle"></ion-icon>
+                  Deny
+                </ion-button>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
     </div>

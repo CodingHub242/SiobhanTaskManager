@@ -5,6 +5,8 @@ export interface Task {
   priority: 'low' | 'medium' | 'high';
   dueDate: Date;
   completed: boolean;
+  pendingApproval?: boolean;
+  approvedByAdmin?: boolean;
   employeeId?: string;
   createdAt: Date;
   updatedAt: Date;

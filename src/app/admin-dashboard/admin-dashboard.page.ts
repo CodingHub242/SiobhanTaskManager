@@ -10,7 +10,7 @@ import { TaskService } from '../services/task.service';
 import { AuthService } from '../services/auth.service';
 import { ApiService } from '../services/api.service';
 import { addIcons } from 'ionicons';
-import { briefcase,add, trash, create, mail, document, close, eye, download, checkmark, arrowBack, arrowUp, arrowDown, filter, cloudUpload, checkmarkCircle, layers, time, alertCircle, chevronBack, chevronForward, chevronDown, person, logOut, list, calendar, analytics, trendingUp, flag, folderOpen, ellipse, business, swapHorizontal } from 'ionicons/icons';
+import { briefcase,add, trash, create, mail, document as docIcon, close, eye, download, checkmark, arrowBack, arrowUp, arrowDown, filter, cloudUpload, checkmarkCircle, layers, time, alertCircle, chevronBack, chevronForward, chevronDown, person, logOut, list, calendar, analytics, trendingUp, flag, folderOpen, ellipse, business, swapHorizontal, people, trophy } from 'ionicons/icons';
 import { TaskModalPage } from '../task-modal/task-modal.page';
 import { DayTasksModalPage } from '../day-tasks-modal/day-tasks-modal.page';
 
@@ -35,6 +35,19 @@ interface EmployeeTaskGroup {
   completed: number;
   pending: number;
   overdue: number;
+}
+
+interface EmployeeCard {
+  id: string;
+  name: string;
+  avatar?: string;
+  department?: string;
+  totalTasks: number;
+  completedTasks: number;
+  pendingTasks: number;
+  dailyCompletion: number;
+  weeklyCompletion: number;
+  monthlyCompletion: number;
 }
 
 @Component({
@@ -69,7 +82,7 @@ export class AdminDashboardPage implements OnInit {
   selectedDate: Date = new Date();
   currentMonth: Date = new Date();
   calendarDays: CalendarDay[] = [];
-  viewMode: 'list' | 'calendar' | 'analytics' = 'list';
+viewMode: 'list' | 'employees' | 'calendar' | 'analytics' = 'list';
   showAssignModal: boolean = false;
   selectedCalendarDate: Date | null = null;
   currentDate: Date = new Date();
@@ -91,10 +104,16 @@ export class AdminDashboardPage implements OnInit {
   
   private destroy$ = new Subject<void>();
 
-  // Chart data
+// Chart data
   tasksByPriority: ChartData[] = [];
   tasksByStatus: ChartData[] = [];
   weeklyTasks: ChartData[] = [];
+
+// Employee cards for horizontal slider
+  employeeCards: EmployeeCard[] = [];
+  
+  // Export period
+  exportPeriod: 'daily' | 'weekly' | 'monthly' = 'weekly';
 
   constructor( private taskService: TaskService,
     private apiService: ApiService,
@@ -105,13 +124,181 @@ export class AdminDashboardPage implements OnInit {
     private actionSheetController: ActionSheetController,
     private toastController: ToastController,
     private popoverController: PopoverController) {
-      addIcons({briefcase,chevronBack,chevronForward,chevronDown,alertCircle, add, trash, create, mail, document, close, eye, download, checkmark, arrowBack, arrowUp, arrowDown, filter,checkmarkCircle,cloudUpload,layers,time,person,logOut,list,calendar,analytics,trendingUp,flag,folderOpen,ellipse,business,swapHorizontal});
+addIcons({briefcase,chevronBack,chevronForward,chevronDown,alertCircle, add, trash, create, mail, docIcon, close, eye, download, checkmark, arrowBack, arrowUp, arrowDown, filter,checkmarkCircle,cloudUpload,layers,time,person,logOut,list,calendar,analytics,trendingUp,flag,folderOpen,ellipse,business,swapHorizontal});
      }
 
-  ngOnInit() {
+ngOnInit() {
     this.loadTasks();
     this.loadUsers();
     this.generateCalendar();
+  }
+
+  // Calculate employee cards with completion analytics
+  calculateEmployeeCards(): void {
+    const employees = this.users.filter(u => u.role === 'employee' || !u.role);
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    
+    // Start of today
+    const startOfToday = new Date(today);
+    startOfToday.setHours(0, 0, 0, 0);
+    
+    // Start of week (Sunday)
+    const startOfWeek = new Date(today);
+    startOfWeek.setDate(today.getDate() - today.getDay());
+    startOfWeek.setHours(0, 0, 0, 0);
+    
+    // Start of month
+    const startOfMonth = new Date(today.getFullYear(), today.getMonth(), 1);
+    
+    this.employeeCards = employees.map(employee => {
+      const employeeTasks = this.tasks.filter(t => t.employeeId === employee.id);
+      const completedTasks = employeeTasks.filter(t => t.completed);
+      
+      // Tasks completed today
+      const todayCompleted = completedTasks.filter(t => {
+        const taskDate = new Date(t.updatedAt);
+        return taskDate >= startOfToday;
+      }).length;
+      const todayTotal = employeeTasks.filter(t => {
+        const taskDate = new Date(t.dueDate);
+        return taskDate >= startOfToday && taskDate <= today;
+      }).length;
+      
+      // Tasks completed this week
+      const weekCompleted = completedTasks.filter(t => {
+        const taskDate = new Date(t.updatedAt);
+        return taskDate >= startOfWeek;
+      }).length;
+      const weekTotal = employeeTasks.filter(t => {
+        const taskDate = new Date(t.dueDate);
+        return taskDate >= startOfWeek && taskDate <= today;
+      }).length;
+      
+      // Tasks completed this month
+      const monthCompleted = completedTasks.filter(t => {
+        const taskDate = new Date(t.updatedAt);
+        return taskDate >= startOfMonth;
+      }).length;
+      const monthTotal = employeeTasks.filter(t => {
+        const taskDate = new Date(t.dueDate);
+        return taskDate >= startOfMonth && taskDate <= today;
+      }).length;
+      
+      return {
+        id: employee.id,
+        name: employee.name,
+        avatar: employee.avatar,
+        department: employee.department,
+        totalTasks: employeeTasks.length,
+        completedTasks: completedTasks.length,
+        pendingTasks: employeeTasks.length - completedTasks.length,
+        dailyCompletion: todayTotal > 0 ? Math.round((todayCompleted / todayTotal) * 100) : 0,
+        weeklyCompletion: weekTotal > 0 ? Math.round((weekCompleted / weekTotal) * 100) : 0,
+        monthlyCompletion: monthTotal > 0 ? Math.round((monthCompleted / monthTotal) * 100) : 0,
+      };
+    });
+  }
+
+  // Get top performer for a specific period
+  getTopPerformer(period: 'daily' | 'weekly' | 'monthly'): EmployeeCard | null {
+    if (this.employeeCards.length === 0) return null;
+    
+    return this.employeeCards.slice().sort((a, b) => {
+      if (period === 'daily') return b.dailyCompletion - a.dailyCompletion;
+      if (period === 'weekly') return b.weeklyCompletion - a.weeklyCompletion;
+      return b.monthlyCompletion - a.monthlyCompletion;
+    })[0];
+  }
+
+// Task approval methods
+  async approveTask(task: Task): Promise<void> {
+    this.apiService.approveTaskCompletion(task.id).subscribe({
+      next: () => {
+        this.showToast('Task approved successfully');
+        this.taskService.loadTasks();
+      },
+      error: () => {
+        this.showToast('Failed to approve task');
+      }
+    });
+  }
+
+  async denyTask(task: Task): Promise<void> {
+    const alert = await this.alertController.create({
+      header: 'Deny Task Completion',
+      message: 'Are you sure you want to deny this task completion? The task will be marked as pending again.',
+      buttons: [
+        { text: 'Cancel', role: 'cancel' },
+        { 
+          text: 'Deny', 
+          handler: () => {
+            this.apiService.denyTaskCompletion(task.id).subscribe({
+              next: () => {
+                this.showToast('Task denied');
+                this.taskService.loadTasks();
+              },
+              error: () => {
+                this.showToast('Failed to deny task');
+              }
+            });
+          }
+        }
+      ]
+    });
+    await alert.present();
+  }
+
+  // Export analytics
+  async exportAnalytics(): Promise<void> {
+    const actionSheet = await this.actionSheetController.create({
+      header: 'Export Analytics',
+      buttons: [
+        {
+          text: 'Daily Report',
+          handler: () => this.downloadExport('daily')
+        },
+        {
+          text: 'Weekly Report',
+          handler: () => this.downloadExport('weekly')
+        },
+        {
+          text: 'Monthly Report',
+          handler: () => this.downloadExport('monthly')
+        },
+        { text: 'Cancel', role: 'cancel' }
+      ]
+    });
+    await actionSheet.present();
+  }
+
+  private async downloadExport(period: 'daily' | 'weekly' | 'monthly'): Promise<void> {
+    try {
+      // Generate CSV content
+      let csvContent = 'Employee,Total Tasks,Completed,Pending,Completion Rate\n';
+      
+      this.employeeCards.forEach(emp => {
+        let rate = 0;
+        if (period === 'daily') rate = emp.dailyCompletion;
+        else if (period === 'weekly') rate = emp.weeklyCompletion;
+        else rate = emp.monthlyCompletion;
+        
+        csvContent += `${emp.name},${emp.totalTasks},${emp.completedTasks},${emp.pendingTasks},${rate}%\n`;
+      });
+      
+      // Create and download file
+      const blob = new Blob([csvContent], { type: 'text/csv' });
+      const url = window.URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = `analytics_${period}_${new Date().toISOString().split('T')[0]}.csv`;
+      link.click();
+      window.URL.revokeObjectURL(url);
+      
+      this.showToast(`${period.charAt(0).toUpperCase() + period.slice(1)} report exported`);
+    } catch (error) {
+      this.showToast('Failed to export report');
+    }
   }
 
    ngOnDestroy(): void {
@@ -680,13 +867,92 @@ export class AdminDashboardPage implements OnInit {
     return names[0][0];
   }
 
-  getAvatarUrl(): string {
+getAvatarUrl(): string {
     const user = this.authService.getCurrentUser();
     if (!user?.avatar) return '';
     if (user.avatar.startsWith('http') || user.avatar.startsWith('https')) {
       return user.avatar;
     }
     return `https://ecg.codepps.online/storage/${user.avatar}`;
+  }
+
+  getEmployeeAvatarUrl(avatar?: string): string {
+    if (!avatar) return '';
+    if (avatar.startsWith('http') || avatar.startsWith('https')) {
+      return avatar;
+    }
+    return `https://ecg.codepps.online/storage/${avatar}`;
+  }
+
+  getEmployeeInitialsByName(name: string): string {
+    if (!name) return '?';
+    const names = name.split(' ');
+    if (names.length >= 2) {
+      return names[0][0] + names[1][0];
+    }
+    return names[0][0];
+  }
+
+  getPendingApprovalTasks(): Task[] {
+    return this.tasks.filter(t => t.pendingApproval === true);
+  }
+
+  async exportEmployeeReport(employeeId: string): Promise<void> {
+    const actionSheet = await this.actionSheetController.create({
+      header: 'Export Employee Report',
+      buttons: [
+        {
+          text: 'Daily Report',
+          handler: () => this.downloadEmployeeReport(employeeId, 'daily')
+        },
+        {
+          text: 'Weekly Report',
+          handler: () => this.downloadEmployeeReport(employeeId, 'weekly')
+        },
+        {
+          text: 'Monthly Report',
+          handler: () => this.downloadEmployeeReport(employeeId, 'monthly')
+        },
+        { text: 'Cancel', role: 'cancel' }
+      ]
+    });
+    await actionSheet.present();
+  }
+
+  private async downloadEmployeeReport(employeeId: string, period: 'daily' | 'weekly' | 'monthly'): Promise<void> {
+    const employee = this.employeeCards.find(e => e.id === employeeId);
+    if (!employee) return;
+
+    // Get the tasks for this employee
+    const employeeTasks = this.tasks.filter(t => t.employeeId === employeeId);
+    const completed = employeeTasks.filter(t => t.completed).length;
+    const pending = employeeTasks.filter(t => !t.completed).length;
+
+    // Generate CSV content
+    let csvContent = `Report for ${employee.name}\n`;
+    csvContent += `Period: ${period.charAt(0).toUpperCase() + period.slice(1)}\n`;
+    csvContent += `Date Generated: ${new Date().toLocaleDateString()}\n\n`;
+    csvContent += `Task Title,Description,Priority,Due Date,Status\n`;
+    
+    employeeTasks.forEach(task => {
+      csvContent += `"${task.title}","${task.description}","${task.priority}","${new Date(task.dueDate).toLocaleDateString()}","${task.completed ? 'Completed' : 'Pending'}"\n`;
+    });
+
+    csvContent += `\nSummary:\n`;
+    csvContent += `Total Tasks,${employeeTasks.length}\n`;
+    csvContent += `Completed,${completed}\n`;
+    csvContent += `Pending,${pending}\n`;
+
+    // Create and download file
+    const blob = new Blob([csvContent], { type: 'text/csv' });
+    const url = (window as any).URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = `${employee.name.replace(/\s+/g, '_')}_${period}_${new Date().toISOString().split('T')[0]}.csv`;
+    link.click();
+    (window as any).URL.revokeObjectURL(url);
+
+    this.showToast(`${period.charAt(0).toUpperCase() + period.slice(1)} report exported for ${employee.name}`);
   }
 
   getMinDate(): string {

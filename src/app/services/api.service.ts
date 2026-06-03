@@ -140,8 +140,28 @@ export class ApiService {
     });
   }
 
-  getTaskReports(taskId: string): Observable<any[]> {
+getTaskReports(taskId: string): Observable<any[]> {
     return this.http.get<any[]>(`${this.baseUrl}/task-reports/task/${taskId}`, { 
+      headers: this.getHeaders() 
+    });
+  }
+
+  // Task approval endpoints - when employee marks task complete, admin must approve
+  approveTaskCompletion(taskId: string): Observable<any> {
+    return this.http.post<any>(`${this.baseUrl}/tasks/${taskId}/approve`, {}, {
+      headers: this.getHeaders()
+    });
+  }
+
+  denyTaskCompletion(taskId: string): Observable<any> {
+    return this.http.post<any>(`${this.baseUrl}/tasks/${taskId}/deny`, {}, {
+      headers: this.getHeaders()
+    });
+  }
+
+  // Get tasks pending approval
+  getPendingApprovals(): Observable<Task[]> {
+    return this.http.get<Task[]>(`${this.baseUrl}/tasks?pending_approval=true`, { 
       headers: this.getHeaders() 
     });
   }
