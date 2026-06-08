@@ -1245,7 +1245,7 @@ ion-fab-button {
     gap: 8px;
 
     ion-button {
-      --color: #007bff;
+      --color: #ff8420;
       font-weight: 600;
 
       &[disabled] {
@@ -1254,9 +1254,10 @@ ion-fab-button {
       }
 
       &.active {
-        --background: rgba(0, 123, 255, 0.1);
-        --border-color: #007bff;
-        border: 1px solid #007bff;
+        --background: rgba(0, 123, 255, .1);
+        --border-color: #d39e00;
+        border: 1px solid #d39e00;
+        color: #000;
       }
     }
   }
@@ -1307,7 +1308,7 @@ ion-fab-button {
     }
     
     ion-button {
-      --background: #007bff;
+      --background: #612d03;
       --color: #ffffff;
       --border-radius: 8px;
       --font-weight: 600;
