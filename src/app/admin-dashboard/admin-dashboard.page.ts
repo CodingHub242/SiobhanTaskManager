@@ -1143,7 +1143,8 @@ getAvatarUrl(): string {
   }
 
   getPendingApprovalTasks(): Task[] {
-    return this.tasks.filter(t => t.pendingApproval  === true || t.pending_approval === true || t.pending_approval === null);
+    //first check if task has been marked as completed but pending approval (pendingApproval or pending_approval field)
+    return this.tasks.filter(t => t.pendingApproval  === true || t.pending_approval === true || t.pending_approval === null && t.completed === true);
   }
 
   async exportEmployeeReport(employeeId: string): Promise<void> {
