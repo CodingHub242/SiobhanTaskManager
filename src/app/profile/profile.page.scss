@@ -30,7 +30,7 @@ ion-back-button {
   align-items: center;
   gap: 8px;
   font-weight: 600;
-  color: #333333;
+  color: #9b9999;
   
   ion-icon {
     color: #007bff;
@@ -217,7 +217,7 @@ ion-back-button {
     }
     
     ion-button {
-      --background: linear-gradient(135deg, var(--accent-blue) 0%, var(--accent-purple) 100%);
+      //--background: linear-gradient(135deg, var(--accent-blue) 0%, var(--accent-purple) 100%);
       --color: var(--text-primary);
       --border-radius: var(--radius-md);
       --font-weight: 600;
@@ -1189,7 +1189,7 @@ ion-back-button {
   width: 100px;
   height: 100px;
   border-radius: 50%;
-  background: linear-gradient(135deg, #007bff 0%, #0056b3 100%);
+  background: linear-gradient(135deg, #d39e00 0%, #000 100%);
   color: #ffffff;
   display: flex;
   align-items: center;
@@ -1248,9 +1248,9 @@ ion-back-button {
   
   ion-chip {
     --background: rgba(0, 123, 255, 0.1);
-    --color: #007bff;
-    color: #007bff;
-    --border: 1px solid #007bff;
+    --color: #d39e00;
+    color: #d39e00;
+    --border: 1px solid #d39e00;
   }
 }
 
@@ -1280,9 +1280,9 @@ ion-back-button {
       font-weight: 600;
       color: #333333;
       
-      ion-icon {
+        ion-icon {
         font-size: 18px;
-        color: #007bff;
+        color: #d39e00;
       }
     }
     
@@ -1327,7 +1327,7 @@ ion-back-button {
   padding: 0 20px 20px;
   
   ion-button {
-    --background: #007bff;
+    --background: #d39e00;
     --color: #ffffff;
     --border-radius: 8px;
     --font-weight: 600;
