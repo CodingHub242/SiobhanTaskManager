@@ -11,7 +11,7 @@ export class TaskService {
   tasks$ = this.tasksSubject.asObservable();
 
   constructor(private apiService: ApiService) {
-    this.loadTasks();
+    // Don't auto-load tasks - let components call loadTasks() when needed
   }
 
   private transformTask(task: any): Task {

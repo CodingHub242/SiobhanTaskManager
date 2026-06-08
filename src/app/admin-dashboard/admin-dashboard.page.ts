@@ -133,18 +133,42 @@ addIcons({briefcase,people,chevronBack,chevronForward,chevronDown,alertCircle, a
      }
 
 ngOnInit() {
-    this.loadTasks();
+    // Subscribe to tasks once
+    this.taskService.tasks$
+      .pipe(takeUntil(this.destroy$))
+      .subscribe((tasks: any) => {
+        console.log('AdminDashboard received tasks:', tasks);
+        // Ensure tasks is always an array
+        this.tasks = Array.isArray(tasks) ? tasks : [];
+        //make sure completed status is set to true for completed tasks
+        this.tasks.forEach(task => {
+          if (task.status == 'completed') {
+            task.completed = true;
+          }
+        })
+        console.log('AdminDashboard processed tasks:', this.tasks.length);
+        this.totalItems = this.tasks.length;
+        this.totalPages = Math.ceil(this.totalItems / this.pageSize);
+        this.filterTasksLocal();
+        this.updatePaginatedTasks();
+        this.generateCalendar();
+        this.calculateChartData();
+        // Only calculate employee cards if users are already loaded
+        if (this.users.length > 0) {
+          this.calculateEmployeeCards();
+        }
+      });
+    
+    // Load initial data
+    this.taskService.loadTasks();
     this.loadUsers();
-    this.generateCalendar();
-  }
-
-  // Check if both tasks and users are loaded, then calculate employee cards
-  private shouldCalculateEmployeeCards(): boolean {
-    return this.tasks.length > 0 && this.users.length > 0;
   }
 
 // Calculate employee cards with completion analytics
   calculateEmployeeCards(): void {
+    // Clear top performer cache when employee cards change
+    this.clearTopPerformerCache();
+    
     const employees = this.users.filter(u => u.role === 'employee' || !u.role);
     const today = new Date();
     today.setHours(0, 0, 0, 0);
@@ -230,14 +254,30 @@ return {
   }
 
 // Get top performer for a specific period
+  private _topPerformerCache: { [key: string]: EmployeeCard | null } = {};
+  
   getTopPerformer(period: 'daily' | 'weekly' | 'monthly'): EmployeeCard | null {
     if (this.employeeCards.length === 0) return null;
     
-    return this.employeeCards.slice().sort((a, b) => {
+    // Check cache first
+    const cacheKey = period;
+    if (this._topPerformerCache[cacheKey]) {
+      return this._topPerformerCache[cacheKey];
+    }
+    
+    const result = this.employeeCards.slice().sort((a, b) => {
       if (period === 'daily') return b.dailyCompletion - a.dailyCompletion;
       if (period === 'weekly') return b.weeklyCompletion - a.weeklyCompletion;
       return b.monthlyCompletion - a.monthlyCompletion;
     })[0];
+    
+    this._topPerformerCache[cacheKey] = result;
+    return result;
+  }
+  
+  // Clear cache when employee cards change
+  private clearTopPerformerCache(): void {
+    this._topPerformerCache = {};
   }
 
   // Set employee period selection
@@ -343,8 +383,14 @@ return {
     }
   }
 
-  // Get months for selection (last 12 months)
+  // Get months for selection (last 12 months) - cached
+  private _availableMonths: { value: string; label: string }[] | null = null;
+  
   getAvailableMonths(): { value: string; label: string }[] {
+    if (this._availableMonths) {
+      return this._availableMonths;
+    }
+    
     const months: { value: string; label: string }[] = [];
     const today = new Date();
     
@@ -356,11 +402,18 @@ return {
       });
     }
     
+    this._availableMonths = months;
     return months;
   }
 
-  // Get days for current month selection
+  // Get days for current month selection - cached
+  private _availableDays: { value: string; label: string }[] | null = null;
+  
   getAvailableDays(): { value: string; label: string }[] {
+    if (this._availableDays) {
+      return this._availableDays;
+    }
+    
     const days: { value: string; label: string }[] = [];
     const today = new Date();
     const year = today.getFullYear();
@@ -375,6 +428,7 @@ return {
       });
     }
     
+    this._availableDays = days;
     return days;
   }
 
@@ -471,36 +525,6 @@ return {
    ngOnDestroy(): void {
     this.destroy$.next();
     this.destroy$.complete();
-  }
-
-  loadTasks(): void {
-    // First load tasks from service, then subscribe to observable
-    this.taskService.loadTasks();
-    
-    this.taskService.tasks$
-      .pipe(takeUntil(this.destroy$))
-      .subscribe((tasks: any) => {
-        console.log('AdminDashboard received tasks:', tasks);
-        // Ensure tasks is always an array
-        this.tasks = Array.isArray(tasks) ? tasks : [];
-        //make sure completed status is set to true for completed tasks
-        this.tasks.forEach(task => {
-          if (task.status == 'completed') {
-            task.completed = true;
-          }
-        })
-        console.log('AdminDashboard processed tasks:', this.tasks.length);
-        this.totalItems = this.tasks.length;
-        this.totalPages = Math.ceil(this.totalItems / this.pageSize);
-        this.filterTasksLocal();
-        this.updatePaginatedTasks();
-this.generateCalendar();
-        this.calculateChartData();
-        // Only calculate employee cards if users are already loaded
-        if (this.users.length > 0) {
-          this.calculateEmployeeCards();
-        }
-      });
   }
 
   loadUsers(): void {
