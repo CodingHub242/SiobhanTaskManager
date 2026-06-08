@@ -1155,7 +1155,8 @@ getAvatarUrl(): string {
 
   getPendingApprovalTasks(): Task[] {
     //first check if task has been marked as completed but pending approval (pendingApproval or pending_approval field)
-    const pending = this.tasks.filter(t => t.pending_approval == null);
+   // only return tasks that are marked as completed but have pending_approval == null (not yet approved or denied)
+    const pending = this.tasks.filter(t => t.pending_approval == null && t.completed);
     console.log('Pending approval tasks:', pending);
     console.log('All tasks:', this.tasks);
     return pending;
