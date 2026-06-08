@@ -48,6 +48,11 @@ interface EmployeeCard {
   dailyCompletion: number;
   weeklyCompletion: number;
   monthlyCompletion: number;
+  yearlyCompletion: number;
+  overallCompletion: number;
+  selectedPeriod: 'weekly' | 'monthly' | 'yearly';
+  selectedMonth: Date | null;
+  selectedDay: Date | null;
 }
 
 @Component({
@@ -198,7 +203,7 @@ ngOnInit() {
       const monthPending = monthActiveTasks.filter(t => !t.completed).length;
       const monthTotal = monthActiveTasks.length;
       
-      return {
+return {
         id: employee.id,
         name: employee.name,
         avatar: employee.avatar,
@@ -210,11 +215,16 @@ ngOnInit() {
         dailyCompletion: todayTotal > 0 ? Math.round((todayCompleted / todayTotal) * 100) : 0,
         weeklyCompletion: weekTotal > 0 ? Math.round((weekCompleted / weekTotal) * 100) : 0,
         monthlyCompletion: monthTotal > 0 ? Math.round((monthCompleted / monthTotal) * 100) : 0,
+        yearlyCompletion: 0, // Will be calculated dynamically
+        overallCompletion: employeeTasks.length > 0 ? Math.round((completedTasks.length / employeeTasks.length) * 100) : 0,
+        selectedPeriod: 'monthly' as const,
+        selectedMonth: null,
+        selectedDay: null,
       };
     });
   }
 
-  // Get top performer for a specific period
+// Get top performer for a specific period
   getTopPerformer(period: 'daily' | 'weekly' | 'monthly'): EmployeeCard | null {
     if (this.employeeCards.length === 0) return null;
     
@@ -223,6 +233,144 @@ ngOnInit() {
       if (period === 'weekly') return b.weeklyCompletion - a.weeklyCompletion;
       return b.monthlyCompletion - a.monthlyCompletion;
     })[0];
+  }
+
+  // Set employee period selection
+  setEmployeePeriod(employeeId: string, period: 'weekly' | 'monthly' | 'yearly'): void {
+    const employee = this.employeeCards.find(e => e.id === employeeId);
+    if (employee) {
+      employee.selectedPeriod = period;
+      // Reset selections when changing period
+      if (period === 'weekly') {
+        employee.selectedMonth = null;
+        employee.selectedDay = null;
+      } else if (period === 'monthly') {
+        employee.selectedDay = null;
+      }
+    }
+  }
+
+  // Select specific month for monthly view
+  selectEmployeeMonth(employeeId: string, event: any): void {
+    const employee = this.employeeCards.find(e => e.id === employeeId);
+    if (employee && event?.detail?.value) {
+      employee.selectedMonth = new Date(event.detail.value);
+      this.calculateYearlyCompletionForEmployee(employee);
+    }
+  }
+
+  // Select specific day for yearly view
+  selectEmployeeDay(employeeId: string, event: any): void {
+    const employee = this.employeeCards.find(e => e.id === employeeId);
+    if (employee && event?.detail?.value) {
+      employee.selectedDay = new Date(event.detail.value);
+      this.calculateYearlyCompletionForEmployee(employee);
+    }
+  }
+
+  // Calculate yearly completion for specific selected day
+  calculateYearlyCompletionForEmployee(employee: EmployeeCard): void {
+    const employeeTasks = this.tasks.filter(t => t.employeeId === employee.id);
+    const completedTasks = employeeTasks.filter(t => t.completed);
+    
+    if (employee.selectedPeriod === 'yearly' && employee.selectedDay) {
+      // Calculate for selected day
+      const selectedDate = new Date(employee.selectedDay);
+      selectedDate.setHours(0, 0, 0, 0);
+      const nextDay = new Date(selectedDate);
+      nextDay.setDate(nextDay.getDate() + 1);
+      
+      const tasksForDay = employeeTasks.filter(t => {
+        const taskDate = new Date(t.dueDate);
+        return taskDate >= selectedDate && taskDate < nextDay;
+      });
+      
+      const completedForDay = tasksForDay.filter(t => t.completed).length;
+      employee.yearlyCompletion = tasksForDay.length > 0 ? Math.round((completedForDay / tasksForDay.length) * 100) : 0;
+    } else if (employee.selectedPeriod === 'monthly' && employee.selectedMonth) {
+      // Calculate for selected month
+      const selectedDate = new Date(employee.selectedMonth);
+      const startOfMonth = new Date(selectedDate.getFullYear(), selectedDate.getMonth(), 1);
+      const endOfMonth = new Date(selectedDate.getFullYear(), selectedDate.getMonth() + 1, 0);
+      endOfMonth.setHours(23, 59, 59, 999);
+      
+      const tasksForMonth = employeeTasks.filter(t => {
+        const taskDate = new Date(t.dueDate);
+        return taskDate >= startOfMonth && taskDate <= endOfMonth;
+      });
+      
+      const completedForMonth = tasksForMonth.filter(t => t.completed).length;
+      employee.monthlyCompletion = tasksForMonth.length > 0 ? Math.round((completedForMonth / tasksForMonth.length) * 100) : 0;
+    }
+  }
+
+  // Get completion for display based on selected period
+  getDisplayCompletion(employee: EmployeeCard): number {
+    switch (employee.selectedPeriod) {
+      case 'weekly':
+        return employee.weeklyCompletion;
+      case 'monthly':
+        return employee.monthlyCompletion;
+      case 'yearly':
+        return employee.yearlyCompletion;
+      default:
+        return employee.monthlyCompletion;
+    }
+  }
+
+  // Get period label for display
+  getPeriodLabel(employee: EmployeeCard): string {
+    switch (employee.selectedPeriod) {
+      case 'weekly':
+        return 'This Week';
+      case 'monthly':
+        if (employee.selectedMonth) {
+          return new Date(employee.selectedMonth).toLocaleDateString('en-US', { month: 'short', year: 'numeric' });
+        }
+        return 'This Month';
+      case 'yearly':
+        if (employee.selectedDay) {
+          return new Date(employee.selectedDay).toLocaleDateString('en-US', { day: 'numeric', month: 'short', year: 'numeric' });
+        }
+        return 'Select Date';
+      default:
+        return 'This Month';
+    }
+  }
+
+  // Get months for selection (last 12 months)
+  getAvailableMonths(): { value: string; label: string }[] {
+    const months: { value: string; label: string }[] = [];
+    const today = new Date();
+    
+    for (let i = 0; i < 12; i++) {
+      const date = new Date(today.getFullYear(), today.getMonth() - i, 1);
+      months.push({
+        value: date.toISOString().split('T')[0],
+        label: date.toLocaleDateString('en-US', { month: 'long', year: 'numeric' })
+      });
+    }
+    
+    return months;
+  }
+
+  // Get days for current month selection
+  getAvailableDays(): { value: string; label: string }[] {
+    const days: { value: string; label: string }[] = [];
+    const today = new Date();
+    const year = today.getFullYear();
+    const month = today.getMonth();
+    const daysInMonth = new Date(year, month + 1, 0).getDate();
+    
+    for (let i = 1; i <= daysInMonth; i++) {
+      const date = new Date(year, month, i);
+      days.push({
+        value: date.toISOString().split('T')[0],
+        label: date.toLocaleDateString('en-US', { day: 'numeric', month: 'short' })
+      });
+    }
+    
+    return days;
   }
 
 // Task approval methods

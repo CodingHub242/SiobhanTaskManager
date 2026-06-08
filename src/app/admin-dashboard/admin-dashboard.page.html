@@ -522,7 +522,7 @@
         </div>
       </div>
 
-      <!-- Employees View with Horizontal Cards Slider -->
+<!-- Employees View with Horizontal Cards Slider -->
       <div *ngIf="viewMode === 'employees'" class="view-container">
         <div class="section-header">
           <div class="section-title">
@@ -536,7 +536,7 @@
 
         <!-- Horizontal Employee Cards Slider -->
         <div class="employee-slider">
-<div class="employee-cards-container">
+          <div class="employee-cards-container">
             <div *ngFor="let emp of employeeCards" class="employee-card" (click)="viewEmployeeTasks(emp)">
               <div class="employee-header">
                 <div class="employee-avatar">
@@ -550,29 +550,62 @@
                 <ion-icon *ngIf="emp.id === getTopPerformer('weekly')?.id" name="trophy" class="top-performer-badge"></ion-icon>
               </div>
               
-              <!-- Completion Analytics -->
+              <!-- Overall Completion Display -->
+              <div class="overall-completion">
+                <span class="overall-label">Overall</span>
+                <div class="overall-bar">
+                  <div class="overall-fill" [style.width.%]="emp.overallCompletion" [class.high]="emp.overallCompletion >= 80"></div>
+                </div>
+                <span class="overall-value">{{ emp.overallCompletion }}%</span>
+              </div>
+
+              <!-- Period Selector -->
+              <div class="period-selector">
+                <ion-select 
+                  [value]="emp.selectedPeriod" 
+                  (ionChange)="setEmployeePeriod(emp.id, $any($event.detail.value))"
+                  interface="popover"
+                  placeholder="Select Period">
+                  <ion-select-option value="weekly">Weekly</ion-select-option>
+                  <ion-select-option value="monthly">Monthly</ion-select-option>
+                  <ion-select-option value="yearly">Yearly</ion-select-option>
+                </ion-select>
+              </div>
+
+              <!-- Month Selector (shown when Monthly is selected) -->
+              <div class="date-selector" *ngIf="emp.selectedPeriod === 'monthly'">
+                <ion-select 
+                  (ionChange)="selectEmployeeMonth(emp.id, $event)"
+                  interface="popover"
+                  [placeholder]="getPeriodLabel(emp)">
+                  <ion-select-option *ngFor="let month of getAvailableMonths()" [value]="month.value">
+                    {{ month.label }}
+                  </ion-select-option>
+                </ion-select>
+              </div>
+
+              <!-- Day Selector (shown when Yearly is selected) -->
+              <div class="date-selector" *ngIf="emp.selectedPeriod === 'yearly'">
+                <ion-select 
+                  (ionChange)="selectEmployeeDay(emp.id, $event)"
+                  interface="popover"
+                  [placeholder]="getPeriodLabel(emp)">
+                  <ion-select-option *ngFor="let day of getAvailableDays()" [value]="day.value">
+                    {{ day.label }}
+                  </ion-select-option>
+                </ion-select>
+              </div>
+              
+              <!-- Completion Analytics based on selected period -->
               <div class="completion-stats">
                 <div class="completion-item">
-                  <span class="completion-label">Daily</span>
+                  <span class="completion-label">Period</span>
                   <div class="completion-bar">
-                    <div class="completion-fill" [style.width.%]="emp.dailyCompletion" [class.high]="emp.dailyCompletion >= 80"></div>
+                    <div class="completion-fill" [style.width.%]="getDisplayCompletion(emp)" [class.high]="getDisplayCompletion(emp) >= 80"></div>
                   </div>
-                  <span class="completion-value">{{ emp.dailyCompletion }}%</span>
+                  <span class="completion-value">{{ getDisplayCompletion(emp) }}%</span>
                 </div>
-                <div class="completion-item">
-                  <span class="completion-label">Weekly</span>
-                  <div class="completion-bar">
-                    <div class="completion-fill" [style.width.%]="emp.weeklyCompletion" [class.high]="emp.weeklyCompletion >= 80"></div>
-                  </div>
-                  <span class="completion-value">{{ emp.weeklyCompletion }}%</span>
-                </div>
-                <div class="completion-item">
-                  <span class="completion-label">Monthly</span>
-                  <div class="completion-bar">
-                    <div class="completion-fill" [style.width.%]="emp.monthlyCompletion" [class.high]="emp.monthlyCompletion >= 80"></div>
-                  </div>
-                  <span class="completion-value">{{ emp.monthlyCompletion }}%</span>
-                </div>
+                <div class="period-label">{{ getPeriodLabel(emp) }}</div>
               </div>
 
               <!-- Task Summary -->
