@@ -138,6 +138,11 @@ ngOnInit() {
     this.generateCalendar();
   }
 
+  // Check if both tasks and users are loaded, then calculate employee cards
+  private shouldCalculateEmployeeCards(): boolean {
+    return this.tasks.length > 0 && this.users.length > 0;
+  }
+
 // Calculate employee cards with completion analytics
   calculateEmployeeCards(): void {
     const employees = this.users.filter(u => u.role === 'employee' || !u.role);
@@ -491,7 +496,10 @@ return {
         this.updatePaginatedTasks();
 this.generateCalendar();
         this.calculateChartData();
-        this.calculateEmployeeCards();
+        // Only calculate employee cards if users are already loaded
+        if (this.users.length > 0) {
+          this.calculateEmployeeCards();
+        }
       });
   }
 
@@ -532,7 +540,10 @@ this.users = (usersRaw || []).map((u: any) => ({
             createdAt: u.created_at ? new Date(u.created_at) : new Date(),
             updatedAt: u.updated_at ? new Date(u.updated_at) : new Date()
           }));
-          this.calculateEmployeeCards();
+          // Only calculate employee cards if tasks are already loaded
+          if (this.tasks.length > 0) {
+            this.calculateEmployeeCards();
+          }
         },
         error: () => this.users = []
       });

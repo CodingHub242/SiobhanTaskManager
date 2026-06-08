@@ -101,8 +101,6 @@ export class TaskService {
           task.id === id ? transformedTask : task
         );
         this.tasksSubject.next(tasks);
-        //load tasks after update
-        this.loadTasks();
       })
     );
     
@@ -120,16 +118,10 @@ export class TaskService {
   toggleTaskCompletion(id: string): void {
     const task = this.getTaskById(id);
     if (task) {
-      //add status==completed if completed=true and status==pending if completed=false and send status and completed to api
-      if(task.status == 'completed') {
-        task.status = 'pending';
-        this.updateTaskStat(id, { completed: !task.completed },task.status).subscribe();
-      } else {
-        task.status = 'completed';
-        this.updateTaskStat(id, { completed: !task.completed },task.status).subscribe();
-      }
-     
-      //this.updateTask(id, { completed: !task.completed }).subscribe();
+      // Determine the new status based on current state
+      const newStatus = task.status === 'completed' ? 'pending' : 'completed';
+      const newCompleted = !task.completed;
+      this.updateTaskStat(id, { completed: newCompleted }, newStatus).subscribe();
     }
   }
 }
