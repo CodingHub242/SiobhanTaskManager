@@ -537,10 +537,10 @@
         <!-- Horizontal Employee Cards Slider -->
         <div class="employee-slider">
           <div class="employee-cards-container">
-            <div *ngFor="let emp of employeeCards" class="employee-card" (click)="viewEmployeeTasks(emp)">
+            <div *ngFor="let emp of employeeCards" class="employee-card">
               <div class="employee-header">
                 <div class="employee-avatar">
-                  <img *ngIf="emp.avatar" [src]="getEmployeeAvatarUrl(emp.avatar)" alt="{{emp.name}}" />
+                  <img *ngIf="emp.avatar" [src]="getEmployeeAvatarUrl(emp.avatar)" alt="{{emp.name}}"  (click)="viewEmployeeTasks(emp)"/>
                   <div *ngIf="!emp.avatar" class="avatar-initials">{{ getEmployeeInitialsByName(emp.name) }}</div>
                 </div>
                 <div class="employee-info">
