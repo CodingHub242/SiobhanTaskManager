@@ -617,6 +617,7 @@ return {
           // Only calculate employee cards if tasks are already loaded
           if (this.tasks.length > 0) {
             this.calculateEmployeeCards();
+            this.getPendingApprovalTasks();
           }
         },
         error: () => this.users = []
@@ -1144,7 +1145,9 @@ getAvatarUrl(): string {
 
   getPendingApprovalTasks(): Task[] {
     //first check if task has been marked as completed but pending approval (pendingApproval or pending_approval field)
-    return this.tasks.filter(t => t.pendingApproval  === true || t.pending_approval === true || t.pending_approval === null && t.completed === true);
+    const pending = this.tasks.filter(t => t.pendingApproval  === true || t.pending_approval === true || t.pending_approval === null && t.completed === true);
+    console.log('Pending approval tasks:', pending);
+    return pending;
   }
 
   async exportEmployeeReport(employeeId: string): Promise<void> {
