@@ -484,13 +484,13 @@ ion-fab-button {
     }
     
     ion-button {
-      --background: linear-gradient(135deg, var(--accent-blue) 0%, var(--accent-purple) 100%);
+      --background: transparent;
       --color: var(--text-primary);
-      --border-radius: var(--radius-md);
+      /* --border-radius: var(--radius-md); */
       --font-weight: 600;
       padding: 0 20px;
       height: 40px;
-      box-shadow: 0 4px 12px var(--glow-blue);
+      box-shadow: 0 4px 12px #d39e00;
       
       ion-icon {
         margin-right: 6px;
