@@ -603,7 +603,7 @@ return {
           }
           
           // Transform snake_case to camelCase
-this.users = (usersRaw || []).map((u: any) => ({
+            this.users = (usersRaw || []).map((u: any) => ({
             id: u.id?.toString() || '',
             email: u.email || '',
             name: u.name || '',
@@ -1143,7 +1143,7 @@ getAvatarUrl(): string {
   }
 
   getPendingApprovalTasks(): Task[] {
-    return this.tasks.filter(t => t.pendingApproval === true);
+    return this.tasks.filter(t => t.pendingApproval  === true || t.pending_approval === true || t.pending_approval === null);
   }
 
   async exportEmployeeReport(employeeId: string): Promise<void> {

@@ -12,6 +12,8 @@ export interface Task {
   updatedAt: Date;
   report?: TaskReport;
   status?: string;
+
+  pending_approval?: boolean;
 }
 
 export interface TaskReport {
