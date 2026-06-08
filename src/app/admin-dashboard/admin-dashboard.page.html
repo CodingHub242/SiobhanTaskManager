@@ -541,7 +541,7 @@
               <div class="employee-header">
                 <div class="employee-avatar">
                   <img *ngIf="emp.avatar" [src]="getEmployeeAvatarUrl(emp.avatar)" alt="{{emp.name}}"  (click)="viewEmployeeTasks(emp)"/>
-                  <div *ngIf="!emp.avatar" class="avatar-initials">{{ getEmployeeInitialsByName(emp.name) }}</div>
+                  <div *ngIf="!emp.avatar" class="avatar-initials" (click)="viewEmployeeTasks(emp)">{{ getEmployeeInitialsByName(emp.name) }}</div>
                 </div>
                 <div class="employee-info">
                   <h3>{{ emp.name }}</h3>
