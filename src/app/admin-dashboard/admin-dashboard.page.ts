@@ -10,7 +10,7 @@ import { TaskService } from '../services/task.service';
 import { AuthService } from '../services/auth.service';
 import { ApiService } from '../services/api.service';
 import { addIcons } from 'ionicons';
-import { briefcase,add, trash, create, mail, document as docIcon, close, eye, download, checkmark, arrowBack, arrowUp, arrowDown, filter, cloudUpload, checkmarkCircle, layers, time, alertCircle, chevronBack, chevronForward, chevronDown, person, logOut, list, calendar, analytics, trendingUp, flag, folderOpen, ellipse, business, swapHorizontal, people, trophy } from 'ionicons/icons';
+import { briefcase,add, trash, create, mail, document as docIcon, close, eye, download, checkmark, arrowBack, arrowUp, arrowDown, filter, cloudUpload, checkmarkCircle, layers, time, alertCircle, chevronBack, chevronForward, chevronDown, chevronUp, person, logOut, list, calendar, analytics, trendingUp, flag, folderOpen, ellipse, business, swapHorizontal, people, trophy } from 'ionicons/icons';
 import { TaskModalPage } from '../task-modal/task-modal.page';
 import { DayTasksModalPage } from '../day-tasks-modal/day-tasks-modal.page';
 
@@ -133,7 +133,7 @@ export class AdminDashboardPage implements OnInit {
     private actionSheetController: ActionSheetController,
     private toastController: ToastController,
     private popoverController: PopoverController) {
-addIcons({briefcase,people,chevronBack,chevronForward,chevronDown,alertCircle, add, trash, create, mail, docIcon, close, eye, download, checkmark, arrowBack, arrowUp, arrowDown, filter,checkmarkCircle,cloudUpload,layers,time,person,logOut,list,calendar,analytics,trendingUp,flag,folderOpen,ellipse,business,swapHorizontal});
+addIcons({briefcase,people,chevronBack,chevronForward,chevronDown,chevronUp,alertCircle, add, trash, create, mail, docIcon, close, eye, download, checkmark, arrowBack, arrowUp, arrowDown, filter,checkmarkCircle,cloudUpload,layers,time,person,logOut,list,calendar,analytics,trendingUp,flag,folderOpen,ellipse,business,swapHorizontal});
      }
 
 ngOnInit() {

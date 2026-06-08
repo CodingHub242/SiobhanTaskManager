@@ -1578,6 +1578,13 @@ ion-modal {
       background: #f0f2f5;
     }
     
+    .dropdown-icon {
+      font-size: 20px;
+      color: #666666;
+      transition: transform 0.3s ease;
+      margin-left: 12px;
+    }
+    
     .employee-info {
       display: flex;
       align-items: center;

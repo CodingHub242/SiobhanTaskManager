@@ -144,7 +144,7 @@
           <ng-container *ngIf="employeeTaskGroups.length > 0; else noGroupedTasks">
             <div *ngFor="let group of employeeTaskGroups" class="employee-section">
               <!-- Employee Header -->
-              <div class="employee-header">
+              <div class="employee-header" (click)="toggleEmployeeGroup(group.employee.id)">
                 <div class="employee-info">
                   <div class="employee-avatar">
                     {{ getEmployeeInitialsFromUser(group.employee) }}
@@ -172,10 +172,14 @@
                     <span>{{ group.overdue }}</span>
                   </div>
                 </div>
+                <ion-icon
+                  [name]="isEmployeeGroupExpanded(group.employee.id) ? 'chevron-up' : 'chevron-down'"
+                  class="dropdown-icon">
+                </ion-icon>
               </div>
               
               <!-- Tasks Table for this Employee -->
-              <div class="task-table-container">
+              <div class="task-table-container" *ngIf="isEmployeeGroupExpanded(group.employee.id)">
                 <table class="task-table">
                   <thead>
                     <tr>
