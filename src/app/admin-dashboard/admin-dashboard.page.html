@@ -77,6 +77,12 @@
           <ion-icon name="people" slot="start"></ion-icon>
           <ion-label>Employees</ion-label>
         </ion-item>
+
+        <ion-item [class.active]="viewMode === 'approvals'" (click)="viewMode = 'approvals'">
+          <ion-icon name="people" slot="start"></ion-icon>
+          <ion-label>Completion Approvals</ion-label>
+        </ion-item>
+
         <ion-item [class.active]="viewMode === 'list'" (click)="viewMode = 'list'">
           <ion-icon name="list" slot="start"></ion-icon>
           <ion-label>Tasks</ion-label>
@@ -410,7 +416,7 @@
         </div>
       </div>
 
-<!-- Analytics View -->
+      <!-- Analytics View -->
       <div *ngIf="viewMode === 'analytics'" class="view-container">
         <div class="section-header">
           <div class="section-title">
@@ -526,7 +532,7 @@
         </div>
       </div>
 
-<!-- Employees View with Horizontal Cards Slider -->
+      <!-- Employees View with Horizontal Cards Slider -->
       <div *ngIf="viewMode === 'employees'" class="view-container">
         <div class="section-header">
           <div class="section-title">
@@ -638,7 +644,9 @@
             </div>
           </div>
         </div>
+      </div>
 
+      <div *ngIf="viewMode === 'approvals'" class="view-container">
         <!-- Pending Approvals Section -->
         <div class="pending-approvals" *ngIf="getPendingApprovalTasks().length > 0">
           <h3>Pending Approvals</h3>
