@@ -572,26 +572,38 @@
                 </ion-select>
               </div>
 
+              <!-- Year Selector (shown when Yearly is selected) -->
+              <div class="date-selector" *ngIf="emp.selectedPeriod === 'yearly'">
+                <ion-select 
+                  (ionChange)="selectEmployeeYear(emp.id, $event)"
+                  interface="popover"
+                  [placeholder]="getPeriodLabel(emp)">
+                  <ion-select-option *ngFor="let year of getAvailableYears()" [value]="year.value">
+                    {{ year.label }}
+                  </ion-select-option>
+                </ion-select>
+              </div>
+
+              <!-- Year Selector (shown when Monthly is selected) -->
+              <div class="date-selector" *ngIf="emp.selectedPeriod === 'monthly'">
+                <ion-select 
+                  (ionChange)="selectEmployeeYear(emp.id, $event)"
+                  interface="popover"
+                  placeholder="Select Year">
+                  <ion-select-option *ngFor="let year of getAvailableYears()" [value]="year.value">
+                    {{ year.label }}
+                  </ion-select-option>
+                </ion-select>
+              </div>
+
               <!-- Month Selector (shown when Monthly is selected) -->
               <div class="date-selector" *ngIf="emp.selectedPeriod === 'monthly'">
                 <ion-select 
                   (ionChange)="selectEmployeeMonth(emp.id, $event)"
                   interface="popover"
                   [placeholder]="getPeriodLabel(emp)">
-                  <ion-select-option *ngFor="let month of getAvailableMonths()" [value]="month.value">
+                  <ion-select-option *ngFor="let month of getAvailableMonthsWithYear(emp.selectedYear)" [value]="month.value">
                     {{ month.label }}
-                  </ion-select-option>
-                </ion-select>
-              </div>
-
-              <!-- Day Selector (shown when Yearly is selected) -->
-              <div class="date-selector" *ngIf="emp.selectedPeriod === 'yearly'">
-                <ion-select 
-                  (ionChange)="selectEmployeeDay(emp.id, $event)"
-                  interface="popover"
-                  [placeholder]="getPeriodLabel(emp)">
-                  <ion-select-option *ngFor="let day of getAvailableDays()" [value]="day.value">
-                    {{ day.label }}
                   </ion-select-option>
                 </ion-select>
               </div>

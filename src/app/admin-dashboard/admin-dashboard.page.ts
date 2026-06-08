@@ -51,6 +51,7 @@ interface EmployeeCard {
   yearlyCompletion: number;
   overallCompletion: number;
   selectedPeriod: 'weekly' | 'monthly' | 'yearly';
+  selectedYear: number | null;
   selectedMonth: Date | null;
   selectedDay: Date | null;
 }
@@ -247,6 +248,7 @@ return {
         yearlyCompletion: 0, // Will be calculated dynamically
         overallCompletion: employeeTasks.length > 0 ? Math.round((completedTasks.length / employeeTasks.length) * 100) : 0,
         selectedPeriod: 'monthly' as const,
+        selectedYear: null,
         selectedMonth: null,
         selectedDay: null,
       };
@@ -287,11 +289,24 @@ return {
       employee.selectedPeriod = period;
       // Reset selections when changing period
       if (period === 'weekly') {
+        employee.selectedYear = null;
         employee.selectedMonth = null;
         employee.selectedDay = null;
       } else if (period === 'monthly') {
         employee.selectedDay = null;
+      } else if (period === 'yearly') {
+        employee.selectedMonth = null;
+        employee.selectedDay = null;
       }
+    }
+  }
+
+  // Select specific year for yearly or monthly view
+  selectEmployeeYear(employeeId: string, event: any): void {
+    const employee = this.employeeCards.find(e => e.id === employeeId);
+    if (employee && event?.detail?.value) {
+      employee.selectedYear = parseInt(event.detail.value);
+      this.calculateYearlyCompletionForEmployee(employee);
     }
   }
 
@@ -304,34 +319,22 @@ return {
     }
   }
 
-  // Select specific day for yearly view
-  selectEmployeeDay(employeeId: string, event: any): void {
-    const employee = this.employeeCards.find(e => e.id === employeeId);
-    if (employee && event?.detail?.value) {
-      employee.selectedDay = new Date(event.detail.value);
-      this.calculateYearlyCompletionForEmployee(employee);
-    }
-  }
-
-  // Calculate yearly completion for specific selected day
+  // Calculate yearly completion for specific selected year
   calculateYearlyCompletionForEmployee(employee: EmployeeCard): void {
     const employeeTasks = this.tasks.filter(t => t.employeeId === employee.id);
-    const completedTasks = employeeTasks.filter(t => t.completed);
     
-    if (employee.selectedPeriod === 'yearly' && employee.selectedDay) {
-      // Calculate for selected day
-      const selectedDate = new Date(employee.selectedDay);
-      selectedDate.setHours(0, 0, 0, 0);
-      const nextDay = new Date(selectedDate);
-      nextDay.setDate(nextDay.getDate() + 1);
+    if (employee.selectedPeriod === 'yearly' && employee.selectedYear) {
+      // Calculate for selected year
+      const startOfYear = new Date(employee.selectedYear, 0, 1);
+      const endOfYear = new Date(employee.selectedYear, 11, 31, 23, 59, 59, 999);
       
-      const tasksForDay = employeeTasks.filter(t => {
+      const tasksForYear = employeeTasks.filter(t => {
         const taskDate = new Date(t.dueDate);
-        return taskDate >= selectedDate && taskDate < nextDay;
+        return taskDate >= startOfYear && taskDate <= endOfYear;
       });
       
-      const completedForDay = tasksForDay.filter(t => t.completed).length;
-      employee.yearlyCompletion = tasksForDay.length > 0 ? Math.round((completedForDay / tasksForDay.length) * 100) : 0;
+      const completedForYear = tasksForYear.filter(t => t.completed).length;
+      employee.yearlyCompletion = tasksForYear.length > 0 ? Math.round((completedForYear / tasksForYear.length) * 100) : 0;
     } else if (employee.selectedPeriod === 'monthly' && employee.selectedMonth) {
       // Calculate for selected month
       const selectedDate = new Date(employee.selectedMonth);
@@ -347,6 +350,25 @@ return {
       const completedForMonth = tasksForMonth.filter(t => t.completed).length;
       employee.monthlyCompletion = tasksForMonth.length > 0 ? Math.round((completedForMonth / tasksForMonth.length) * 100) : 0;
     }
+  }
+
+  // Get months for a specific year (for monthly view with year selection)
+  getAvailableMonthsWithYear(year: number | null): { value: string; label: string }[] {
+    if (!year) {
+      return this.getAvailableMonths();
+    }
+    
+    const months: { value: string; label: string }[] = [];
+    
+    for (let i = 0; i < 12; i++) {
+      const date = new Date(year, i, 1);
+      months.push({
+        value: date.toISOString().split('T')[0],
+        label: date.toLocaleDateString('en-US', { month: 'long', year: 'numeric' })
+      });
+    }
+    
+    return months;
   }
 
   // Get completion for display based on selected period
@@ -374,10 +396,10 @@ return {
         }
         return 'This Month';
       case 'yearly':
-        if (employee.selectedDay) {
-          return new Date(employee.selectedDay).toLocaleDateString('en-US', { day: 'numeric', month: 'short', year: 'numeric' });
+        if (employee.selectedYear) {
+          return employee.selectedYear.toString();
         }
-        return 'Select Date';
+        return 'Select Year';
       default:
         return 'This Month';
     }
@@ -430,6 +452,28 @@ return {
     
     this._availableDays = days;
     return days;
+  }
+
+  // Get years for selection (2010 to current year) - cached
+  private _availableYears: { value: number; label: string }[] | null = null;
+  
+  getAvailableYears(): { value: number; label: string }[] {
+    if (this._availableYears) {
+      return this._availableYears;
+    }
+    
+    const years: { value: number; label: string }[] = [];
+    const currentYear = new Date().getFullYear();
+    
+    for (let year = 2010; year <= currentYear; year++) {
+      years.push({
+        value: year,
+        label: year.toString()
+      });
+    }
+    
+    this._availableYears = years;
+    return years;
   }
 
 // Task approval methods
