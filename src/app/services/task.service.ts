@@ -26,7 +26,7 @@ export class TaskService {
       createdAt: task.created_at ? new Date(task.created_at) : new Date(),
       updatedAt: task.updated_at ? new Date(task.updated_at) : new Date(),
       status: task.status || 'pending',
-      pending_approval: task.pending_approval ?? undefined
+      pending_approval: task.pending_approval
     };
   }
 
