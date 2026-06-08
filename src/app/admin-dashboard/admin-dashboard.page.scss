@@ -1908,8 +1908,13 @@ ion-modal {
   h3 {
     margin: 0 0 20px;
     font-size: 1.1rem;
-    font-weight: 600;
-    color: #333333;
+    font-weight: 800;
+    color: #f4f5f878;
+    box-shadow: 0 2px 8px #d39e00;
+    width: fit-content;
+    border: 1px solid #3b2c00;
+    text-transform: uppercase;
+    padding: 5px;
   }
   
   .approval-list {
