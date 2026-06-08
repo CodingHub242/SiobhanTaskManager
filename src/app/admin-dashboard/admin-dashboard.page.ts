@@ -294,6 +294,7 @@ return {
         employee.selectedDay = null;
       } else if (period === 'monthly') {
         employee.selectedDay = null;
+        employee.selectedYear = null;
       } else if (period === 'yearly') {
         employee.selectedMonth = null;
         employee.selectedDay = null;
