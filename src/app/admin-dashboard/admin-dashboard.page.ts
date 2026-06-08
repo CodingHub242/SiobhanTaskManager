@@ -620,7 +620,6 @@ return {
           // Only calculate employee cards if tasks are already loaded
           if (this.tasks.length > 0) {
             this.calculateEmployeeCards();
-            this.getPendingApprovalTasks();
           }
         },
         error: () => this.users = []
