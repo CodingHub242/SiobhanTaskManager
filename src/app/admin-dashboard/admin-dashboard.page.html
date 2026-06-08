@@ -585,7 +585,7 @@
               </div>
 
               <!-- Year Selector (shown when Monthly is selected) -->
-              <div class="date-selector" *ngIf="emp.selectedPeriod === 'monthly'">
+              <!-- <div class="date-selector" *ngIf="emp.selectedPeriod === 'monthly'">
                 <ion-select 
                   (ionChange)="selectEmployeeYear(emp.id, $event)"
                   interface="popover"
@@ -594,7 +594,7 @@
                     {{ year.label }}
                   </ion-select-option>
                 </ion-select>
-              </div>
+              </div> -->
 
               <!-- Month Selector (shown when Monthly is selected) -->
               <div class="date-selector" *ngIf="emp.selectedPeriod === 'monthly'">
