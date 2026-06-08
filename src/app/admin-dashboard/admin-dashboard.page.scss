@@ -2056,3 +2056,39 @@ ion-modal {
   margin-top: 4px;
   font-weight: 500;
 }
+
+// ==================== SELECT POPOVER SCROLLBAR ====================
+ion-select-popover {
+  --max-height: 300px;
+  
+  .select-interface-option {
+    max-height: 300px;
+  }
+  
+  .select-interface-scroll {
+    max-height: 300px;
+  }
+}
+
+ion-popover .select-interface-options {
+  max-height: 300px !important;
+  overflow-y: auto !important;
+}
+
+ion-popover .select-interface-options::-webkit-scrollbar {
+  width: 8px;
+}
+
+ion-popover .select-interface-options::-webkit-scrollbar-track {
+  background: #f0f0f0;
+  border-radius: 4px;
+}
+
+ion-popover .select-interface-options::-webkit-scrollbar-thumb {
+  background: #cccccc;
+  border-radius: 4px;
+  
+  &:hover {
+    background: #999999;
+  }
+}

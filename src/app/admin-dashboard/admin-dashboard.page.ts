@@ -456,7 +456,7 @@ return {
 
   // Get years for selection (2010 to current year) - cached
   private _availableYears: { value: number; label: string }[] | null = null;
-  
+   
   getAvailableYears(): { value: number; label: string }[] {
     if (this._availableYears) {
       return this._availableYears;
@@ -476,7 +476,12 @@ return {
     return years;
   }
 
-// Task approval methods
+  // TrackBy function for years (improves performance)
+  trackByYear(index: number, item: { value: number; label: string }): number {
+    return item.value;
+  }
+
+  // Task approval methods
   async approveTask(task: Task): Promise<void> {
     this.apiService.approveTaskCompletion(task.id).subscribe({
       next: () => {
