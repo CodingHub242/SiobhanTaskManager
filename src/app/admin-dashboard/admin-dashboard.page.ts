@@ -108,6 +108,9 @@ export class AdminDashboardPage implements OnInit {
   // Employee task groups
   employeeTaskGroups: EmployeeTaskGroup[] = [];
   
+  // Track expanded/collapsed state for employee groups
+  expandedEmployeeGroups: { [key: string]: boolean } = {};
+  
   private destroy$ = new Subject<void>();
 
 // Chart data
@@ -1018,6 +1021,14 @@ return {
 
   setListViewMode(mode: 'all' | 'grouped'): void {
     this.listViewMode = mode;
+  }
+
+  toggleEmployeeGroup(employeeId: string): void {
+    this.expandedEmployeeGroups[employeeId] = !this.expandedEmployeeGroups[employeeId];
+  }
+
+  isEmployeeGroupExpanded(employeeId: string): boolean {
+    return this.expandedEmployeeGroups[employeeId] !== false;
   }
 
   // Pagination methods
