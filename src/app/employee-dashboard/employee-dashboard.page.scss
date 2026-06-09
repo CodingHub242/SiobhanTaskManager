@@ -1364,11 +1364,61 @@ ion-item {
 }
 
 // Side Navigation
+// .side-nav {
+//   width: 200px;
+//   background: #f8f9fa !important;
+//   border-right: 1px solid #e0e0e0;
+//   padding: 16px 12px;
+  
+//   ion-list {
+//     background: transparent !important;
+//     padding: 0;
+//   }
+  
+//   ion-item {
+//     --background: transparent;
+//     margin-bottom: 8px;
+//     --padding-start: 12px;
+//     --min-height: 48px;
+//     cursor: pointer;
+//     color: #555555;
+    
+//     &.active {
+//       --background: #ffffff;
+//       --border-color: #007bff;
+//       border: 1px solid #007bff;
+//       border-radius: 8px;
+      
+//       ion-icon {
+//         color: #007bff;
+//       }
+      
+//       ion-label {
+//         color: #007bff;
+//         font-weight: 600;
+//       }
+//     }
+    
+//     ion-icon {
+//       margin-right: 12px;
+//       font-size: 20px;
+//       color: #666666;
+//     }
+    
+//     ion-label {
+//       font-size: 0.95rem;
+//       font-weight: 500;
+//       color: #555555;
+//     }
+//   }
+// }
 .side-nav {
-  width: 200px;
-  background: #f8f9fa !important;
-  border-right: 1px solid #e0e0e0;
+  width: 220px;
+  background: transparent !important;
+  border-right: 1px solid var(--glass-border);
   padding: 16px 12px;
+  @include glass-effect;
+  border-radius: 0 var(--radius-md) var(--radius-md) 0;
   
   ion-list {
     background: transparent !important;
@@ -1381,20 +1431,20 @@ ion-item {
     --padding-start: 12px;
     --min-height: 48px;
     cursor: pointer;
-    color: #555555;
+    color: var(--text-secondary);
     
     &.active {
-      --background: #ffffff;
-      --border-color: #007bff;
-      border: 1px solid #007bff;
+      @include glass-effect;
+      border: 1px solid var(--accent-blue);
       border-radius: 8px;
       
       ion-icon {
-        color: #007bff;
+        color: var(--accent-blue);
+        text-shadow: 0 0 10px var(--glow-blue);
       }
       
       ion-label {
-        color: #007bff;
+        color: var(--accent-blue);
         font-weight: 600;
       }
     }
@@ -1402,13 +1452,13 @@ ion-item {
     ion-icon {
       margin-right: 12px;
       font-size: 20px;
-      color: #666666;
+      color: var(--text-secondary);
     }
     
     ion-label {
       font-size: 0.95rem;
       font-weight: 500;
-      color: #555555;
+      color: var(--text-secondary);
     }
   }
 }
